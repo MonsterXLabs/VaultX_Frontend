@@ -2,7 +2,7 @@ import {createContext, useEffect, useState} from "react"
 import {createWeb3Modal} from "@web3modal/wagmi/react"
 import {defaultWagmiConfig} from "@web3modal/wagmi/react/config"
 import {WagmiProvider} from "wagmi"
-import {polygon, polygonMumbai} from "wagmi/chains"
+import {polygon, polygonMumbai,bscTestnet} from "wagmi/chains"
 import {QueryClient, QueryClientProvider} from "@tanstack/react-query"
 import {
   authenticationServices,
@@ -22,8 +22,7 @@ const metadata = {
   icons: ["https://avatars.githubusercontent.com/u/37784886"],
 }
 
-const chains =
-  process.env.REACT_APP_NODE_ENV !== "DEV" ? [polygon] : [polygonMumbai]
+const chains = [bscTestnet];
 const config = defaultWagmiConfig({
   chains, // required
   projectId, // required

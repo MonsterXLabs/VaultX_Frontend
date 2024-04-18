@@ -1,5 +1,5 @@
 import {createPublicClient, createWalletClient, custom, http} from "viem"
-import {polygon, polygonMumbai} from "viem/chains"
+import {bscTestnet, polygon, polygonMumbai} from "viem/chains"
 import {createConfig} from "wagmi"
 import { chain } from "./config"
 
@@ -22,9 +22,9 @@ export const createWalletClientLocal = () => {
 }
 
 export const config = createConfig({
-  chains: [polygon, polygonMumbai],
+  chains: [bscTestnet],
   transports: {
-    [polygon.id]: http(),
-    [polygonMumbai.id]: http(),
+    [bscTestnet.id]: http(),
+    [bscTestnet.id]: http(),
   },
 })

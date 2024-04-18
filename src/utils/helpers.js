@@ -104,6 +104,7 @@ export const getEthBalance = async (address) => {
   const balance = await getBalance(config, {
     address,
   });
+  console.log("balance is---->", balance);
   return Number(balance.formatted)?.toFixed(4);
 };
 
@@ -185,7 +186,7 @@ export const listNft = async (
   amount,
   royalty,
   splitPayment,
-  userAddress,
+  userAddress
 ) => {
   let etherValue = parseEther(amount);
 
@@ -371,7 +372,7 @@ export const placeBid = async (
   sellerAddress,
   userAddress,
   royalty,
-  splitPayment,
+  splitPayment
 ) => {
   let etherValue = parseEther(price);
   const nftValue = parseEther(nftPrice.toString());
@@ -455,7 +456,7 @@ export const purchaseUnmintedNft = async (
   sellerAddress,
   userAddress,
   royalty,
-  splitPayment,
+  splitPayment
 ) => {
   let etherValue = parseEther(price.toString());
   const splitPayments = changeSplitPayAmount(splitPayment);
