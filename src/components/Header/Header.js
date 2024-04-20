@@ -1,18 +1,21 @@
-import {useContext, useEffect, useState} from "react"
-import {useNavigate} from "react-router-dom"
-import {useWeb3Modal} from "@web3modal/wagmi/react"
-import {useAccount, useDisconnect} from "wagmi"
-import {getEthBalance, handleCopyClick, trimString} from "../../utils/helpers"
-import {WalletContext} from "../../Context/WalletConnect"
-import {collectionServices, userServices} from "../../services/supplier"
+import { useContext, useEffect, useState } from "react"
+import { useNavigate } from "react-router-dom"
+import { useWeb3Modal } from "@web3modal/wagmi/react"
+import { useAccount, useDisconnect } from "wagmi"
+import { getEthBalance, handleCopyClick, trimString } from "../../utils/helpers"
+import { WalletContext } from "../../Context/WalletConnect"
+import { collectionServices, userServices } from "../../services/supplier"
 import * as bootstrap from "bootstrap"
+import { debounce } from "lodash"
+import { Tab, Tabs } from "react-bootstrap"
+import useDebounce from "../../customHook/useDebounce"
 
 function Header() {
   const [openDialog, setOpenDialog] = useState(false)
-  const {open: modalOpen, close} = useWeb3Modal()
-  const {address, isConnected} = useAccount()
-  const {disconnect} = useDisconnect()
-  const {login, logout, isLoggedIn} = useContext(WalletContext)
+  const { open: modalOpen, close } = useWeb3Modal()
+  const { address, isConnected } = useAccount()
+  const { disconnect } = useDisconnect()
+  const { login, logout, isLoggedIn } = useContext(WalletContext)
   const [nfts, setNfts] = useState([])
   const [curations, setCurations] = useState([])
   const [artistsNfts, setArtistsNfts] = useState([])
@@ -27,7 +30,7 @@ function Header() {
   const [errorMsg, setErrorMsg] = useState("")
 
   const [balance, setBalance] = useState(0)
-  const {getUser, user, setSidebar} = useContext(WalletContext)
+  const { getUser, user, setSidebar } = useContext(WalletContext)
 
   useEffect(() => {
     getUser()
@@ -95,39 +98,37 @@ function Header() {
     await modalOpen()
   }
 
-  const getSearchResult = async () => {
-    try {
-      const {
-        data: {nfts, artistsNfts, curations, users},
-      } = await collectionServices.getSearch({filterString})
-      setArtistsNfts(artistsNfts)
-      setUsers(users)
-      setCurations(curations)
-      setNfts(nfts)
-    } catch (error) {
-      console.log(error)
-    }
-  }
+  const getSearchResult = (filterString) => {
+    
+     collectionServices.getSearch({ filterString }).then(res=>{
+          console.log('setts',res.data.nfts)
+        setArtistsNfts(res.data.artistsNfts);
+        setUsers(res.data.users);
+        setCurations(res.data.curations);
+        setNfts(res.data.nfts);
+        }).catch(err=>{
+          console.log("Error in getting search result",err)
+        })
+    
+  };
 
   useEffect(() => {
     loginOnConnect()
   }, [address])
 
-  useEffect(() => {
-    if (filterString.length > 0) {
-      getSearchResult()
-    } else {
-      setArtistsNfts([])
-      setUsers([])
-      setCurations([])
-      setNfts([])
-    }
-  }, [filterString])
+
+
 
   const handleSearch = e => {
-    e.preventDefault()
     setFilterString(e.target.value)
   }
+
+  const debouncedSearch = useDebounce(getSearchResult, 1000);
+
+  useEffect(()=>{
+    debouncedSearch(filterString);
+  },[filterString])
+
 
   const updateDetails = async () => {
     const element = new bootstrap.Modal(
@@ -149,7 +150,7 @@ function Header() {
         window.location.reload()
       }, 2000)
     } catch (error) {
-      console.log({error})
+      console.log({ error })
       if (
         error?.response?.data?.message?.includes(
           "This e-mail is already taken."
@@ -162,6 +163,102 @@ function Header() {
       }, 1000)
     }
   }
+
+  const [activeKey, setActiveKey] = useState('artists');
+
+  const renderDropdownItems = (items, itemType) => {
+    switch (itemType) {
+      case 'artistsNfts':
+        return items.map((nft, index) => (
+          <div
+            key={index}
+            className="search__drop__single__step cursor-pointer"
+            onClick={() => navigate(`/dashboard/nft/${nft._id}`)}
+          >
+            <div className="search__drop__thumb">
+              <img
+                src={nft.cloudinaryUrl}
+                alt=""
+                className="h-full w-full object-cover"
+              />
+            </div>
+            <div className="search__drop__content">
+              <h5>{nft.name}</h5>
+              <p>Price: {nft.price} MATIC</p>
+            </div>
+          </div>
+        ));
+      case 'nfts':
+        return items.map((nft, index) => (
+          <div
+            key={index}
+            className="search__drop__single__step cursor-pointer"
+            onClick={() => navigate(`/dashboard/nft/${nft._id}`)}
+          >
+            <div className="search__drop__thumb">
+              <img
+                className="w-full h-full object-cover"
+                src={nft.cloudinaryUrl}
+                alt=""
+              />
+            </div>
+            <div className="search__drop__content">
+              <h5>{nft.name}</h5>
+              <p>Price: {nft.price} MATIC</p>
+            </div>
+          </div>
+        ));
+      case 'curations':
+        return items.map((curation, index) => (
+          <div
+            key={index}
+            className="search__drop__single__step cursor-pointer"
+            onClick={() => navigate(`/dashboard/curation/${curation._id}`)}
+          >
+            <div className="search__drop__thumb">
+              <img
+                src={curation.logo}
+                alt=""
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <div className="search__drop__content">
+              <h5>{curation.name}</h5>
+              <p>{curation.symbol}</p>
+            </div>
+          </div>
+        ));
+      case 'users':
+        return items.map((user, index) => (
+          <div
+            key={index}
+            className="search__drop__single__step cursor-pointer"
+            onClick={() => navigate(`/dashboard/user/${user._id}`)}
+          >
+            <div className="search__drop__thumb">
+              <img
+                className="w-full h-full object-cover"
+                src={user.avatar?.url ? user.avatar.url : 'assets/img/fox.svg'}
+                alt=""
+              />
+            </div>
+            <div className="search__drop__content">
+              <h5>
+                {user.username ? user.username : trimString(user.wallet)}
+              </h5>
+            </div>
+          </div>
+        ));
+      default:
+        return null;
+    }
+  };
+
+
+
+
+
+
   return (
     <>
       <div
@@ -171,7 +268,7 @@ function Header() {
             : "mobile__menu none__desk"
         }
       >
-        <div className="header__search">
+        {/* <div className="header__search">
           <div className="h__search__blk">
             <input
               id="dropdownMenuClickableInside"
@@ -277,7 +374,7 @@ function Header() {
                   aria-labelledby="nav-profile-tab"
                 >
                   <div className="search__drop__body">
-                    {nfts?.length > 0 &&
+                    {nfts.length > 0 &&
                       nfts?.map((nft, index) => (
                         <div
                           key={index}
@@ -371,7 +468,58 @@ function Header() {
               </div>
             </div>
           </div>
+        </div> */}
+
+        <div className="header__search">
+          <div className="h__search__blk">
+            <input
+              id="dropdownMenuClickableInside"
+              data-bs-toggle="dropdown"
+              data-bs-auto-close="inside"
+              aria-expanded="false"
+              type="text"
+              placeholder="Search artwork, collection..."
+              value={filterString}
+              onChange={handleSearch}
+            />
+            <button type="button">
+              <i className="fa-solid fa-magnifying-glass" />
+            </button>
+            <div
+              className="search__dropdown dropdown-menu dropdown-menu-end"
+              aria-labelledby="dropdownMenuClickableInside"
+            >
+              <Tabs
+                id="search-tabs"
+                activeKey={activeKey}
+                onSelect={(k) => setActiveKey(k)}
+                className="mb-3"
+              >
+                <Tab eventKey="artists" title="Artists">
+                  <div className="search__drop__body">
+                    {renderDropdownItems(artistsNfts, 'artistsNfts')}
+                  </div>
+                </Tab>
+                <Tab eventKey="nfts" title="NFTs">
+                  <div className="search__drop__body">
+                    {renderDropdownItems(nfts, 'nfts')}
+                  </div>
+                </Tab>
+                <Tab eventKey="curations" title="Curations">
+                  <div className="search__drop__body">
+                    {renderDropdownItems(curations, 'curations')}
+                  </div>
+                </Tab>
+                <Tab eventKey="users" title="Users">
+                  <div className="search__drop__body">
+                    {renderDropdownItems(users, 'users')}
+                  </div>
+                </Tab>
+              </Tabs>
+            </div>
+          </div>
         </div>
+
         <div className="header__right__blk">
           <div className="main__menu">
             <nav className="accordion">
@@ -930,7 +1078,7 @@ function Header() {
                       type="text"
                       value={info.nickname}
                       onChange={e =>
-                        setInfo({...info, nickname: e.target.value})
+                        setInfo({ ...info, nickname: e.target.value })
                       }
                       placeholder="Enter nickname..."
                     />
@@ -943,7 +1091,7 @@ function Header() {
                       required
                       type="email"
                       value={info.email}
-                      onChange={e => setInfo({...info, email: e.target.value})}
+                      onChange={e => setInfo({ ...info, email: e.target.value })}
                       placeholder="Enter Email"
                     />
                     <button className="popup_left_position_btn" type="button">

@@ -1,15 +1,20 @@
 import {createContext, useEffect, useState} from "react"
 import {createWeb3Modal} from "@web3modal/wagmi/react"
 import {defaultWagmiConfig} from "@web3modal/wagmi/react/config"
+import { createConfig, configureChains, mainnet } from 'wagmi'
 import {WagmiProvider} from "wagmi"
 import {polygon, polygonMumbai} from "wagmi/chains"
 import {QueryClient, QueryClientProvider} from "@tanstack/react-query"
+// import { MetaMaskConnector } from 'wagmi/connectors/metaMask'
+
 import {
   authenticationServices,
   getMedia,
   userServices,
 } from "../services/supplier"
 import {createCookie} from "../utils/cookie"
+
+// const connector = new MetaMaskConnector()
 
 const queryClient = new QueryClient()
 
