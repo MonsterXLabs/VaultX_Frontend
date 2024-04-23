@@ -102,6 +102,7 @@ export function WalletContextProvider({children}) {
 
   const fetchImages = async () => {
     const data = await getMedia()
+    console.log("media",data)
     localStorage.setItem("media", JSON.stringify(data))
     return data
   }

@@ -1,4 +1,4 @@
-import {useContext, useEffect, useRef, useState} from "react"
+import { useContext, useEffect, useRef, useState } from "react"
 import MainSearch from "../Search/MainSearch"
 import {
   CategoryService,
@@ -6,18 +6,18 @@ import {
   collectionServices,
 } from "../../../services/supplier"
 import * as bootstrap from "bootstrap"
-import {getEventValue, listNft, trimString} from "../../../utils/helpers"
-import {useAccount} from "wagmi"
+import { getEventValue, listNft, trimString } from "../../../utils/helpers"
+import { useAccount, useSwitchChain } from "wagmi"
 import _ from "lodash"
-import {useNavigate, useSearchParams} from "react-router-dom"
-import {City, Country, State} from "country-state-city"
-import {WalletContext} from "../../../Context/WalletConnect"
-import {network} from "../../../utils/config"
+import { useNavigate, useSearchParams } from "react-router-dom"
+import { City, Country, State } from "country-state-city"
+import { WalletContext } from "../../../Context/WalletConnect"
+import { network } from "../../../utils/config"
 import UploadImage from "../../../utils/uploadImage"
 import ErrorPopup from "./Popup"
-import {strDoesExist, validateEmail, validateUrl} from "../../../utils/checkUrl"
+import { strDoesExist, validateEmail, validateUrl } from "../../../utils/checkUrl"
 import Banner from "../../../utils/bannerUpload"
-import {io} from "socket.io-client"
+import { io } from "socket.io-client"
 
 function Create(props) {
   const [bannerImage, setBannerImage] = useState(null)
@@ -83,7 +83,7 @@ function Create(props) {
     link: "#",
   })
   const [message, setMessage] = useState()
-  const {fetchImages} = useContext(WalletContext)
+  const { fetchImages } = useContext(WalletContext)
 
   const fetchMedia = async () => {
     const images = await fetchImages()
@@ -105,7 +105,7 @@ function Create(props) {
         validateUrl(`Youtube url ${idx + 1}`, item.url, arr)
       })
     if (discriptionImage.length === 0) arr.push("Description Image is Needed")
-    if(!bannerImage) arr.push("Banner Image is Needed")
+    if (!bannerImage) arr.push("Banner Image is Needed")
     if (!file) arr.push("Cover Image is Needed")
     setErrorCuration([...arr])
     if (arr.length > 0) return false
@@ -224,7 +224,7 @@ function Create(props) {
   const nftService = new CreateNftServices()
 
   const handleUpdateValues = e => {
-    const {name, value} = e.target
+    const { name, value } = e.target
     setCreateNftStep1({
       ...createNftStep1,
       [name]: value,
@@ -232,7 +232,7 @@ function Create(props) {
   }
 
   const handleUpdateValuesStep2 = e => {
-    const {name, value} = e.target
+    const { name, value } = e.target
     setCreateNftStep2({
       ...createNftStep2,
       [name]: value,
@@ -240,7 +240,7 @@ function Create(props) {
   }
 
   const handleUpdateSeller = e => {
-    const {name, value} = e.target
+    const { name, value } = e.target
     if (name === "country") {
       const parsedVal = JSON.parse(value)
       const countryStates = State.getStatesOfCountry(parsedVal.isoCode)
@@ -258,7 +258,7 @@ function Create(props) {
   }
 
   const handleUpdateValuesStep2Split = e => {
-    const {name, value} = e.target
+    const { name, value } = e.target
     setCreateNftStep2SplitInput({
       ...createNftStep2SplitInput,
       [name]: value,
@@ -266,7 +266,7 @@ function Create(props) {
   }
 
   const handleUpdateValuesStep2Properties = e => {
-    const {name, value} = e.target
+    const { name, value } = e.target
     setCreateNftStep2PropertiesInput({
       ...createNftStep2PropertiesInput,
       [name]: value,
@@ -289,7 +289,7 @@ function Create(props) {
   }
 
   const [agree, setAgree] = useState(false)
-  const {address} = useAccount()
+  const { address } = useAccount()
 
   const discriptionImageRef = useRef()
 
@@ -333,7 +333,7 @@ function Create(props) {
       props.setProfileTab("Curation")
     } catch (error) {
       element1.hide()
-      console.log({error})
+      console.log({ error })
     }
   }
 
@@ -375,6 +375,7 @@ function Create(props) {
   const fetchUserCollections = async () => {
     try {
       const res = await collectionServices.getUserCollections()
+      console.log('curations',res)
       setUserCollection(
         res.data.collection.length > 0 ? res.data.collection : []
       )
@@ -387,7 +388,7 @@ function Create(props) {
     try {
       const categoryService = new CategoryService()
       const {
-        data: {categories},
+        data: { categories },
       } = await categoryService.getAllCategories(0, 0)
       setCategories(categories)
     } catch (error) {
@@ -491,7 +492,7 @@ function Create(props) {
 
     try {
       const {
-        data: {uri},
+        data: { uri },
       } = await nftService.createSellerDetails(data)
       setUri(uri)
       nftUri = uri
@@ -505,7 +506,7 @@ function Create(props) {
         setTimeout(() => window.location.reload(), 3000)
       }
     } catch (error) {
-      console.log({error})
+      console.log({ error })
       if (
         error?.response?.data?.message?.includes(
           "Advance details not found or already minted"
@@ -521,7 +522,7 @@ function Create(props) {
   const discardData = async () => {
     const nftService = new CreateNftServices()
     try {
-      nftId && (await nftService.removeFromDb({nftId}))
+      nftId && (await nftService.removeFromDb({ nftId }))
       navigate("/dashboard?tab=create")
       window.location.reload()
     } catch (error) {
@@ -534,7 +535,7 @@ function Create(props) {
   }
 
   const handleYoutubeInput = (tag, value, index) => {
-    console.log({tag, value, index})
+    console.log({ tag, value, index })
     const newYoutube = youtube
     if (tag === "title") newYoutube[index].title = value
     else newYoutube[index].url = value
@@ -545,7 +546,7 @@ function Create(props) {
   const getCuration = async (curationId) => {
     try {
       const {
-        data: {collection},
+        data: { collection },
       } = await collectionServices.getCollectionById(curationId)
       setCollectionName(collection?.name)
       setSymbol(collection?.symbol)
@@ -562,7 +563,7 @@ function Create(props) {
       setNumberOfInputs(collection?.descriptionImage.length)
       setBannerImage(collection?.bannerImage)
     } catch (error) {
-      console.log({error})
+      console.log({ error })
     }
   }
 
@@ -626,7 +627,7 @@ function Create(props) {
         window.location.reload()
       }, 3000)
     } catch (error) {
-      await nftService.removeFromDb({nftId})
+      await nftService.removeFromDb({ nftId })
       element1.hide()
       setTimeout(() => {
         element2.hide()
@@ -642,14 +643,14 @@ function Create(props) {
       user = user && JSON.parse(user)
       const socketUrl = process.env.REACT_APP_SOCKET_URL
       const socket = io(socketUrl, {
-        query: {token},
+        query: { token },
       })
       socket.emit(user._id, user._id)
       socket.on(user?._id, async data => {
         setMessage(data?.message)
       })
     } catch (error) {
-      console.log({error}, 2423534)
+      console.log({ error }, 2423534)
     }
   }
 
@@ -712,7 +713,7 @@ function Create(props) {
       props.setProfileTab("Curation")
     } catch (error) {
       element1.hide()
-      console.log({error})
+      console.log({ error })
     }
   }
 
@@ -720,6 +721,11 @@ function Create(props) {
     const val = params.get("type")
     if (val === "createCuration") await updateCuration()
     else await createCollection()
+  }
+  const { chains, switchChain } = useSwitchChain()
+
+  const handleNetworkChange = () => {
+
   }
 
   return (
@@ -796,6 +802,8 @@ function Create(props) {
                   </div>
                   <a href="#">
                     <img src="assets/img/arrow-right-ico.svg" alt="" />
+                   
+
                   </a>
                 </div>
               </div>
@@ -822,7 +830,7 @@ function Create(props) {
       <div className={selectedType === "createCuration" ? "" : "d-none"}>
         <div className="edit__profile__wrapper">
           <div className="edit__profile__title ">
-            <h4>{selectedType === "createCuration"? "Edit": "Create"} Your Collection</h4>
+            <h4>{selectedType === "createCuration" ? "Edit" : "Create"} Your Collection</h4>
           </div>
           <div className="connected__top__blk mb-4">
             <div className="connected__left__blk">
@@ -840,9 +848,11 @@ function Create(props) {
               <a data-bs-toggle="modal" role="button">
                 Connected
               </a>
-              <span className="angle_down">
+              <span className="angle_down" onClick={handleNetworkChange}>
                 <img src="assets/img/angle_down.svg" alt="" />
+             
               </span>
+              
             </div>
           </div>
           {/* <div className="connected__bottom__btn">
@@ -929,7 +939,7 @@ function Create(props) {
                         </div>
                       </div>
 
-                      <Banner bannerImage={bannerImage} setBannerImage={setBannerImage}/>
+                      <Banner bannerImage={bannerImage} setBannerImage={setBannerImage} />
 
                       <div className="col-md-12">
                         <div className="single__edit__profile__step">
@@ -978,7 +988,7 @@ function Create(props) {
                               placeholder="Enter your website link"
                               value={links.website}
                               onChange={e =>
-                                setLinks({...links, website: e.target.value})
+                                setLinks({ ...links, website: e.target.value })
                               }
                             />
                             <button className="delete_btn" type="button">
@@ -994,7 +1004,7 @@ function Create(props) {
                               placeholder="Enter your twitter link"
                               value={links.twitter}
                               onChange={e =>
-                                setLinks({...links, twitter: e.target.value})
+                                setLinks({ ...links, twitter: e.target.value })
                               }
                             />
                             <button className="delete_btn" type="button">
@@ -1010,7 +1020,7 @@ function Create(props) {
                               placeholder="Enter your facebook link"
                               value={links.facebook}
                               onChange={e =>
-                                setLinks({...links, facebook: e.target.value})
+                                setLinks({ ...links, facebook: e.target.value })
                               }
                             />
                             <button className="delete_btn" type="button">
@@ -1119,7 +1129,7 @@ function Create(props) {
                                 <button className="link_ico" type="button">
                                   <img src="assets/img/link_ico.svg" alt="" />
                                 </button>
-                                
+
                               </div>
                             </div>
                           </div>
@@ -1177,7 +1187,7 @@ function Create(props) {
                                 type="file"
                                 id="discription-image"
                                 ref={discriptionImageRef}
-                                style={{display: "none"}}
+                                style={{ display: "none" }}
                                 onChange={e => {
                                   const file = e.target.files[0]
                                   if (!file) return
@@ -1305,6 +1315,7 @@ function Create(props) {
               <a href="#">Connected</a>
               <span className="angle_down">
                 <img src="assets/img/angle_down.svg" alt="" />
+                
               </span>
             </div>
           </div>
@@ -1399,9 +1410,9 @@ function Create(props) {
                               Number(e.target.value) >= 0
                                 ? handleUpdateValues(e)
                                 : setCreateNftStep1({
-                                    ...createNftStep1,
-                                    price: "",
-                                  })
+                                  ...createNftStep1,
+                                  price: "",
+                                })
                             }
                           />
                           <button className="eth" type="button">
@@ -1419,7 +1430,7 @@ function Create(props) {
                             <span>
                               {createNftStep1.price
                                 ? createNftStep1.price -
-                                  (2 * createNftStep1.price) / 100
+                                (2 * createNftStep1.price) / 100
                                 : 0}
                             </span>
                           </p>
@@ -1713,9 +1724,9 @@ function Create(props) {
                             Number(e.target.value) >= 0
                               ? handleUpdateValuesStep2(e)
                               : setCreateNftStep1({
-                                  ...createNftStep1,
-                                  royalty: "",
-                                })
+                                ...createNftStep1,
+                                royalty: "",
+                              })
                           }
                         />
                       </div>
@@ -1727,7 +1738,7 @@ function Create(props) {
                         <div className="single__edit__profile__step">
                           <label htmlFor="#">Unlockable Content</label>
                           <textarea
-                            style={{height: 119}}
+                            style={{ height: 119 }}
                             name="unlockable"
                             value={createNftStep2.unlockable}
                             onChange={handleUpdateValuesStep2}
@@ -1845,7 +1856,7 @@ function Create(props) {
                         </div>
                         <div
                           className="single__edit__profile__step"
-                          style={{width: 95}}
+                          style={{ width: 95 }}
                         >
                           <input
                             type="text"
@@ -1886,7 +1897,7 @@ function Create(props) {
                         </div>
                         <div
                           className="single__edit__profile__step_custom"
-                          style={{width: 95}}
+                          style={{ width: 95 }}
                         >
                           {item.percent}%
                         </div>
@@ -2431,7 +2442,7 @@ function Create(props) {
                   </h5>
                   <div
                     className="popup__inner__button edit__profile__bottom__btn pt-20 pb-0"
-                    style={{maxWidth: 320, margin: "auto"}}
+                    style={{ maxWidth: 320, margin: "auto" }}
                   >
                     <a href="#" className="no_btn">
                       No
@@ -2533,7 +2544,7 @@ function Create(props) {
       >
         <div
           className="modal-dialog modal-dialog-centered"
-          style={{maxWidth: 780}}
+          style={{ maxWidth: 780 }}
         >
           <div className="modal-content">
             <div className="modal-body similar__site__popup">
@@ -2577,7 +2588,7 @@ function Create(props) {
                 </div>
                 <div
                   className="popup__inner__button edit__profile__bottom__btn pt-20 pb-0"
-                  style={{maxWidth: 210, margin: "auto"}}
+                  style={{ maxWidth: 210, margin: "auto" }}
                 >
                   <a
                     data-bs-dismiss="modal"
@@ -2610,7 +2621,7 @@ function Create(props) {
       >
         <div
           className="modal-dialog modal-dialog-centered"
-          style={{maxWidth: 780}}
+          style={{ maxWidth: 780 }}
         >
           <div className="modal-content">
             <div className="modal-body similar__site__popup">
@@ -2644,7 +2655,7 @@ function Create(props) {
       >
         <div
           className="modal-dialog modal-dialog-centered"
-          style={{maxWidth: 420}}
+          style={{ maxWidth: 420 }}
         >
           <div className="modal-content">
             <div className="modal-body similar__site__popup">
