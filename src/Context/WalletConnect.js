@@ -1,11 +1,12 @@
 import {createContext, useEffect, useState} from "react"
 import {createWeb3Modal} from "@web3modal/wagmi/react"
 import {defaultWagmiConfig} from "@web3modal/wagmi/react/config"
-import { createConfig, configureChains, mainnet } from 'wagmi'
+import { createConfig, configureChains, mainnet,http } from 'wagmi'
 import {WagmiProvider} from "wagmi"
 import {polygon, polygonMumbai} from "wagmi/chains"
 import {QueryClient, QueryClientProvider} from "@tanstack/react-query"
-// import { MetaMaskConnector } from 'wagmi/connectors/metaMask'
+
+import { metaMask } from 'wagmi/connectors'
 
 import {
   authenticationServices,
@@ -29,11 +30,21 @@ const metadata = {
 
 const chains =
   process.env.REACT_APP_NODE_ENV !== "DEV" ? [polygon] : [polygonMumbai]
-const config = defaultWagmiConfig({
-  chains, // required
-  projectId, // required
-  metadata, // required
-})
+
+  export const config = createConfig({
+    chains: chains,
+    connectors: [metaMask()],
+    transports: {
+      [polygon.id]: http(),
+      [polygonMumbai.id]: http(),
+    },
+  })
+
+// const config = defaultWagmiConfig({
+//   chains, // required
+//   projectId, // required
+//   metadata, // required
+// })
 
 // 3. Create modal
 createWeb3Modal({
