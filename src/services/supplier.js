@@ -554,7 +554,12 @@ export class NftServices {
   }
 
   async getAllNfts(data) {
-    return axios.post(`${server_uri}/nft/getAll`, data)
+    return axios.post(`${server_uri}/nft/getAll`, data,{
+      
+        headers: {
+          authorization: "Bearer " + this.token,
+        }
+    })
   }
 
   async addView(data) {

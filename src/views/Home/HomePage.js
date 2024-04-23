@@ -1,20 +1,20 @@
-import {useContext, useEffect, useState} from "react"
+import { useContext, useEffect, useState } from "react"
 // Header And Footer
 import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer/Footer";
 import OwlCarousel from "react-owl-carousel";
 // jQuery
-import {loadHeroContent} from "../../utils/jquery"
+import { loadHeroContent } from "../../utils/jquery"
 // Components
 import NFTCards from "../../components/Home/NFTCards"
-import {useNavigate} from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 import {
   NftServices,
   collectionServices,
   getSections,
   userServices,
 } from "../../services/supplier"
-import {WalletContext} from "../../Context/WalletConnect"
+import { WalletContext } from "../../Context/WalletConnect"
 
 function HomePage() {
   const [artists, setArtists] = useState([]);
@@ -28,16 +28,25 @@ function HomePage() {
     title: "",
     description: "",
   })
-  const {fetchImages} = useContext(WalletContext)
+  const { fetchImages } = useContext(WalletContext)
   const [curations, setCurations] = useState([])
   const [initial, setInitial] = useState(true)
   const [section4, setSection4] = useState()
   const [section1, setSection1] = useState()
   const [carousel, setCarousel] = useState([
     {
-      image: "url(./assets/img/hero_bg.png)",
+      image: "https://www.shutterstock.com/image-vector/pink-red-lips-mouth-tongue-600w-1388484560.jpg",
       link: "",
     },
+    {
+      image:
+        "https://monsterx-bucket.s3.ap-south-1.amazonaws.com/images/7bffd8f1-725f-4341-9ced-e9d5d70694c4",
+      link:
+        "https://monsterx-admin-rho.vercel.app/#",
+      _id
+        :
+        "660d4c79f6d04abe2e537aaf"
+    }
   ]);
   const [bottomBanner, setBottomBanner] = useState("");
   const navigate = useNavigate();
@@ -49,9 +58,9 @@ function HomePage() {
       '<img src="assets/img/round_arrow_icon_2.svg" alt="">',
     ],
     dots: true,
-    autoplay: false,
+    autoplay: true,
     smartSpeed: 1000,
-    autoplayTimeout: 3500,
+    autoplayTimeout: 3000,
     items: 1,
     margin: 8,
     slideToScroll: 1,
@@ -64,14 +73,14 @@ function HomePage() {
 
   const getSectionsData = async () => {
     try {
-      const {section1, section2, section3, section4} = await getSections()
+      const { section1, section2, section3, section4 } = await getSections()
       setSection1(section1)
       const tempNfts = []
       for (let i = 0; i < section2?.box?.length; i++) {
         try {
           const nftService = new NftServices()
           const {
-            data: {nft},
+            data: { nft },
           } = await nftService.getNftById(section2?.box[i]?.split("/")[5])
           tempNfts.push(nft)
         } catch (error) {
@@ -87,7 +96,7 @@ function HomePage() {
       for (let i = 0; i < section3?.box?.length; i++) {
         try {
           const {
-            data: {collection},
+            data: { collection },
           } = await collectionServices.getCollectionById(
             section3?.box[i]?.split("/")[5]
           );
@@ -110,8 +119,8 @@ function HomePage() {
   const getArtits = async () => {
     try {
       const {
-        data: {artists},
-      } = await userServices.getArtits({limit: 3})
+        data: { artists },
+      } = await userServices.getArtits({ limit: 3 })
       setArtists(artists)
     } catch (error) {
       console.log(error);
@@ -121,7 +130,7 @@ function HomePage() {
   const getCollections = async () => {
     try {
       const {
-        data: {curations},
+        data: { curations },
       } = await collectionServices.getAllCollections()
       setCurations(curations)
     } catch (error) {
@@ -133,8 +142,8 @@ function HomePage() {
     try {
       const nftService = new NftServices();
       const {
-        data: {nfts},
-      } = await nftService.getAllNfts({limit: 0, skip: 0, searchInput: ""})
+        data: { nfts },
+      } = await nftService.getAllNfts({ limit: 0, skip: 0, searchInput: "" })
       setNfts(nfts)
     } catch (error) {
       console.log(error);
@@ -143,6 +152,7 @@ function HomePage() {
 
   const fetchMedia = async () => {
     const images = await fetchImages();
+    console.log('image', images)
     setCarousel(images?.homeAutority);
     setBottomBanner(images?.bottomBaner?.image);
     setInitial(false);
@@ -297,7 +307,7 @@ function HomePage() {
             <OwlCarousel className="hero__inner__blk" {...options}>
               <div
                 className="hero__content__blk md:p-20 p-8 h-full min-h-[500px] md:min-h-[600px] mmd:min-h-[700px]"
-                // style={{ backgroundImage: "url(./assets/img/hero_bg.png" }}
+              // style={{ backgroundImage: "url(./assets/img/hero_bg.png" }}
               >
                 {/* <h1>
                   The First <span>RWA </span> Collection of <span>Wesley</span>
@@ -308,12 +318,12 @@ function HomePage() {
           ) : (
             <OwlCarousel className="hero__inner__blk" {...options}>
               {carousel?.map((item, i) => {
-                
+
                 return (
                   <div
                     key={i}
                     className="hero__content__blk md:p-20 p-8 h-full relative min-h-[500px] md:min-h-[600px] mmd:min-h-[700px]"
-                    // style={{ backgroundImage: item.image }}
+                  // style={{ backgroundImage: item.image }}
                   >
                     <img
                       src={item.image}
@@ -376,7 +386,7 @@ function HomePage() {
               className="common__btn"
               target="_blank"
               rel="noopener noreferrer"
-              // onClick={() => navigate("/dashboard?artist")}
+            // onClick={() => navigate("/dashboard?artist")}
             >
               Discover Artist
             </a>
@@ -397,7 +407,7 @@ function HomePage() {
                 <span>
                   {
                     nftHeader?.title?.split(" ")[
-                      nftHeader?.title?.split(" ").length - 1
+                    nftHeader?.title?.split(" ").length - 1
                     ]
                   }
                 </span>
@@ -583,7 +593,7 @@ function HomePage() {
                   </a>
                 </div>
                 <div className="news__thumb">
-                <a
+                  <a
                     href="https://artistvaultx.wpcomstaging.com/at-art-basel-fashion-and-innovation-get-back-to-business/"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -597,7 +607,7 @@ function HomePage() {
                   </a>
                 </div>
                 <div className="news__thumb">
-                <a
+                  <a
                     href="https://artistvaultx.wpcomstaging.com/celebrating-art-nfts-h3nsy-hosts-immersive-phygital-experience-at-nfc-lisbon/"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -611,7 +621,7 @@ function HomePage() {
                   </a>
                 </div>
                 <div className="news__thumb">
-                <a
+                  <a
                     href="https://artistvaultx.wpcomstaging.com/rwa-tokens-know-its-benefits-and-how-it-facilitates-trade/"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -625,7 +635,7 @@ function HomePage() {
                   </a>
                 </div>
                 <div className="news__thumb">
-                <a
+                  <a
                     href="https://artistvaultx.wpcomstaging.com/tokenized-real-world-assets-are-bringing-new-yield-opportunities-to-defi/"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -639,7 +649,7 @@ function HomePage() {
                   </a>
                 </div>
                 <div className="news__thumb">
-                <a
+                  <a
                     href="https://artistvaultx.wpcomstaging.com/the-price-of-bitcoin-has-been-dropped-sudden-by-12-3/"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -671,9 +681,9 @@ function HomePage() {
         <div className="container">
           <div
             className="newsltter__inner__blk relative overflow-hidden"
-            // style={{
-            //   backgroundImage: "url(../../assets/img/newsletter_thumb.png)",
-            // }}
+          // style={{
+          //   backgroundImage: "url(../../assets/img/newsletter_thumb.png)",
+          // }}
           >
             <img
               src={

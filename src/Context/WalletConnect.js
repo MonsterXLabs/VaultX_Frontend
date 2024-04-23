@@ -12,7 +12,7 @@ import {
   getMedia,
   userServices,
 } from "../services/supplier"
-import {createCookie} from "../utils/cookie"
+import {createCookie, getCookie} from "../utils/cookie"
 
 // const connector = new MetaMaskConnector()
 
@@ -38,6 +38,7 @@ const config = defaultWagmiConfig({
 // 3. Create modal
 createWeb3Modal({
   wagmiConfig: config,
+  // featuredWalletIds:['c57ca95b47569778a828d19178114f4db188b89b763c899ba0be274e97267d96'],
   projectId,
   enableAnalytics: true, // Optional - defaults to your Cloud configuration
 })
@@ -57,6 +58,7 @@ export function WalletContextProvider({children}) {
         })
       createCookie("user", JSON.stringify(authenticate_user_token.data.user))
       createCookie("token", authenticate_user_token.data.token)
+      createCookie('isLoggedIn',true)
       setIsLoggedIn(true)
     } catch (error) {
       console.log({error})
@@ -80,6 +82,7 @@ export function WalletContextProvider({children}) {
       setUser(null)
       localStorage.removeItem("user")
       localStorage.removeItem("token")
+      localStorage.removeItem("isLoggedIn")
       if (pathname?.includes("/")) window.location.reload()
     } catch (error) {
       console.log({error})
@@ -93,6 +96,10 @@ export function WalletContextProvider({children}) {
   }
 
   useEffect(() => {
+    if(getCookie('isLoggedIn')){
+
+      setIsLoggedIn(getCookie('isLoggedIn'))
+    }
     fetchImages()
   }, [])
 
