@@ -650,8 +650,12 @@ function NFTDetails() {
   }
 
   const handleTxCall = async () => {
+    try{
     if (txType === "buy") await purchase()
     else await bidAPlace()
+    }catch(err){
+      console.log(err)
+    }
     setTimeout(() => {
       window.location.reload()
     }, 3000)
