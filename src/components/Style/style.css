@@ -4966,3 +4966,17 @@ ion-icon {
 ::-webkit-scrollbar-thumb:hover {
   background: #d8f500; 
 }
+
+
+.phone-control{
+  border: none !important;
+  width: 100% !important;
+  height: 100% !important;
+  border-radius: 14px !important;
+}
+.phone-dropdown{
+  
+    background: #1d1d1d !important;
+    border: none !important;
+
+}

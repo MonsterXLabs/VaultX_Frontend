@@ -18,6 +18,8 @@ import ErrorPopup from "./Popup"
 import { strDoesExist, validateEmail, validateUrl } from "../../../utils/checkUrl"
 import Banner from "../../../utils/bannerUpload"
 import { io } from "socket.io-client"
+import PhoneInput from 'react-phone-input-2'
+import 'react-phone-input-2/lib/style.css'
 
 function Create(props) {
   const [bannerImage, setBannerImage] = useState(null)
@@ -256,7 +258,12 @@ function Create(props) {
       [name]: value,
     })
   }
-
+  const handlePhoneInput = value=>{
+    setSellerInfo({
+      ...sellerInfo,
+      phone: value,
+    })
+  }
   const handleUpdateValuesStep2Split = e => {
     const { name, value } = e.target
     setCreateNftStep2SplitInput({
@@ -375,7 +382,7 @@ function Create(props) {
   const fetchUserCollections = async () => {
     try {
       const res = await collectionServices.getUserCollections()
-      console.log('curations',res)
+      console.log('curations', res)
       setUserCollection(
         res.data.collection.length > 0 ? res.data.collection : []
       )
@@ -627,6 +634,7 @@ function Create(props) {
         window.location.reload()
       }, 3000)
     } catch (error) {
+      console.log("error for delete nft",error)
       await nftService.removeFromDb({ nftId })
       element1.hide()
       setTimeout(() => {
@@ -802,7 +810,7 @@ function Create(props) {
                   </div>
                   <a href="#">
                     <img src="assets/img/arrow-right-ico.svg" alt="" />
-                   
+
 
                   </a>
                 </div>
@@ -850,9 +858,9 @@ function Create(props) {
               </a>
               <span className="angle_down" onClick={handleNetworkChange}>
                 <img src="assets/img/angle_down.svg" alt="" />
-             
+
               </span>
-              
+
             </div>
           </div>
           {/* <div className="connected__bottom__btn">
@@ -1315,7 +1323,7 @@ function Create(props) {
               <a href="#">Connected</a>
               <span className="angle_down">
                 <img src="assets/img/angle_down.svg" alt="" />
-                
+
               </span>
             </div>
           </div>
@@ -2178,7 +2186,7 @@ function Create(props) {
                     <div className="col-lg-12">
                       <div className="single__edit__profile__step">
                         <label htmlFor="#">Phone Number*</label>
-                        <input
+                        {/* <input
                           type="tel"
                           id="mobile_code"
                           className="from-control"
@@ -2186,6 +2194,16 @@ function Create(props) {
                           name="phone"
                           value={sellerInfo.phone}
                           onChange={handleUpdateSeller}
+                        /> */}
+                        <PhoneInput
+                          id="mobile_code"
+                          enableLongNumbers={true}
+                          containerClass="phone-container"
+                          buttonClass="phone-dropdown"
+                          inputClass="phone-control"
+                          country={'us'}
+                          value={sellerInfo.phone}
+                          onChange={handlePhoneInput}
                         />
                       </div>
                     </div>
