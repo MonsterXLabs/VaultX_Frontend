@@ -197,7 +197,7 @@ function Curation() {
           <div
             className="breadcrumb__inner__wrap"
             style={{
-              backgroundImage: `url(${curation?.bannerImage})`,
+              backgroundImage: `url(${curation?.bannerImage?curation.bannerImage:curation?.logo})`,
             }}
           >
             <div className="breadcrumb__inner__blk">
@@ -467,7 +467,7 @@ function Curation() {
                           Price{" "}
                           <span>
                             <img
-                              src="assets/img/MATIC.png"
+                              src={require('../../../public/assets/img/MATIC.png')}
                               className="h-6 w-6 p-1 grayscale brightness-200 rounded-full border border-white"
                               alt=""
                             />{" "}

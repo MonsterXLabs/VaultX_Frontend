@@ -14,7 +14,7 @@ function Appreciate(props) {
   })
   const [filter, setFilter] = useState({
     title: "",
-    filter: {},
+    filter: '',
   })
 
   const handleSearch = (e) => {
