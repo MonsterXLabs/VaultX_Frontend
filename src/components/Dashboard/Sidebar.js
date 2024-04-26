@@ -63,7 +63,7 @@ function Sidebar({onClickMenuButton, activeTab, openDialog, setOpenDialog}) {
                     Appreciation
                   </a>
                 </li>
-                <li
+                {/* <li
                   className={active === "artist" ? "active" : ""}
                   onClick={() => {
                     onClickMenuButton("artist")
@@ -76,7 +76,7 @@ function Sidebar({onClickMenuButton, activeTab, openDialog, setOpenDialog}) {
                     </span>{" "}
                     Artist
                   </a>
-                </li>
+                </li> */}
                 <li
                   className={active === "curation" ? "active" : ""}
                   onClick={() => {
@@ -277,7 +277,7 @@ function Sidebar({onClickMenuButton, activeTab, openDialog, setOpenDialog}) {
                   Appreciation
                 </a>
               </li>
-              <li
+              {/* <li
                 className={active === "artist" ? "active" : ""}
                 onClick={() => {
                   onClickMenuButton("artist")
@@ -290,7 +290,7 @@ function Sidebar({onClickMenuButton, activeTab, openDialog, setOpenDialog}) {
                   </span>{" "}
                   Artist
                 </a>
-              </li>
+              </li> */}
               <li
                 className={active === "curation" ? "active" : ""}
                 onClick={() => {
