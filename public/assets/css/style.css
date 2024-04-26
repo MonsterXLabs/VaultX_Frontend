@@ -281,7 +281,7 @@ textarea {
 .hero__inner__blk .owl-dots {
   position: absolute;
   bottom: -70px;
-  right: 0;
+  right: 100px;
 }
 
 .hero__inner__blk .owl-dots button {

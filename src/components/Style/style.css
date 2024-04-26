@@ -307,7 +307,7 @@ textarea {
 .hero__inner__blk .owl-dots {
   position: absolute;
   bottom: -70px;
-  right: 0;
+  right: 100px;
 }
 
 .hero__inner__blk .owl-dots button {
@@ -2692,7 +2692,54 @@ textarea {
   padding: 18px 23px;
   margin-top: 20px;
 }
+.single__create__card:hover {
+  background: #ddf247;
+}
+.single__create__card:hover h4 {
+  color: #161616;
+}
+.single__create__card:hover p {
+  color: #161616;
+}
+.svg-container {
+  display: inline-block;
+  width: 28px; /* Set width and height according to your SVG */
+  height: 28px;
+  background-image: url('../../../public/assets/img/create-ico-1.svg'); /* Path to the SVG */
+  background-size: contain; /* Ensure the SVG fits within the container */
+  background-repeat: no-repeat; /* Prevent repeating the background */
+  transition: background-image 0.3s; /* Smooth transition effect */
+}
 
+.single__create__card:hover .svg-container {
+  background-image: url('../../../public/assets/img/Create_Curation_black.svg'); /* Path to the SVG for hover */
+}
+.svg-container-art {
+  display: inline-block;
+  width: 28px; /* Set width and height according to your SVG */
+  height: 28px;
+  background-image: url('../../../public/assets/img/create-ico-2.svg'); /* Path to the SVG */
+  background-size: contain; /* Ensure the SVG fits within the container */
+  background-repeat: no-repeat; /* Prevent repeating the background */
+  transition: background-image 0.3s; /* Smooth transition effect */
+}
+
+.single__create__card:hover .svg-container-art {
+  background-image: url('../../../public/assets/img/Create_Artwork_NFTs_black.svg'); /* Path to the SVG for hover */
+}
+.svg-container-mint {
+  display: inline-block;
+  width: 28px; /* Set width and height according to your SVG */
+  height: 28px;
+  background-image: url('../../../public/assets/img/Yellow.png'); /* Path to the SVG */
+  background-size: contain; /* Ensure the SVG fits within the container */
+  background-repeat: no-repeat; /* Prevent repeating the background */
+  transition: background-image 0.3s; /* Smooth transition effect */
+}
+
+.single__create__card:hover .svg-container-mint {
+  background-image: url('../../../public/assets/img/Black.png'); /* Path to the SVG for hover */
+}
 .create__title {
   display: flex;
   align-items: center;
