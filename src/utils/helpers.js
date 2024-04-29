@@ -88,12 +88,13 @@ export const getEventArray = (logs, eventName) => {
           data: logs[i].data,
           topics: logs[i].topics,
         });
+        console.log("log in event array is---->",log);
         if (log.eventName === eventName) {
           state.push(log);
         }
       }
     } catch (error) {
-      console.log({ error });
+      console.log("error is--->",{ error });
       throw error;
     }
   }

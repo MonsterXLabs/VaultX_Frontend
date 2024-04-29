@@ -487,6 +487,7 @@ function NFTDetails() {
     try {
       const user = JSON.parse(getCookie("user"))
       const {logs, transactionHash} = await releaseEscrow(nft?.tokenId, address)
+      console.log("logs are---->",logs);
       let eventRoyaltyReceived = getEventArray(logs, "RoyaltyReceived")
       let eventPaymentSplitReceived = getEventArray(
         logs,

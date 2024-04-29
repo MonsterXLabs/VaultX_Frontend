@@ -1,10 +1,15 @@
 import { contractAddress } from "./config"
 export const abi = [
-  {inputs: [], stateMutability: "nonpayable", type: "constructor"},
+  { inputs: [], stateMutability: "nonpayable", type: "constructor" },
   {
     anonymous: false,
     inputs: [
-      {indexed: true, internalType: "address", name: "owner", type: "address"},
+      {
+        indexed: true,
+        internalType: "address",
+        name: "owner",
+        type: "address",
+      },
       {
         indexed: true,
         internalType: "address",
@@ -24,14 +29,19 @@ export const abi = [
   {
     anonymous: false,
     inputs: [
-      {indexed: true, internalType: "address", name: "owner", type: "address"},
+      {
+        indexed: true,
+        internalType: "address",
+        name: "owner",
+        type: "address",
+      },
       {
         indexed: true,
         internalType: "address",
         name: "operator",
         type: "address",
       },
-      {indexed: false, internalType: "bool", name: "approved", type: "bool"},
+      { indexed: false, internalType: "bool", name: "approved", type: "bool" },
     ],
     name: "ApprovalForAll",
     type: "event",
@@ -51,7 +61,12 @@ export const abi = [
         name: "seller",
         type: "address",
       },
-      {indexed: false, internalType: "uint256", name: "price", type: "uint256"},
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "price",
+        type: "uint256",
+      },
     ],
     name: "AssetListed",
     type: "event",
@@ -65,8 +80,18 @@ export const abi = [
         name: "tokenId",
         type: "uint256",
       },
-      {indexed: false, internalType: "address", name: "buyer", type: "address"},
-      {indexed: false, internalType: "uint256", name: "price", type: "uint256"},
+      {
+        indexed: false,
+        internalType: "address",
+        name: "buyer",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "price",
+        type: "uint256",
+      },
     ],
     name: "AssetPurchased",
     type: "event",
@@ -80,7 +105,7 @@ export const abi = [
         name: "tokenId",
         type: "uint256",
       },
-      {indexed: false, internalType: "string", name: "uri", type: "string"},
+      { indexed: false, internalType: "string", name: "uri", type: "string" },
     ],
     name: "AssetTokenized",
     type: "event",
@@ -88,7 +113,12 @@ export const abi = [
   {
     anonymous: false,
     inputs: [
-      {indexed: false, internalType: "uint256", name: "bidId", type: "uint256"},
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "bidId",
+        type: "uint256",
+      },
       {
         indexed: false,
         internalType: "address",
@@ -114,7 +144,12 @@ export const abi = [
         name: "tokenId",
         type: "uint256",
       },
-      {indexed: false, internalType: "uint256", name: "bidId", type: "uint256"},
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "bidId",
+        type: "uint256",
+      },
       {
         indexed: false,
         internalType: "address",
@@ -134,7 +169,12 @@ export const abi = [
   {
     anonymous: false,
     inputs: [
-      {indexed: false, internalType: "uint256", name: "bidId", type: "uint256"},
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "bidId",
+        type: "uint256",
+      },
       {
         indexed: false,
         internalType: "address",
@@ -198,7 +238,12 @@ export const abi = [
         name: "tokenId",
         type: "uint256",
       },
-      {indexed: true, internalType: "uint256", name: "status", type: "uint256"},
+      {
+        indexed: true,
+        internalType: "uint256",
+        name: "status",
+        type: "uint256",
+      },
     ],
     name: "DisputeResolved",
     type: "event",
@@ -231,7 +276,12 @@ export const abi = [
         name: "tokenId",
         type: "uint256",
       },
-      {indexed: true, internalType: "address", name: "seller", type: "address"},
+      {
+        indexed: true,
+        internalType: "address",
+        name: "seller",
+        type: "address",
+      },
       {
         indexed: false,
         internalType: "uint256",
@@ -257,15 +307,25 @@ export const abi = [
         name: "feeAmount",
         type: "uint256",
       },
-      {indexed: false, internalType: "address", name: "buyer", type: "address"},
+      {
+        indexed: false,
+        internalType: "address",
+        name: "buyer",
+        type: "address",
+      },
     ],
-    name: "FeeReceived",
+    name: "MarketplaceFee",
     type: "event",
   },
   {
     anonymous: false,
     inputs: [
-      {indexed: false, internalType: "address", name: "owner", type: "address"},
+      {
+        indexed: false,
+        internalType: "address",
+        name: "owner",
+        type: "address",
+      },
       {
         indexed: false,
         internalType: "uint256",
@@ -310,7 +370,12 @@ export const abi = [
         name: "feeAmount",
         type: "uint256",
       },
-      {indexed: true, internalType: "address", name: "wallet", type: "address"},
+      {
+        indexed: true,
+        internalType: "address",
+        name: "wallet",
+        type: "address",
+      },
     ],
     name: "PaymentSplitReceived",
     type: "event",
@@ -324,7 +389,12 @@ export const abi = [
         name: "tokenId",
         type: "uint256",
       },
-      {indexed: true, internalType: "address", name: "wallet", type: "address"},
+      {
+        indexed: true,
+        internalType: "address",
+        name: "wallet",
+        type: "address",
+      },
       {
         indexed: false,
         internalType: "uint256",
@@ -332,7 +402,7 @@ export const abi = [
         type: "uint256",
       },
     ],
-    name: "RoyaltyReceived",
+    name: "RoyaltiesReceived",
     type: "event",
   },
   {
@@ -370,8 +440,8 @@ export const abi = [
   {
     anonymous: false,
     inputs: [
-      {indexed: true, internalType: "address", name: "from", type: "address"},
-      {indexed: true, internalType: "address", name: "to", type: "address"},
+      { indexed: true, internalType: "address", name: "from", type: "address" },
+      { indexed: true, internalType: "address", name: "to", type: "address" },
       {
         indexed: true,
         internalType: "uint256",
@@ -382,11 +452,11 @@ export const abi = [
     name: "Transfer",
     type: "event",
   },
-  {stateMutability: "payable", type: "fallback"},
+  { stateMutability: "payable", type: "fallback" },
   {
     inputs: [
-      {internalType: "uint256", name: "_tokenId", type: "uint256"},
-      {internalType: "uint256", name: "_bidId", type: "uint256"},
+      { internalType: "uint256", name: "_tokenId", type: "uint256" },
+      { internalType: "uint256", name: "_bidId", type: "uint256" },
     ],
     name: "acceptBid",
     outputs: [],
@@ -395,8 +465,8 @@ export const abi = [
   },
   {
     inputs: [
-      {internalType: "address", name: "to", type: "address"},
-      {internalType: "uint256", name: "tokenId", type: "uint256"},
+      { internalType: "address", name: "to", type: "address" },
+      { internalType: "uint256", name: "tokenId", type: "uint256" },
     ],
     name: "approve",
     outputs: [],
@@ -404,28 +474,28 @@ export const abi = [
     type: "function",
   },
   {
-    inputs: [{internalType: "address", name: "owner", type: "address"}],
+    inputs: [{ internalType: "address", name: "owner", type: "address" }],
     name: "balanceOf",
-    outputs: [{internalType: "uint256", name: "", type: "uint256"}],
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [],
     name: "bidCounter",
-    outputs: [{internalType: "uint256", name: "_value", type: "uint256"}],
+    outputs: [{ internalType: "uint256", name: "_value", type: "uint256" }],
     stateMutability: "view",
     type: "function",
   },
   {
-    inputs: [{internalType: "uint256", name: "_tokenId", type: "uint256"}],
+    inputs: [{ internalType: "uint256", name: "_tokenId", type: "uint256" }],
     name: "burnNft",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
   },
   {
-    inputs: [{internalType: "uint256", name: "_bid", type: "uint256"}],
+    inputs: [{ internalType: "uint256", name: "_bid", type: "uint256" }],
     name: "cancelBid",
     outputs: [],
     stateMutability: "nonpayable",
@@ -433,8 +503,8 @@ export const abi = [
   },
   {
     inputs: [
-      {internalType: "uint256", name: "_tokenId", type: "uint256"},
-      {internalType: "string", name: "description", type: "string"},
+      { internalType: "uint256", name: "_tokenId", type: "uint256" },
+      { internalType: "string", name: "description", type: "string" },
     ],
     name: "cancelOrder",
     outputs: [],
@@ -442,7 +512,7 @@ export const abi = [
     type: "function",
   },
   {
-    inputs: [{internalType: "uint256", name: "_tokenId", type: "uint256"}],
+    inputs: [{ internalType: "uint256", name: "_tokenId", type: "uint256" }],
     name: "endSale",
     outputs: [],
     stateMutability: "nonpayable",
@@ -451,112 +521,116 @@ export const abi = [
   {
     inputs: [],
     name: "escrowReleaseTime",
-    outputs: [{internalType: "uint256", name: "", type: "uint256"}],
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [],
     name: "fee",
-    outputs: [{internalType: "uint256", name: "", type: "uint256"}],
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
     stateMutability: "view",
     type: "function",
   },
   {
-    inputs: [{internalType: "uint256", name: "_tokenId", type: "uint256"}],
+    inputs: [{ internalType: "uint256", name: "_tokenId", type: "uint256" }],
     name: "getAllBids",
-    outputs: [{internalType: "uint256[]", name: "", type: "uint256[]"}],
+    outputs: [{ internalType: "uint256[]", name: "", type: "uint256[]" }],
     stateMutability: "view",
     type: "function",
   },
   {
-    inputs: [{internalType: "uint256", name: "tokenId", type: "uint256"}],
+    inputs: [{ internalType: "uint256", name: "tokenId", type: "uint256" }],
     name: "getApproved",
-    outputs: [{internalType: "address", name: "", type: "address"}],
+    outputs: [{ internalType: "address", name: "", type: "address" }],
     stateMutability: "view",
     type: "function",
   },
   {
-    inputs: [{internalType: "uint256", name: "", type: "uint256"}],
+    inputs: [{ internalType: "uint256", name: "", type: "uint256" }],
     name: "idToBid",
     outputs: [
-      {internalType: "uint256", name: "tokenId", type: "uint256"},
-      {internalType: "address", name: "bidder", type: "address"},
-      {internalType: "uint256", name: "bidAmount", type: "uint256"},
+      { internalType: "uint256", name: "tokenId", type: "uint256" },
+      { internalType: "address", name: "bidder", type: "address" },
+      { internalType: "uint256", name: "bidAmount", type: "uint256" },
     ],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [
-      {internalType: "uint256", name: "", type: "uint256"},
-      {internalType: "uint256", name: "", type: "uint256"},
+      { internalType: "uint256", name: "", type: "uint256" },
+      { internalType: "uint256", name: "", type: "uint256" },
     ],
     name: "idToPaymentSplit",
     outputs: [
-      {internalType: "address", name: "paymentWallet", type: "address"},
-      {internalType: "uint256", name: "paymentPercentage", type: "uint256"},
+      { internalType: "address", name: "paymentWallet", type: "address" },
+      { internalType: "uint256", name: "paymentPercentage", type: "uint256" },
     ],
     stateMutability: "view",
     type: "function",
   },
   {
-    inputs: [{internalType: "uint256", name: "", type: "uint256"}],
+    inputs: [{ internalType: "uint256", name: "", type: "uint256" }],
     name: "idToRoyalty",
     outputs: [
-      {internalType: "address", name: "royaltyWallet", type: "address"},
-      {internalType: "uint256", name: "royaltyPercentage", type: "uint256"},
+      { internalType: "address", name: "royaltyWallet", type: "address" },
+      { internalType: "uint256", name: "royaltyPercentage", type: "uint256" },
     ],
     stateMutability: "view",
     type: "function",
   },
   {
-    inputs: [{internalType: "uint256", name: "", type: "uint256"}],
+    inputs: [{ internalType: "uint256", name: "", type: "uint256" }],
     name: "idToSale",
     outputs: [
-      {internalType: "uint256", name: "tokenId", type: "uint256"},
-      {internalType: "address", name: "seller", type: "address"},
-      {internalType: "address", name: "buyer", type: "address"},
-      {internalType: "uint256", name: "price", type: "uint256"},
-      {internalType: "uint256", name: "status", type: "uint256"},
-      {internalType: "uint256", name: "shipmentTime", type: "uint256"},
-      {internalType: "string", name: "description", type: "string"},
+      { internalType: "uint256", name: "tokenId", type: "uint256" },
+      { internalType: "address", name: "seller", type: "address" },
+      { internalType: "address", name: "buyer", type: "address" },
+      { internalType: "uint256", name: "price", type: "uint256" },
+      { internalType: "uint256", name: "status", type: "uint256" },
+      { internalType: "uint256", name: "shipmentTime", type: "uint256" },
+      { internalType: "string", name: "description", type: "string" },
     ],
     stateMutability: "view",
     type: "function",
   },
   {
-    inputs: [{internalType: "address", name: "", type: "address"}],
+    inputs: [{ internalType: "address", name: "", type: "address" }],
     name: "isAdmin",
-    outputs: [{internalType: "bool", name: "", type: "bool"}],
+    outputs: [{ internalType: "bool", name: "", type: "bool" }],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [
-      {internalType: "address", name: "owner", type: "address"},
-      {internalType: "address", name: "operator", type: "address"},
+      { internalType: "address", name: "owner", type: "address" },
+      { internalType: "address", name: "operator", type: "address" },
     ],
     name: "isApprovedForAll",
-    outputs: [{internalType: "bool", name: "", type: "bool"}],
+    outputs: [{ internalType: "bool", name: "", type: "bool" }],
     stateMutability: "view",
     type: "function",
   },
   {
-    inputs: [{internalType: "address", name: "", type: "address"}],
+    inputs: [{ internalType: "address", name: "", type: "address" }],
     name: "isCurator",
-    outputs: [{internalType: "bool", name: "", type: "bool"}],
+    outputs: [{ internalType: "bool", name: "", type: "bool" }],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [
-      {internalType: "string", name: "_uri", type: "string"},
-      {internalType: "uint256", name: "price", type: "uint256"},
+      { internalType: "string", name: "_uri", type: "string" },
+      { internalType: "uint256", name: "price", type: "uint256" },
       {
         components: [
-          {internalType: "address", name: "royaltyWallet", type: "address"},
-          {internalType: "uint256", name: "royaltyPercentage", type: "uint256"},
+          { internalType: "address", name: "royaltyWallet", type: "address" },
+          {
+            internalType: "uint256",
+            name: "royaltyPercentage",
+            type: "uint256",
+          },
         ],
         internalType: "struct Monsterx.RoyaltyDetails",
         name: "royalty",
@@ -564,8 +638,12 @@ export const abi = [
       },
       {
         components: [
-          {internalType: "address", name: "paymentWallet", type: "address"},
-          {internalType: "uint256", name: "paymentPercentage", type: "uint256"},
+          { internalType: "address", name: "paymentWallet", type: "address" },
+          {
+            internalType: "uint256",
+            name: "paymentPercentage",
+            type: "uint256",
+          },
         ],
         internalType: "struct Monsterx.PaymentSplit[]",
         name: "_paymentSplit",
@@ -580,38 +658,38 @@ export const abi = [
   {
     inputs: [],
     name: "name",
-    outputs: [{internalType: "string", name: "", type: "string"}],
+    outputs: [{ internalType: "string", name: "", type: "string" }],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [
-      {internalType: "address", name: "", type: "address"},
-      {internalType: "address", name: "", type: "address"},
-      {internalType: "uint256", name: "", type: "uint256"},
-      {internalType: "bytes", name: "", type: "bytes"},
+      { internalType: "address", name: "", type: "address" },
+      { internalType: "address", name: "", type: "address" },
+      { internalType: "uint256", name: "", type: "uint256" },
+      { internalType: "bytes", name: "", type: "bytes" },
     ],
     name: "onERC721Received",
-    outputs: [{internalType: "bytes4", name: "", type: "bytes4"}],
+    outputs: [{ internalType: "bytes4", name: "", type: "bytes4" }],
     stateMutability: "nonpayable",
     type: "function",
   },
   {
     inputs: [],
     name: "owner",
-    outputs: [{internalType: "address", name: "", type: "address"}],
+    outputs: [{ internalType: "address", name: "", type: "address" }],
     stateMutability: "view",
     type: "function",
   },
   {
-    inputs: [{internalType: "uint256", name: "tokenId", type: "uint256"}],
+    inputs: [{ internalType: "uint256", name: "tokenId", type: "uint256" }],
     name: "ownerOf",
-    outputs: [{internalType: "address", name: "", type: "address"}],
+    outputs: [{ internalType: "address", name: "", type: "address" }],
     stateMutability: "view",
     type: "function",
   },
   {
-    inputs: [{internalType: "uint256", name: "_tokenId", type: "uint256"}],
+    inputs: [{ internalType: "uint256", name: "_tokenId", type: "uint256" }],
     name: "placeBid",
     outputs: [],
     stateMutability: "payable",
@@ -619,13 +697,17 @@ export const abi = [
   },
   {
     inputs: [
-      {internalType: "string", name: "_uri", type: "string"},
-      {internalType: "address", name: "seller", type: "address"},
-      {internalType: "uint256", name: "price", type: "uint256"},
+      { internalType: "string", name: "_uri", type: "string" },
+      { internalType: "address", name: "seller", type: "address" },
+      { internalType: "uint256", name: "price", type: "uint256" },
       {
         components: [
-          {internalType: "address", name: "royaltyWallet", type: "address"},
-          {internalType: "uint256", name: "royaltyPercentage", type: "uint256"},
+          { internalType: "address", name: "royaltyWallet", type: "address" },
+          {
+            internalType: "uint256",
+            name: "royaltyPercentage",
+            type: "uint256",
+          },
         ],
         internalType: "struct Monsterx.RoyaltyDetails",
         name: "royalty",
@@ -633,8 +715,12 @@ export const abi = [
       },
       {
         components: [
-          {internalType: "address", name: "paymentWallet", type: "address"},
-          {internalType: "uint256", name: "paymentPercentage", type: "uint256"},
+          { internalType: "address", name: "paymentWallet", type: "address" },
+          {
+            internalType: "uint256",
+            name: "paymentPercentage",
+            type: "uint256",
+          },
         ],
         internalType: "struct Monsterx.PaymentSplit[]",
         name: "_paymentSplit",
@@ -647,7 +733,7 @@ export const abi = [
     type: "function",
   },
   {
-    inputs: [{internalType: "uint256", name: "_tokenId", type: "uint256"}],
+    inputs: [{ internalType: "uint256", name: "_tokenId", type: "uint256" }],
     name: "purchaseAsset",
     outputs: [],
     stateMutability: "payable",
@@ -655,12 +741,16 @@ export const abi = [
   },
   {
     inputs: [
-      {internalType: "string", name: "_uri", type: "string"},
-      {internalType: "address", name: "seller", type: "address"},
+      { internalType: "string", name: "_uri", type: "string" },
+      { internalType: "address", name: "seller", type: "address" },
       {
         components: [
-          {internalType: "address", name: "royaltyWallet", type: "address"},
-          {internalType: "uint256", name: "royaltyPercentage", type: "uint256"},
+          { internalType: "address", name: "royaltyWallet", type: "address" },
+          {
+            internalType: "uint256",
+            name: "royaltyPercentage",
+            type: "uint256",
+          },
         ],
         internalType: "struct Monsterx.RoyaltyDetails",
         name: "royalty",
@@ -668,8 +758,12 @@ export const abi = [
       },
       {
         components: [
-          {internalType: "address", name: "paymentWallet", type: "address"},
-          {internalType: "uint256", name: "paymentPercentage", type: "uint256"},
+          { internalType: "address", name: "paymentWallet", type: "address" },
+          {
+            internalType: "uint256",
+            name: "paymentPercentage",
+            type: "uint256",
+          },
         ],
         internalType: "struct Monsterx.PaymentSplit[]",
         name: "_paymentSplit",
@@ -683,8 +777,8 @@ export const abi = [
   },
   {
     inputs: [
-      {internalType: "uint256", name: "_tokenId", type: "uint256"},
-      {internalType: "uint256", name: "price", type: "uint256"},
+      { internalType: "uint256", name: "_tokenId", type: "uint256" },
+      { internalType: "uint256", name: "price", type: "uint256" },
     ],
     name: "reSaleAsset",
     outputs: [],
@@ -692,7 +786,7 @@ export const abi = [
     type: "function",
   },
   {
-    inputs: [{internalType: "uint256", name: "_tokenId", type: "uint256"}],
+    inputs: [{ internalType: "uint256", name: "_tokenId", type: "uint256" }],
     name: "releaseEscrow",
     outputs: [],
     stateMutability: "nonpayable",
@@ -707,8 +801,8 @@ export const abi = [
   },
   {
     inputs: [
-      {internalType: "uint256", name: "_tokenId", type: "uint256"},
-      {internalType: "string", name: "description", type: "string"},
+      { internalType: "uint256", name: "_tokenId", type: "uint256" },
+      { internalType: "string", name: "description", type: "string" },
     ],
     name: "reportDispute",
     outputs: [],
@@ -717,8 +811,8 @@ export const abi = [
   },
   {
     inputs: [
-      {internalType: "uint256", name: "_tokenId", type: "uint256"},
-      {internalType: "string", name: "description", type: "string"},
+      { internalType: "uint256", name: "_tokenId", type: "uint256" },
+      { internalType: "string", name: "description", type: "string" },
     ],
     name: "requestCancellation",
     outputs: [],
@@ -727,9 +821,9 @@ export const abi = [
   },
   {
     inputs: [
-      {internalType: "uint256", name: "_tokenId", type: "uint256"},
-      {internalType: "bool", name: "_releaseEscrow", type: "bool"},
-      {internalType: "string", name: "description", type: "string"},
+      { internalType: "uint256", name: "_tokenId", type: "uint256" },
+      { internalType: "bool", name: "_releaseEscrow", type: "bool" },
+      { internalType: "string", name: "description", type: "string" },
     ],
     name: "resolveDispute",
     outputs: [],
@@ -738,9 +832,9 @@ export const abi = [
   },
   {
     inputs: [
-      {internalType: "address", name: "from", type: "address"},
-      {internalType: "address", name: "to", type: "address"},
-      {internalType: "uint256", name: "tokenId", type: "uint256"},
+      { internalType: "address", name: "from", type: "address" },
+      { internalType: "address", name: "to", type: "address" },
+      { internalType: "uint256", name: "tokenId", type: "uint256" },
     ],
     name: "safeTransferFrom",
     outputs: [],
@@ -749,10 +843,10 @@ export const abi = [
   },
   {
     inputs: [
-      {internalType: "address", name: "from", type: "address"},
-      {internalType: "address", name: "to", type: "address"},
-      {internalType: "uint256", name: "tokenId", type: "uint256"},
-      {internalType: "bytes", name: "_data", type: "bytes"},
+      { internalType: "address", name: "from", type: "address" },
+      { internalType: "address", name: "to", type: "address" },
+      { internalType: "uint256", name: "tokenId", type: "uint256" },
+      { internalType: "bytes", name: "_data", type: "bytes" },
     ],
     name: "safeTransferFrom",
     outputs: [],
@@ -760,16 +854,16 @@ export const abi = [
     type: "function",
   },
   {
-    inputs: [{internalType: "address", name: "", type: "address"}],
+    inputs: [{ internalType: "address", name: "", type: "address" }],
     name: "sellerEscrowAmount",
-    outputs: [{internalType: "uint256", name: "", type: "uint256"}],
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [
-      {internalType: "address[]", name: "admins", type: "address[]"},
-      {internalType: "bool", name: "_isAdmin", type: "bool"},
+      { internalType: "address[]", name: "admins", type: "address[]" },
+      { internalType: "bool", name: "_isAdmin", type: "bool" },
     ],
     name: "setAdmin",
     outputs: [],
@@ -778,8 +872,8 @@ export const abi = [
   },
   {
     inputs: [
-      {internalType: "address", name: "operator", type: "address"},
-      {internalType: "bool", name: "approved", type: "bool"},
+      { internalType: "address", name: "operator", type: "address" },
+      { internalType: "bool", name: "approved", type: "bool" },
     ],
     name: "setApprovalForAll",
     outputs: [],
@@ -788,8 +882,8 @@ export const abi = [
   },
   {
     inputs: [
-      {internalType: "address[]", name: "curators", type: "address[]"},
-      {internalType: "bool", name: "_isCurator", type: "bool"},
+      { internalType: "address[]", name: "curators", type: "address[]" },
+      { internalType: "bool", name: "_isCurator", type: "bool" },
     ],
     name: "setCurators",
     outputs: [],
@@ -797,76 +891,76 @@ export const abi = [
     type: "function",
   },
   {
-    inputs: [{internalType: "uint256", name: "_time", type: "uint256"}],
+    inputs: [{ internalType: "uint256", name: "_time", type: "uint256" }],
     name: "setEscrowReleaseTime",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
   },
   {
-    inputs: [{internalType: "uint256", name: "_fee", type: "uint256"}],
+    inputs: [{ internalType: "uint256", name: "_fee", type: "uint256" }],
     name: "setFee",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
   },
   {
-    inputs: [{internalType: "address", name: "_treasury", type: "address"}],
+    inputs: [{ internalType: "address", name: "_treasury", type: "address" }],
     name: "setTreasury",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
   },
   {
-    inputs: [{internalType: "bytes4", name: "interfaceId", type: "bytes4"}],
+    inputs: [{ internalType: "bytes4", name: "interfaceId", type: "bytes4" }],
     name: "supportsInterface",
-    outputs: [{internalType: "bool", name: "", type: "bool"}],
+    outputs: [{ internalType: "bool", name: "", type: "bool" }],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [],
     name: "symbol",
-    outputs: [{internalType: "string", name: "", type: "string"}],
+    outputs: [{ internalType: "string", name: "", type: "string" }],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [],
     name: "tokenCounter",
-    outputs: [{internalType: "uint256", name: "_value", type: "uint256"}],
+    outputs: [{ internalType: "uint256", name: "_value", type: "uint256" }],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [
-      {internalType: "uint256", name: "", type: "uint256"},
-      {internalType: "uint256", name: "", type: "uint256"},
+      { internalType: "uint256", name: "", type: "uint256" },
+      { internalType: "uint256", name: "", type: "uint256" },
     ],
     name: "tokenOffers",
-    outputs: [{internalType: "uint256", name: "", type: "uint256"}],
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
     stateMutability: "view",
     type: "function",
   },
   {
-    inputs: [{internalType: "uint256", name: "tokenId", type: "uint256"}],
+    inputs: [{ internalType: "uint256", name: "tokenId", type: "uint256" }],
     name: "tokenURI",
-    outputs: [{internalType: "string", name: "", type: "string"}],
+    outputs: [{ internalType: "string", name: "", type: "string" }],
     stateMutability: "view",
     type: "function",
   },
   {
-    inputs: [{internalType: "string", name: "_uri", type: "string"}],
+    inputs: [{ internalType: "string", name: "_uri", type: "string" }],
     name: "tokenizeAsset",
-    outputs: [{internalType: "uint256", name: "tokenId", type: "uint256"}],
+    outputs: [{ internalType: "uint256", name: "tokenId", type: "uint256" }],
     stateMutability: "nonpayable",
     type: "function",
   },
   {
     inputs: [
-      {internalType: "address", name: "from", type: "address"},
-      {internalType: "address", name: "to", type: "address"},
-      {internalType: "uint256", name: "tokenId", type: "uint256"},
+      { internalType: "address", name: "from", type: "address" },
+      { internalType: "address", name: "to", type: "address" },
+      { internalType: "uint256", name: "tokenId", type: "uint256" },
     ],
     name: "transferFrom",
     outputs: [],
@@ -874,7 +968,7 @@ export const abi = [
     type: "function",
   },
   {
-    inputs: [{internalType: "address", name: "newOwner", type: "address"}],
+    inputs: [{ internalType: "address", name: "newOwner", type: "address" }],
     name: "transferOwnership",
     outputs: [],
     stateMutability: "nonpayable",
@@ -883,14 +977,14 @@ export const abi = [
   {
     inputs: [],
     name: "treasury",
-    outputs: [{internalType: "address", name: "", type: "address"}],
+    outputs: [{ internalType: "address", name: "", type: "address" }],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [
-      {internalType: "uint256", name: "_tokenId", type: "uint256"},
-      {internalType: "uint256", name: "price", type: "uint256"},
+      { internalType: "uint256", name: "_tokenId", type: "uint256" },
+      { internalType: "uint256", name: "price", type: "uint256" },
     ],
     name: "updatePrice",
     outputs: [],
@@ -899,8 +993,8 @@ export const abi = [
   },
   {
     inputs: [
-      {internalType: "uint256", name: "_tokenId", type: "uint256"},
-      {internalType: "string", name: "_uri", type: "string"},
+      { internalType: "uint256", name: "_tokenId", type: "uint256" },
+      { internalType: "string", name: "_uri", type: "string" },
     ],
     name: "updateUri",
     outputs: [],
@@ -908,21 +1002,21 @@ export const abi = [
     type: "function",
   },
   {
-    inputs: [{internalType: "uint256", name: "", type: "uint256"}],
+    inputs: [{ internalType: "uint256", name: "", type: "uint256" }],
     name: "uri",
-    outputs: [{internalType: "string", name: "", type: "string"}],
+    outputs: [{ internalType: "string", name: "", type: "string" }],
     stateMutability: "view",
     type: "function",
   },
   {
-    inputs: [{internalType: "address", name: "wallet", type: "address"}],
+    inputs: [{ internalType: "address", name: "wallet", type: "address" }],
     name: "withdrawFunds",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
   },
   {
-    inputs: [{internalType: "uint256", name: "_tokenId", type: "uint256"}],
+    inputs: [{ internalType: "uint256", name: "_tokenId", type: "uint256" }],
     name: "withdrawNft",
     outputs: [],
     stateMutability: "nonpayable",
@@ -930,16 +1024,16 @@ export const abi = [
   },
   {
     inputs: [
-      {internalType: "contract IERC20", name: "token", type: "address"},
-      {internalType: "address", name: "wallet", type: "address"},
+      { internalType: "contract IERC20", name: "token", type: "address" },
+      { internalType: "address", name: "wallet", type: "address" },
     ],
     name: "withdrawTokens",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
   },
-  {stateMutability: "payable", type: "receive"},
-]
+  { stateMutability: "payable", type: "receive" },
+];
 
 export const address = contractAddress
 

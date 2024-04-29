@@ -21,6 +21,7 @@ import { io } from "socket.io-client"
 import PhoneInput from 'react-phone-input-2'
 import 'react-phone-input-2/lib/style.css'
 
+
 function Create(props) {
   const [bannerImage, setBannerImage] = useState(null)
   const [showErrorPopup, setShowErrorPopup] = useState(false)
@@ -375,6 +376,7 @@ function Create(props) {
       element1.hide()
     } catch (error) {
       console.log(error)
+      alert(error.response.data.message)
       element1.hide()
     }
   }
@@ -635,6 +637,7 @@ function Create(props) {
       }, 3000)
     } catch (error) {
       console.log("error for delete nft",error)
+      alert(error)
       await nftService.removeFromDb({ nftId })
       element1.hide()
       setTimeout(() => {
