@@ -77,6 +77,7 @@ function HomePage() {
       setSection1(section1)
       const tempNfts = []
       for (let i = 0; i < section2?.box?.length; i++) {
+        console.log(section2?.box[i]?.split("/")[5])
         try {
           const nftService = new NftServices()
           const {
@@ -351,10 +352,10 @@ function HomePage() {
         <div className="container">
           <div className="section__title text-center">
             <h3>
-              Inspiring <span>Artist</span> Interviews
+              Inspiring <span>{section1?.title}</span> Interviews
             </h3>
             <p>
-              Discover art's wisdom in conversations with our brilliant artists
+              {section1?.description}
             </p>
           </div>
           <div className="row g-4">
@@ -496,7 +497,7 @@ function HomePage() {
           </div>
           <div className="row g-4">
             {nfts?.length > 0 &&
-              nfts?.map((nft, index) => {
+              nfts[0]?.data?.map((nft, index) => {
                 if (index < 4) {
                   return (
                     <div
@@ -541,7 +542,7 @@ function HomePage() {
               })}
           </div>
           <div className="appreciate__slide__blk">
-            <NFTCards nfts={nfts?.slice(4)} />
+            <NFTCards nfts={nfts[0]?.data?.slice(4)} />
             <div className="sport__dts__ico">
               <img src="assets/img/Dots.svg" alt="" />
             </div>
