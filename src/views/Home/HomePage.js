@@ -308,7 +308,7 @@ function HomePage() {
             <OwlCarousel className="hero__inner__blk" {...options}>
               <div
                 className="hero__content__blk md:p-20 p-8 h-full min-h-[500px] md:min-h-[600px] mmd:min-h-[700px]"
-              // style={{ backgroundImage: "url(./assets/img/hero_bg.png" }}
+                // style={{ backgroundImage: "url(./assets/img/hero_bg.png" }}
               >
                 {/* <h1>
                   The First <span>RWA </span> Collection of <span>Wesley</span>
@@ -319,12 +319,11 @@ function HomePage() {
           ) : (
             <OwlCarousel className="hero__inner__blk" {...options}>
               {carousel?.map((item, i) => {
-
                 return (
                   <div
                     key={i}
                     className="hero__content__blk md:p-20 p-8 h-full relative min-h-[500px] md:min-h-[600px] mmd:min-h-[700px]"
-                  // style={{ backgroundImage: item.image }}
+                    // style={{ backgroundImage: item.image }}
                   >
                     <img
                       src={item.image}
@@ -354,9 +353,7 @@ function HomePage() {
             <h3>
               Inspiring <span>{section1?.title}</span> Interviews
             </h3>
-            <p>
-              {section1?.description}
-            </p>
+            <p>{section1?.description}</p>
           </div>
           <div className="row g-4">
             {section1?.box?.map((value, index) => {
@@ -375,7 +372,10 @@ function HomePage() {
                       src={value?.image}
                       alt=""
                     />
-                    {/* </div> */}
+                    <div className="inspire__content">
+                      <h5>{value?.title}</h5>
+                      <p>{value?.subtitle1}</p>
+                    </div>
                   </div>
                 </a>
               );
@@ -387,7 +387,7 @@ function HomePage() {
               className="common__btn"
               target="_blank"
               rel="noopener noreferrer"
-            // onClick={() => navigate("/dashboard?artist")}
+              // onClick={() => navigate("/dashboard?artist")}
             >
               Discover Artist
             </a>
@@ -408,7 +408,7 @@ function HomePage() {
                 <span>
                   {
                     nftHeader?.title?.split(" ")[
-                    nftHeader?.title?.split(" ").length - 1
+                      nftHeader?.title?.split(" ").length - 1
                     ]
                   }
                 </span>
@@ -560,6 +560,7 @@ function HomePage() {
         <div className="container">
           <div className="section__title text-center">
             <h3>{section4?.title}</h3>
+            <h3>{section4?.description}</h3>
           </div>
           <div className="row g-4">
             <div className="col-xl-7">
@@ -574,6 +575,7 @@ function HomePage() {
                     className="w-full md:aspect-auto aspect-square object-cover"
                     alt=""
                   />
+                  <p>{section4?.box[0]?.title}</p>
                 </a>
               </div>
             </div>
@@ -682,9 +684,9 @@ function HomePage() {
         <div className="container">
           <div
             className="newsltter__inner__blk relative overflow-hidden"
-          // style={{
-          //   backgroundImage: "url(../../assets/img/newsletter_thumb.png)",
-          // }}
+            // style={{
+            //   backgroundImage: "url(../../assets/img/newsletter_thumb.png)",
+            // }}
           >
             <img
               src={
