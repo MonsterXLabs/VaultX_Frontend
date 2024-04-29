@@ -497,7 +497,7 @@ function HomePage() {
           </div>
           <div className="row g-4">
             {nfts?.length > 0 &&
-              nfts?.map((nft, index) => {
+              nfts[0]?.data?.map((nft, index) => {
                 if (index < 4) {
                   return (
                     <div
@@ -542,7 +542,7 @@ function HomePage() {
               })}
           </div>
           <div className="appreciate__slide__blk">
-            <NFTCards nfts={nfts?.slice(4)} />
+            <NFTCards nfts={nfts[0]?.data?.slice(4)} />
             <div className="sport__dts__ico">
               <img src="assets/img/Dots.svg" alt="" />
             </div>
