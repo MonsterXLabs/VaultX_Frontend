@@ -1035,5 +1035,4 @@ export const abi = [
   { stateMutability: "payable", type: "receive" },
 ];
 
-export const address = contractAddress
-
+export const address = contractAddress

@@ -754,9 +754,8 @@ function Create(props) {
                 <h4>Create</h4>
               </div>
               <div className="single__create__card">
-                <span>
-                  <img src="assets/img/create-ico-1.svg" alt="" />
-                </span>
+              <span class="svg-container">
+              </span>
                 <div className="create__content__blk">
                   <div className="create__content">
                     <h4>Create Curation</h4>
@@ -777,8 +776,7 @@ function Create(props) {
                 </div>
               </div>
               <div className="single__create__card">
-                <span>
-                  <img src="assets/img/create-ico-2.svg" alt="" />
+                <span className="svg-container-art">
                 </span>
                 <div className="create__content__blk">
                   <div className="create__content">
@@ -800,8 +798,8 @@ function Create(props) {
                 </div>
               </div>
               <div className="single__create__card">
-                <span>
-                  <img src="assets/img/create-ico-3.svg" alt="" />
+                <span className="svg-container-mint">
+                 
                 </span>
                 <div className="create__content__blk">
                   <div className="create__content">
@@ -813,8 +811,6 @@ function Create(props) {
                   </div>
                   <a href="#">
                     <img src="assets/img/arrow-right-ico.svg" alt="" />
-
-
                   </a>
                 </div>
               </div>
@@ -1506,7 +1502,7 @@ function Create(props) {
                               </div>
                               <div className="attachment__content">
                                 <a
-                                  href="#"
+                                  style={{color : '#ddf247'}}
                                   onClick={() => handleChangeStep1Attachment(i)}
                                 >
                                   Change{" "}
@@ -1518,7 +1514,7 @@ function Create(props) {
                             </div>
                           </div>
                         ))}
-
+                          {createNftStep1Attachments.length > 4 ? '' :  
                         <div className="col-xxl-3 col-xl-4 col-lg-4 col-md-6 col-sm-6">
                           <div className="single__attachment__cird__blk">
                             <div className="attachment_upload_thumb">
@@ -1549,7 +1545,7 @@ function Create(props) {
                               </span>
                             </button>
                           </div>
-                        </div>
+                        </div> }
                       </div>
                     </div>
                   </div>
@@ -1914,7 +1910,6 @@ function Create(props) {
                         </div>
                         <div className="input__add__btn">
                           <a
-                            href="#"
                             onClick={() => {
                               const tempArr = [...createNftStep2Split]
                               tempArr.splice(i, 1)
@@ -1984,7 +1979,6 @@ function Create(props) {
                             >
                               <div className="nft__single__option">
                                 <a
-                                  href="#"
                                   onClick={() => {
                                     const temp = [...createNftStep2Properties]
                                     temp.splice(i, 1)

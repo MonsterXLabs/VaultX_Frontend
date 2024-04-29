@@ -467,7 +467,7 @@ function Curation() {
                           Price{" "}
                           <span>
                             <img
-                              src={require('../../../public/assets/img/MATIC.png')}
+                              src='../../assets/img/MATIC.png'
                               className="h-6 w-6 p-1 grayscale brightness-200 rounded-full border border-white"
                               alt=""
                             />{" "}
