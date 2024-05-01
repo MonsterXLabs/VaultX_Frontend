@@ -517,7 +517,7 @@ function HomePage() {
                           <p className="text-[12px]">
                             Created by:{" "}
                             <span className="!font-azeret">
-                              {nft?.mintedBy?.username}
+                              {nft?.artist}
                             </span>
                           </p>
                           <p className="!font-bold underline !text-[#CCCCCC] !italic !text-sm">
