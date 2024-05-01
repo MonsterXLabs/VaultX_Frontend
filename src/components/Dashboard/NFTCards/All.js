@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import { NftServices } from "../../../services/supplier"
 import { Link } from "react-router-dom"
+import useDebounce from "../../../customHook/useDebounce"
 
 function All({tab, category, searchInput, filter}) {
   const [nfts, setNfts] = useState([])
@@ -20,9 +21,9 @@ function All({tab, category, searchInput, filter}) {
     }
   }
 
-
+  const debounceSearch = useDebounce(getUserNfts,1000)
   useEffect(() => {
-    getUserNfts()
+    debounceSearch()
   }, [category, searchInput, filter])
 
   return (
