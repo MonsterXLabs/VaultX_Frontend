@@ -852,13 +852,13 @@ function Create(props) {
               </div>
             </div>
             <div className="connected__right__blk">
-              <a data-bs-toggle="modal" role="button">
+              <a href='#'>
                 Connected
               </a>
-              <span className="angle_down" onClick={handleNetworkChange}>
+              {/* <span className="angle_down" onClick={handleNetworkChange}>
                 <img src="assets/img/angle_down.svg" alt="" />
 
-              </span>
+              </span> */}
 
             </div>
           </div>
@@ -1320,10 +1320,10 @@ function Create(props) {
             </div>
             <div className="connected__right__blk">
               <a href="#">Connected</a>
-              <span className="angle_down">
+              {/* <span className="angle_down">
                 <img src="assets/img/angle_down.svg" alt="" />
 
-              </span>
+              </span> */}
             </div>
           </div>
           {/* Step 1 */}

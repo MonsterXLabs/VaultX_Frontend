@@ -3,6 +3,7 @@ import ErrorPopup from "../components/Dashboard/Sidebar/Popup";
 
 const UploadImage = ({ uploadfile, setUploadfile }) => {
   const [showProportionsError, setShowProportionsError] = useState(false);
+  const [showPropertiesError, setshowPropertiesError] = useState(false);
   const MediaData=JSON.parse(localStorage.getItem("media"))
 
   const handleCloseModal = () => {
@@ -91,10 +92,14 @@ const UploadImage = ({ uploadfile, setUploadfile }) => {
       img.src = URL.createObjectURL(uploadedFile);
       console.log(img)
     } else {
+      setshowPropertiesError(true)
       console.log("main else")
       return;
     }
   };
+  const handlePropertyModal = ()=>{
+    setshowPropertiesError(false)
+  }
 
   const handleReset = () => {
     setUploadfile(null);
@@ -170,6 +175,10 @@ const UploadImage = ({ uploadfile, setUploadfile }) => {
           `Please upload an image with Dimensions ${MediaData?.nftThumbnailQuality?.split('-')[1]} Pixels and Size less than ${MediaData?.nftUploadSize}MB`
         }
       />
+      <ErrorPopup
+        isOpen={showPropertiesError}
+        onClose ={handlePropertyModal}
+        messege={'Media properties are not set by admin.'}/>
     </div>
   );
 };
