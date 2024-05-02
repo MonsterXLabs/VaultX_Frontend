@@ -37,7 +37,7 @@ function Activity() {
             </thead>
 
             <tbody>
-              {users.map((value, index) => {
+              {users?.map((value, index) => {
                 return (
                   <tr>
                     <td>
@@ -51,9 +51,9 @@ function Activity() {
                     <td>
                       <div className="flex__table">
                         <span className="table_thumb">
-                          <img className="w-full !aspect-square !object-cover" src={value?.nftId.cloudinaryUrl} alt="" />
+                          <img className="w-full !aspect-square !object-cover" src={value?.nftId?.cloudinaryUrl} alt="" />
                         </span>
-                        {value?.nftId.name}
+                        {value?.nftId?.name}
                       </div>
                     </td>
                     <td>{value?.price ? value?.price : "-/-"}</td>

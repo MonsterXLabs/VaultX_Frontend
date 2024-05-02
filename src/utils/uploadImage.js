@@ -42,7 +42,7 @@ const UploadImage = ({ uploadfile, setUploadfile }) => {
     const mediaData = JSON.parse(localStorage.getItem("media"));
 
     // Check if mediaData exists and contains the required keys
-    if (mediaData && mediaData.nftUploadSize && mediaData.nftThumbnailQuality) {
+    if (mediaData && mediaData.nftUploadSize) {
       console.log('if',uploadedFile)
       // Retrieve nftUploadSize and nftThumbnailQuality from mediaData
       const nftUploadSize = mediaData.nftUploadSize;
@@ -56,10 +56,10 @@ const UploadImage = ({ uploadfile, setUploadfile }) => {
       // const [width, height] = nftThumbnailQuality.split('x').map(value => parseInt(value));
 
       const regex = /(\d+)x(\d+)/;
-      const match = nftThumbnailQuality.match(regex);
+      // const match = nftThumbnailQuality.match(regex);
 
-      const width = match[1]; // width will be "720"
-      const height = match[2]; // height will be "702"
+      // const width = match[1]; // width will be "720"
+      // const height = match[2]; // height will be "702"
 
       // Check image size and resolution here
       const fileSizeLimit = parseInt(nftUploadSize) * 1024 * 1024; // Convert MB to bytes
@@ -76,18 +76,19 @@ const UploadImage = ({ uploadfile, setUploadfile }) => {
       // Check image resolution
       const img = new Image();
       img.onload = function () {
-        const uploadedWidth = this.width;
-        const uploadedHeight = this.height;
+        setUploadfile(uploadedFile);
+        // const uploadedWidth = this.width;
+        // const uploadedHeight = this.height;
 
-        if (uploadedWidth > Number(width) || uploadedHeight > Number(height)) {
-          setShowProportionsError(true);
-          setUploadfile(null);
-        } else {
-          console.log("else",uploadedFile)
-          setUploadfile(uploadedFile);
+        // if (uploadedWidth > Number(width) || uploadedHeight > Number(height)) {
+        //   setShowProportionsError(true);
+        //   setUploadfile(null);
+        // } else {
+        //   console.log("else",uploadedFile)
+        //   setUploadfile(uploadedFile);
 
-          setShowProportionsError(false);
-        }
+        //   setShowProportionsError(false);
+        // }
       };
       img.src = URL.createObjectURL(uploadedFile);
       console.log(img)

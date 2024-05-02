@@ -445,7 +445,7 @@ function HomePage() {
           <div className="exceptional__card__blk">
             <div className="row g-4">
               {curations?.length > 0 &&
-                curations?.map((curation, index) => {
+                curations?.filter((item)=>(!item.active && !item.owner?.active)).map((curation, index) => {
                   if (index < 2) {
                     return (
                       <div
@@ -497,7 +497,7 @@ function HomePage() {
           </div>
           <div className="row g-4">
             {nfts?.length > 0 &&
-              nfts[0]?.data?.filter((nft)=>(!nft?.active && !nft.ownerInfo?.[0]?.active && !nft.curationInfo?.[0].active)).map((nft, index) => {
+              nfts[0]?.data?.filter((nft)=>(!nft?.active && !nft.ownerInfo?.[0]?.active && !nft.curationInfo?.[0].active && nft.minted)).map((nft, index) => {
                 if (index < 4) {
                   return (
                     <div
@@ -542,7 +542,7 @@ function HomePage() {
               })}
           </div>
           <div className="appreciate__slide__blk">
-            <NFTCards nfts={nfts[0]?.data?.filter((nft)=>(!nft?.active && !nft.ownerInfo?.[0]?.active && !nft.curationInfo?.[0].active)).slice(4)} />
+            <NFTCards nfts={nfts[0]?.data?.slice(4).filter((nft)=>(!nft?.active && !nft.ownerInfo?.[0]?.active && !nft.curationInfo?.[0].active && nft.minted))} />
             <div className="sport__dts__ico">
               <img src="assets/img/Dots.svg" alt="" />
             </div>
