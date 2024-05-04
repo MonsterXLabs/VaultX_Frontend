@@ -29,7 +29,7 @@ function All({tab, category, searchInput, filter}) {
   return (
     <div className="categorie__card__blk">
       <div className="row g-4">
-        {nfts?.length> 0 && nfts.filter((nft)=>(!nft?.active && !nft.ownerInfo?.[0]?.active && !nft.curationInfo?.[0].active && nft.minted)).map((nft,index) => (
+        {nfts?.length> 0 && nfts.filter((nft)=>(!nft?.active && !nft.ownerInfo?.[0]?.active && !nft.curationInfo?.[0].active)).map((nft,index) => (
           <Link
             to={`/dashboard/nft/${nft._id}`}
             className="col-xxl-3 col-xl-4 col-lg-4 col-md-6 col-sm-6"

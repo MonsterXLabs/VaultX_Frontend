@@ -33,7 +33,7 @@ function Order({searchInput, filter}) {
             </thead>
             <tbody>
               {nfts?.length > 0 &&
-                nfts.filter((nft)=>(!nft?.active && !nft.ownerInfo?.[0]?.active && !nft.curationInfo?.[0].active && nft.minted)).map((nft, index) => {
+                nfts.filter((nft)=>(!nft?.active && !nft.ownerInfo?.[0]?.active && !nft.curationInfo?.[0].active)).map((nft, index) => {
                   const day =
                     new Date().getTime() - new Date(nft?.saleId?.ItemPurchasedOn).getTime()
                   return (

@@ -18,7 +18,7 @@ function Owned({tab, searchInput, filter}) {
   return (
     <div className="categorie__card__blk">
       <div className="row g-4">
-        {nfts.filter((nft)=>(!nft?.active && !nft.ownerInfo?.[0]?.active && !nft.curationInfo?.[0].active && nft.minted)).map((nft) => (
+        {nfts.filter((nft)=>(!nft?.active && !nft.ownerInfo?.[0]?.active && !nft.curationInfo?.[0].active)).map((nft) => (
           <Link
             to={`/dashboard/nft/${nft._id}`}
             className="col-xxl-3 col-xl-4 col-lg-4 col-md-6 col-sm-6"
