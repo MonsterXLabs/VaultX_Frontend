@@ -88,7 +88,7 @@ function Favorite({searchInput, filter}) {
           <div className="categorie__card__blk">
             <div className="row g-4">
               {nfts?.length > 0 &&
-                nfts.filter((nft)=>(!nft?.nftId?.active && !nft.nftId?.owner?.active && !nft.nftId?.curationInfo?.active && nft.nftId?.minted)).map((nft, index) => {
+                nfts.filter((nft)=>(!nft?.nftId?.active && !nft.nftId?.owner?.active && !nft.nftId?.curationInfo?.active )).map((nft, index) => {
                     return (
                       <div
                         className="col-lg-3 col-md-4 col-sm-6"
