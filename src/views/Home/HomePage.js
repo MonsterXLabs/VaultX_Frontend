@@ -77,6 +77,7 @@ function HomePage() {
       setSection1(section1)
       const tempNfts = []
       for (let i = 0; i < section2?.box?.length; i++) {
+        console.log(section2?.box[i]?.split("/")[5])
         try {
           const nftService = new NftServices()
           const {
@@ -307,7 +308,7 @@ function HomePage() {
             <OwlCarousel className="hero__inner__blk" {...options}>
               <div
                 className="hero__content__blk md:p-20 p-8 h-full min-h-[500px] md:min-h-[600px] mmd:min-h-[700px]"
-              // style={{ backgroundImage: "url(./assets/img/hero_bg.png" }}
+                // style={{ backgroundImage: "url(./assets/img/hero_bg.png" }}
               >
                 {/* <h1>
                   The First <span>RWA </span> Collection of <span>Wesley</span>
@@ -318,12 +319,11 @@ function HomePage() {
           ) : (
             <OwlCarousel className="hero__inner__blk" {...options}>
               {carousel?.map((item, i) => {
-
                 return (
                   <div
                     key={i}
                     className="hero__content__blk md:p-20 p-8 h-full relative min-h-[500px] md:min-h-[600px] mmd:min-h-[700px]"
-                  // style={{ backgroundImage: item.image }}
+                    // style={{ backgroundImage: item.image }}
                   >
                     <img
                       src={item.image}
@@ -351,11 +351,9 @@ function HomePage() {
         <div className="container">
           <div className="section__title text-center">
             <h3>
-              Inspiring <span>Artist</span> Interviews
+              Inspiring <span>{section1?.title}</span> Interviews
             </h3>
-            <p>
-              Discover art's wisdom in conversations with our brilliant artists
-            </p>
+            <p>{section1?.description}</p>
           </div>
           <div className="row g-4">
             {section1?.box?.map((value, index) => {
@@ -374,7 +372,10 @@ function HomePage() {
                       src={value?.image}
                       alt=""
                     />
-                    {/* </div> */}
+                    <div className="inspire__content">
+                      <h5>{value?.title}</h5>
+                      <p>{value?.subtitle1}</p>
+                    </div>
                   </div>
                 </a>
               );
@@ -386,7 +387,7 @@ function HomePage() {
               className="common__btn"
               target="_blank"
               rel="noopener noreferrer"
-            // onClick={() => navigate("/dashboard?artist")}
+              // onClick={() => navigate("/dashboard?artist")}
             >
               Discover Artist
             </a>
@@ -407,7 +408,7 @@ function HomePage() {
                 <span>
                   {
                     nftHeader?.title?.split(" ")[
-                    nftHeader?.title?.split(" ").length - 1
+                      nftHeader?.title?.split(" ").length - 1
                     ]
                   }
                 </span>
@@ -444,7 +445,7 @@ function HomePage() {
           <div className="exceptional__card__blk">
             <div className="row g-4">
               {curations?.length > 0 &&
-                curations?.map((curation, index) => {
+                curations?.filter((item)=>(!item.active && !item.owner?.active)).map((curation, index) => {
                   if (index < 2) {
                     return (
                       <div
@@ -496,7 +497,7 @@ function HomePage() {
           </div>
           <div className="row g-4">
             {nfts?.length > 0 &&
-              nfts?.map((nft, index) => {
+              nfts[0]?.data?.filter((nft)=>(!nft?.active && !nft.ownerInfo?.[0]?.active && !nft.curationInfo?.[0].active)).map((nft, index) => {
                 if (index < 4) {
                   return (
                     <div
@@ -516,7 +517,7 @@ function HomePage() {
                           <p className="text-[12px]">
                             Created by:{" "}
                             <span className="!font-azeret">
-                              {nft?.mintedBy?.username}
+                              {nft?.artist}
                             </span>
                           </p>
                           <p className="!font-bold underline !text-[#CCCCCC] !italic !text-sm">
@@ -541,7 +542,7 @@ function HomePage() {
               })}
           </div>
           <div className="appreciate__slide__blk">
-            <NFTCards nfts={nfts?.slice(4)} />
+            <NFTCards nfts={nfts[0]?.data?.slice(4).filter((nft)=>(!nft?.active && !nft.ownerInfo?.[0]?.active && !nft.curationInfo?.[0].active))} />
             <div className="sport__dts__ico">
               <img src="assets/img/Dots.svg" alt="" />
             </div>
@@ -559,6 +560,7 @@ function HomePage() {
         <div className="container">
           <div className="section__title text-center">
             <h3>{section4?.title}</h3>
+            <h3>{section4?.description}</h3>
           </div>
           <div className="row g-4">
             <div className="col-xl-7">
@@ -573,6 +575,7 @@ function HomePage() {
                     className="w-full md:aspect-auto aspect-square object-cover"
                     alt=""
                   />
+                  <p>{section4?.box[0]?.title}</p>
                 </a>
               </div>
             </div>
@@ -681,9 +684,9 @@ function HomePage() {
         <div className="container">
           <div
             className="newsltter__inner__blk relative overflow-hidden"
-          // style={{
-          //   backgroundImage: "url(../../assets/img/newsletter_thumb.png)",
-          // }}
+            // style={{
+            //   backgroundImage: "url(../../assets/img/newsletter_thumb.png)",
+            // }}
           >
             <img
               src={

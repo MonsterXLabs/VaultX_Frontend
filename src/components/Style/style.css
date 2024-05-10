@@ -353,6 +353,7 @@ textarea {
 
 .single__inspir__card {
   position: relative;
+  height:100%;
 }
 
 .single__inspire__thumb {

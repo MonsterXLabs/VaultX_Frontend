@@ -84,7 +84,7 @@ function NFTCards(props) {
               <div className="sport__content">
                 <h5>{nft?.name}</h5>
                 <p>
-                  Created by: <span className="!font-azeret">{nft?.mintedBy?.username}</span>
+                  Created by: <span className="!font-azeret">{nft?.artist}</span>
                 </p>
                 <p className="!font-bold underline !text-[#CCCCCC] !italic !text-sm">
                   {nft?.curation?.name}

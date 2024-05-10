@@ -25,7 +25,7 @@ function Curation({tab, searchInput, filter}) {
   return (
     <div className="curation__area">
       <div className="row g-4">
-        {curation.length>0 && curation.map((item) => (
+        {curation.length>0 && curation.filter((item)=>(!item?.active && !item?.owner?.active)).map((item) => (
           <CurationCard item={item}/>
         ))}
       </div>

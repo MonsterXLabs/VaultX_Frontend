@@ -718,7 +718,7 @@ export const getSections = async () => {
   return res.data
 }
 
-export const getPrice = async() => {
-  const {data:{quote:{USD:{price}}}} = await axios.get(`${server_uri}/nft/matic-to-dolor`)
+export const getPrice = async(payload) => {
+  const price = await axios.post(`${server_uri}/nft/matic-to-dolor`,payload)
   return price
 }

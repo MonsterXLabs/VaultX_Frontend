@@ -1,11 +1,11 @@
-import {useEffect, useRef, useState} from "react"
+import { useEffect, useRef, useState } from "react"
 import Category from "../../components/Dashboard/Filters/Category"
 import Footer from "../../components/Footer/Footer"
-import {useAccount} from "wagmi"
+import { useAccount } from "wagmi"
 import * as bootstrap from "bootstrap"
-import {City, Country, State} from "country-state-city"
+import { City, Country, State } from "country-state-city"
 import _ from "lodash"
-import {useNavigate, useParams} from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import {
   CategoryService,
   CreateNftServices,
@@ -15,7 +15,7 @@ import {
   getAllNftActivitys,
   getPrice,
 } from "../../services/supplier"
-import {getCookie} from "../../utils/cookie"
+import { getCookie } from "../../utils/cookie"
 import {
   acceptBid,
   burnItem,
@@ -44,7 +44,7 @@ import {
   validateEmail,
 } from "../../utils/validators"
 import MainSearch from "../../components/Dashboard/Search/MainSearch"
-import {contractAddress, explorer, network} from "../../utils/config"
+import { contractAddress, explorer, network } from "../../utils/config"
 
 /**
  * MyComponent functional component.
@@ -56,8 +56,8 @@ function NFTDetails() {
   const [name, setName] = useState()
   const [email, setEmail] = useState()
   const [createNftStep2SplitInput, setCreateNftStep2SplitInput] = useState()
-  const {id} = useParams()
-  const {address} = useAccount()
+  const { id } = useParams()
+  const { address } = useAccount()
   const nftService = new NftServices()
   const createNftServices = new CreateNftServices()
   const navigate = useNavigate()
@@ -122,7 +122,7 @@ function NFTDetails() {
     try {
       const categoryService = new CategoryService()
       const {
-        data: {categories},
+        data: { categories },
       } = await categoryService.getAllCategories(0, 0)
       setCategories(categories)
     } catch (error) {
@@ -131,7 +131,7 @@ function NFTDetails() {
   }
 
   const handleUpdateValuesStep2Split = e => {
-    const {name, value} = e.target
+    const { name, value } = e.target
     setCreateNftStep2SplitInput({
       ...createNftStep2SplitInput,
       [name]: value,
@@ -143,7 +143,7 @@ function NFTDetails() {
       const fee = await getMarketPlaceFee()
       setFee(Number(fee) / 100)
     } catch (error) {
-      console.log({error})
+      console.log({ error })
     }
   }
 
@@ -151,13 +151,13 @@ function NFTDetails() {
     try {
       const previosIpAddress = localStorage.getItem("ipAddress")
       const {
-        data: {views, ipAddress},
-      } = await nftService.addView({nftId: id, ip: previosIpAddress})
-      console.log({ipAddress, views}, "rlafh")
+        data: { views, ipAddress },
+      } = await nftService.addView({ nftId: id, ip: previosIpAddress })
+      console.log({ ipAddress, views }, "rlafh")
       localStorage.setItem("ipAddress", ipAddress)
       setViews(views)
     } catch (error) {
-      console.log({error})
+      console.log({ error })
     }
   }
   useEffect(() => {
@@ -195,7 +195,7 @@ function NFTDetails() {
    * @param {import("react").ChangeEvent<HTMLSelectElement>} e
    */
   const handleUpdateShippingAddress = e => {
-    const {name, value} = e.target
+    const { name, value } = e.target
     if (name === "country") {
       const parsedVal = JSON.parse(value)
       const countryStates = State.getStatesOfCountry(parsedVal.isoCode)
@@ -215,12 +215,12 @@ function NFTDetails() {
   const getNftInfo = async () => {
     try {
       const {
-        data: {nft},
+        data: { nft },
       } = await nftService.getNftById(id)
       setNft(nft)
       setDiscription(nft?.description)
       setCreateNftStep1Attachments(nft?.attachments)
-      console.log(nft?.category?.name,"name")
+      console.log(nft?.category?.name, "name")
       setCategory(nft?.category?.name)
       const user = getCookie("user")
       user && setUser(JSON.parse(user))
@@ -287,7 +287,7 @@ function NFTDetails() {
   const buyNft = async () => {
     try {
       if (!agree) throw new Error("Please agree to terms")
-      const {transactionHash} = await buyItem(nft.tokenId, address)
+      const { transactionHash } = await buyItem(nft.tokenId, address)
       const data = {
         nftId: id,
         name,
@@ -312,7 +312,7 @@ function NFTDetails() {
       )
       element1.show()
     } catch (error) {
-      console.log({error})
+      console.log({ error })
     }
   }
 
@@ -336,7 +336,7 @@ function NFTDetails() {
       }, 1000)
     } catch (error) {
       element1.hide()
-      console.log({error})
+      console.log({ error })
     }
   }
 
@@ -355,7 +355,7 @@ function NFTDetails() {
       for (const file of discriptionImage) {
         formData.append("files", file)
       }
-      const {transactionHash} = await putCancelRequest(
+      const { transactionHash } = await putCancelRequest(
         nft?.tokenId,
         request,
         address
@@ -371,7 +371,7 @@ function NFTDetails() {
     } catch (error) {
       elem.hide()
       element1.hide()
-      console.log({error})
+      console.log({ error })
     }
   }
 
@@ -387,7 +387,7 @@ function NFTDetails() {
     element1.show()
     try {
       if (!agree) throw new Error("Please agree to terms")
-      const {transactionHash} = await resell(nft.tokenId, price, address)
+      const { transactionHash } = await resell(nft.tokenId, price, address)
       const data = {
         nftId: id,
         name,
@@ -414,7 +414,7 @@ function NFTDetails() {
       }, 1000)
     } catch (error) {
       element1.hide()
-      console.log({error})
+      console.log({ error })
     }
   }
 
@@ -429,9 +429,9 @@ function NFTDetails() {
         nft?.walletAddresses?.length > 0
           ? nft?.walletAddresses[0].percentage
             ? nft?.walletAddresses?.map(item => ({
-                paymentWallet: item.address,
-                paymentPercentage: item.percentage,
-              }))
+              paymentWallet: item.address,
+              paymentPercentage: item.percentage,
+            }))
             : []
           : []
       const result = await purchaseUnmintedNft(
@@ -486,7 +486,8 @@ function NFTDetails() {
     element1.show()
     try {
       const user = JSON.parse(getCookie("user"))
-      const {logs, transactionHash} = await releaseEscrow(nft?.tokenId, address)
+      const { logs, transactionHash } = await releaseEscrow(nft?.tokenId, address)
+      console.log("logs are---->", logs);
       let eventRoyaltyReceived = getEventArray(logs, "RoyaltyReceived")
       let eventPaymentSplitReceived = getEventArray(
         logs,
@@ -595,9 +596,9 @@ function NFTDetails() {
           nft?.walletAddresses?.length > 0
             ? nft?.walletAddresses[0].percentage
               ? nft?.walletAddresses?.map(item => ({
-                  paymentWallet: item.address,
-                  paymentPercentage: item.percentage,
-                }))
+                paymentWallet: item.address,
+                paymentPercentage: item.percentage,
+              }))
               : []
             : []
         result = await placeBid(
@@ -644,16 +645,16 @@ function NFTDetails() {
       await getBids()
       element1.hide()
     } catch (error) {
-      console.log({error})
+      console.log({ error })
       element1.hide()
     }
   }
 
   const handleTxCall = async () => {
-    try{
-    if (txType === "buy") await purchase()
-    else await bidAPlace()
-    }catch(err){
+    try {
+      if (txType === "buy") await purchase()
+      else await bidAPlace()
+    } catch (err) {
       console.log(err)
     }
     setTimeout(() => {
@@ -666,7 +667,7 @@ function NFTDetails() {
       document.getElementById("exampleModalToggl9")
     )
     try {
-      const {transactionHash} = await acceptBid(
+      const { transactionHash } = await acceptBid(
         nft?.tokenId,
         bid?.bidId,
         address
@@ -692,7 +693,7 @@ function NFTDetails() {
     )
     try {
       element.show()
-      const {transactionHash} = await cancleBid(bid.bidId, address)
+      const { transactionHash } = await cancleBid(bid.bidId, address)
       const data = {
         bidId: bid._id,
         transactionHash,
@@ -703,7 +704,7 @@ function NFTDetails() {
       await getBids()
       element.hide()
     } catch (error) {
-      console.log({error})
+      console.log({ error })
       element.hide()
     }
   }
@@ -723,9 +724,9 @@ function NFTDetails() {
         nft?.walletAddresses?.length > 0
           ? nft?.paymentPercentage
             ? nft?.walletAddresses?.map(item => ({
-                paymentWallet: item.address,
-                paymentPercentage: item.percentage,
-              }))
+              paymentWallet: item.address,
+              paymentPercentage: item.percentage,
+            }))
             : []
           : []
       const result = await listNft(
@@ -754,8 +755,8 @@ function NFTDetails() {
   const getAllNftActivity = async id => {
     try {
       const {
-        data: {data},
-      } = await getAllNftActivitys({nftId: id})
+        data: { data },
+      } = await getAllNftActivitys({ nftId: id })
       setActivity(data)
     } catch (error) {
       console.log(error)
@@ -771,8 +772,8 @@ function NFTDetails() {
     try {
       const createSellService = new CreateSellService()
       const {
-        data: {bids},
-      } = await createSellService.getNftBids({nftId: id})
+        data: { bids },
+      } = await createSellService.getNftBids({ nftId: id })
       setBids(bids)
     } catch (error) {
       console.log(error)
@@ -817,11 +818,11 @@ function NFTDetails() {
   const getArtitsLikes = async () => {
     try {
       const {
-        data: {totalLikedNfts},
-      } = await favoriteService.getNftTotalLikes({nftId: nft?._id})
+        data: { totalLikedNfts },
+      } = await favoriteService.getNftTotalLikes({ nftId: nft?._id })
       const {
-        data: {favorite},
-      } = await favoriteService.getUserReactionToNft({nftId: nft?._id})
+        data: { favorite },
+      } = await favoriteService.getUserReactionToNft({ nftId: nft?._id })
       setLikes(totalLikedNfts)
       setLiked(favorite)
     } catch (error) {
@@ -846,7 +847,7 @@ function NFTDetails() {
 
   const setMyLike = async () => {
     try {
-      await favoriteService.handleLikeNfts({nftId: nft?._id})
+      await favoriteService.handleLikeNfts({ nftId: nft?._id })
     } catch (error) {
       console.log(error)
     }
@@ -869,7 +870,7 @@ function NFTDetails() {
       document.getElementById("exampleModalToggl11Success")
     )
     try {
-      const {transactionHash} = await requestEscrowRelease(
+      const { transactionHash } = await requestEscrowRelease(
         nft?.tokenId,
         request,
         address
@@ -893,13 +894,13 @@ function NFTDetails() {
         await burnItem(nft?.tokenId, address)
       }
       const nftService = new NftServices()
-      await nftService.deleteNftDb({nftId: nft?._id})
+      await nftService.deleteNftDb({ nftId: nft?._id })
       cancleBurn()
       setTimeout(() => {
         navigate("/dashboard?appreciate")
       }, 500)
     } catch (error) {
-      console.log({error})
+      console.log({ error })
     }
   }
 
@@ -912,7 +913,8 @@ function NFTDetails() {
 
   const getData = async () => {
     try {
-      const price = await getPrice()
+      const data={amount:nft?.price}
+      const price = await getPrice(data)
       setDolorPrice(price)
     } catch (error) {
       console.log(error)
@@ -921,7 +923,7 @@ function NFTDetails() {
 
   useEffect(() => {
     getData()
-  }, [])
+  }, [nft])
 
   return (
     <>
@@ -1115,14 +1117,14 @@ function NFTDetails() {
                     <div className="nft__edit__ico">
                       {nft?.owner?.wallet?.toLowerCase() ===
                         address?.toLowerCase() && (
-                        <a
-                          data-toggle="dropdown"
-                          aria-expanded="false"
-                          href="#"
-                        >
-                          <img src="../../assets/img/nft_edit.svg" alt="" />
-                        </a>
-                      )}
+                          <a
+                            data-toggle="dropdown"
+                            aria-expanded="false"
+                            href="#"
+                          >
+                            <img src="../../assets/img/nft_edit.svg" alt="" />
+                          </a>
+                        )}
                       <ul className="dropdown-menu dropdown-menu-end similar__dropdown">
                         <li>
                           <a
@@ -1135,7 +1137,7 @@ function NFTDetails() {
                             Edit NFT
                           </a>
                         </li>
-                        {/* <li>
+                        <li>
                           <a
                             className="dropdown-item"
                             data-bs-toggle="modal"
@@ -1144,7 +1146,7 @@ function NFTDetails() {
                           >
                             Transfer Token
                           </a>
-                        </li> */}
+                        </li>
                         <li>
                           <a
                             className="dropdown-item"
@@ -1365,36 +1367,36 @@ function NFTDetails() {
                         nft?.shippingInformation?.height ||
                         nft?.shippingInformation?.width ||
                         nft?.shippingInformation?.weight) && (
-                        <div className="overview__right__blk">
-                          <div className="overview__similar__text">
-                            <h5>Size</h5>
-                            {nft?.shippingInformation?.lengths && (
-                              <p>
-                                <small>Length</small> <span>:</span>{" "}
-                                {nft?.shippingInformation?.lengths}cm
-                              </p>
-                            )}
-                            {nft?.shippingInformation?.height && (
-                              <p>
-                                <small>Height</small> <span>:</span>{" "}
-                                {nft?.shippingInformation?.height}cm
-                              </p>
-                            )}
-                            {nft?.shippingInformation?.width && (
-                              <p>
-                                <small>Width</small> <span>:</span>{" "}
-                                {nft?.shippingInformation?.width}cm
-                              </p>
-                            )}
-                            {nft?.shippingInformation?.weight && (
-                              <p>
-                                <small>Weight</small> <span>:</span>{" "}
-                                {nft?.shippingInformation?.weight}kg
-                              </p>
-                            )}
+                          <div className="overview__right__blk">
+                            <div className="overview__similar__text">
+                              <h5>Size</h5>
+                              {nft?.shippingInformation?.lengths && (
+                                <p>
+                                  <small>Length</small> <span>:</span>{" "}
+                                  {nft?.shippingInformation?.lengths}cm
+                                </p>
+                              )}
+                              {nft?.shippingInformation?.height && (
+                                <p>
+                                  <small>Height</small> <span>:</span>{" "}
+                                  {nft?.shippingInformation?.height}cm
+                                </p>
+                              )}
+                              {nft?.shippingInformation?.width && (
+                                <p>
+                                  <small>Width</small> <span>:</span>{" "}
+                                  {nft?.shippingInformation?.width}cm
+                                </p>
+                              )}
+                              {nft?.shippingInformation?.weight && (
+                                <p>
+                                  <small>Weight</small> <span>:</span>{" "}
+                                  {nft?.shippingInformation?.weight}kg
+                                </p>
+                              )}
+                            </div>
                           </div>
-                        </div>
-                      )}
+                        )}
                     </div>
                   </div>
                 </div>
@@ -1538,11 +1540,11 @@ function NFTDetails() {
                   <div className="font-azeret text-white/80">
                     {messageSlice
                       ? nft?.saleId?.buyerShippingId?.contactInformation
-                          ?.length > 200
+                        ?.length > 200
                         ? nft?.saleId?.buyerShippingId?.contactInformation?.slice(
-                            0,
-                            200
-                          )
+                          0,
+                          200
+                        )
                         : nft?.saleId?.buyerShippingId?.contactInformation
                       : nft?.saleId?.buyerShippingId?.contactInformation}
                     <span
@@ -1633,11 +1635,11 @@ function NFTDetails() {
                   <div className="font-azeret text-white/80">
                     {messageSlice
                       ? nft?.saleId?.sellerShippingId?.contactInformation
-                          ?.length > 200
+                        ?.length > 200
                         ? nft?.saleId?.sellerShippingId?.contactInformation?.slice(
-                            0,
-                            200
-                          )
+                          0,
+                          200
+                        )
                         : nft?.saleId?.sellerShippingId?.contactInformation
                       : nft?.saleId?.sellerShippingId?.contactInformation}
                     <span
@@ -1701,8 +1703,8 @@ function NFTDetails() {
                           <div className="font-azeret flex text-white items-center">
                             {bid?.createdAt
                               ? new Date(bid?.createdAt)
-                                  .toLocaleString()
-                                  .slice(0, 10)
+                                .toLocaleString()
+                                .slice(0, 10)
                               : "-/-"}
                           </div>
                           <div className="font-azeret flex text-themeYellow items-center">
@@ -1775,8 +1777,8 @@ function NFTDetails() {
                           <div className="font-azeret flex text-white items-center">
                             {bid?.createdAt
                               ? new Date(bid?.createdAt)
-                                  .toLocaleString()
-                                  .slice(0, 10)
+                                .toLocaleString()
+                                .slice(0, 10)
                               : "-/-"}
                           </div>
                           <div className="font-azeret flex text-themeYellow items-center">
@@ -1801,38 +1803,41 @@ function NFTDetails() {
                 </div>
               </div>
             )}
-            <div className="description__similar__blk">
-              <div className="description__title__blk">
-                <div className="description__title">
-                  <h4>
-                    <span>
-                      <img src="../../assets/img/description_ico.svg" alt="" />
-                    </span>{" "}
-                    Properties
-                  </h4>
-                </div>
-                <div className="description__angle__down">
-                  <span>
-                    <img src="../../assets/img/angle_down.svg" alt="" />
-                  </span>
-                </div>
-              </div>
-              <div className="description__testing">
-                <div className="row g-3">
-                  {nft?.attributes.map(item => (
-                    <div className="col-xxl-2 col-xl-3 col-lg-3 col-md-4 col-sm-6">
-                      <div className="nft__single__option">
-                        <a href="#">
-                          <h4>{item?.type}</h4>
-                          <p>{item?.value}</p>
-                        </a>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
+            {nft?.attributes?.length !== 0 &&
+              <div className="description__similar__blk">
+                <div className="description__title__blk">
 
+                  <div className="description__title">
+                    <h4>
+                      <span>
+                        <img src="../../assets/img/description_ico.svg" alt="" />
+                      </span>{" "}
+                      Properties
+                    </h4>
+                  </div>
+
+                  <div className="description__angle__down">
+                    <span>
+                      <img src="../../assets/img/angle_down.svg" alt="" />
+                    </span>
+                  </div>
+                </div>
+                <div className="description__testing">
+                  <div className="row g-3">
+                    {nft?.attributes.map(item => (
+                      <div className="col-xxl-2 col-xl-3 col-lg-3 col-md-4 col-sm-6">
+                        <div className="nft__single__option">
+                          <a href="#">
+                            <h4>{item?.type}</h4>
+                            <p>{item?.value}</p>
+                          </a>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            }
             <div className="description__similar__blk">
               <div className="description__title__blk mb-0">
                 <div className="description__title">
@@ -1948,15 +1953,15 @@ function NFTDetails() {
                               <td>
                                 {value?.createdAt
                                   ? new Date(value.createdAt)
-                                      .toLocaleString()
-                                      .slice(0, 10)
+                                    .toLocaleString()
+                                    .slice(0, 10)
                                   : "-/-"}
                               </td>
                               <td>
                                 {value?.createdAt
                                   ? new Date(
-                                      value.createdAt
-                                    ).toLocaleTimeString()
+                                    value.createdAt
+                                  ).toLocaleTimeString()
                                   : "-/-"}
                               </td>
                             </tr>
@@ -1968,6 +1973,38 @@ function NFTDetails() {
                 </div>
               </div>
             </div>
+
+            {(nft?.unlockableContent && JSON.parse(getCookie('user'))._id == nft?.owner?._id) &&
+              <div className="description__similar__blk">
+                <div className="description__title__blk">
+                  <div className="description__title">
+                    <h4>
+                      <span>
+                        <img src="../../assets/img/icons8-lock.svg" alt="" />
+                      </span>{" "}
+                      Unlockable content
+                    </h4>
+                  </div>
+                  <div className="description__angle__down">
+                    <span>
+                      <img src="../../assets/img/angle_down.svg" alt="" />
+                    </span>
+                  </div>
+                </div>
+                <div className="description__content">
+                  <div className="row g-3">
+                    <p className="inline">{nft?.unlockableContent}</p>
+                    {nft?.certificates.map(item => (
+                      <div className="col-xxl-2 col-xl-3 col-lg-3 col-md-4 col-sm-6">
+                        <div className="nft__single__option">
+                          <img src={item}></img>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            }
             <div className="nft__details__area">
               <p>
                 <span>
@@ -2119,7 +2156,7 @@ function NFTDetails() {
       >
         <div
           className="modal-dialog modal-dialog-centered"
-          style={{maxWidth: 1180}}
+          style={{ maxWidth: 1180 }}
         >
           <div className="modal-content">
             <div className="modal-body similar__site__popup">
@@ -2187,7 +2224,7 @@ function NFTDetails() {
                                 Change{" "}
                               </a>
                               <span className="mt-3">
-                                <img src="../../assets/img/Trash.svg" alt=""/>
+                                <img src="../../assets/img/Trash.svg" alt="" />
                               </span>
                             </div>
                           </div>
@@ -2231,7 +2268,7 @@ function NFTDetails() {
                 <div className="popup__select">
                   <div className="col-md-12">
                     <div className="single__edit__profile__step">
-                      <label htmlFor="#" style={{fontSize: "xl"}}>
+                      <label htmlFor="#" style={{ fontSize: "xl" }}>
                         Category
                       </label>
                       <select
@@ -2275,7 +2312,7 @@ function NFTDetails() {
       >
         <div
           className="modal-dialog modal-dialog-centered"
-          style={{maxWidth: 1200}}
+          style={{ maxWidth: 1200 }}
         >
           <div className="modal-content">
             <div className="modal-body similar__site__popup">
@@ -2753,7 +2790,7 @@ function NFTDetails() {
       >
         <div
           className="modal-dialog modal-dialog-centered"
-          style={{maxWidth: 1200}}
+          style={{ maxWidth: 1200 }}
         >
           <div className="modal-content">
             <div className="modal-body similar__site__popup">
@@ -3254,7 +3291,7 @@ function NFTDetails() {
       >
         <div
           className="modal-dialog modal-dialog-centered"
-          style={{maxWidth: 1200}}
+          style={{ maxWidth: 1200 }}
         >
           <div className="modal-content">
             <div className="modal-body similar__site__popup">
@@ -3638,7 +3675,7 @@ function NFTDetails() {
       >
         <div
           className="modal-dialog modal-dialog-centered"
-          style={{maxWidth: 780}}
+          style={{ maxWidth: 780 }}
         >
           <div className="modal-content">
             <div className="modal-body similar__site__popup">
@@ -3685,7 +3722,7 @@ function NFTDetails() {
                 </div>
                 <div
                   className="popup__inner__button edit__profile__bottom__btn pt-20 pb-0"
-                  style={{maxWidth: 210, marginRight: "auto"}}
+                  style={{ maxWidth: 210, marginRight: "auto" }}
                 >
                   <a
                     data-bs-dismiss="modal"
@@ -3714,7 +3751,7 @@ function NFTDetails() {
       >
         <div
           className="modal-dialog modal-dialog-centered"
-          style={{maxWidth: 780}}
+          style={{ maxWidth: 780 }}
         >
           <div className="modal-content">
             <div className="modal-body similar__site__popup">
@@ -3753,7 +3790,7 @@ function NFTDetails() {
                 </div>
                 <div
                   className="popup__inner__button edit__profile__bottom__btn pt-20 pb-0"
-                  style={{maxWidth: 210, marginRight: "auto"}}
+                  style={{ maxWidth: 210, marginRight: "auto" }}
                 >
                   <a data-bs-dismiss="modal" href="#">
                     Close
@@ -3825,7 +3862,7 @@ function NFTDetails() {
       >
         <div
           className="modal-dialog modal-dialog-centered"
-          style={{maxWidth: 780}}
+          style={{ maxWidth: 780 }}
         >
           <div className="modal-content">
             <div className="modal-body similar__site__popup">
@@ -3863,7 +3900,7 @@ function NFTDetails() {
                   <a
                     data-bs-dismiss="modal"
                     href="#"
-                    // onClick={buyNft}
+                  // onClick={buyNft}
                   >
                     Escrow Release
                   </a>
@@ -3882,7 +3919,7 @@ function NFTDetails() {
       >
         <div
           className="modal-dialog modal-dialog-centered"
-          style={{maxWidth: 575}}
+          style={{ maxWidth: 575 }}
         >
           <div className="modal-content">
             <div className="modal-body similar__site__popup">
@@ -3986,7 +4023,7 @@ function NFTDetails() {
       >
         <div
           className="modal-dialog modal-dialog-centered"
-          style={{maxWidth: 575}}
+          style={{ maxWidth: 575 }}
         >
           <div className="modal-content">
             <div className="modal-body similar__site__popup">
@@ -4069,7 +4106,7 @@ function NFTDetails() {
       >
         <div
           className="modal-dialog modal-dialog-centered"
-          style={{maxWidth: 575}}
+          style={{ maxWidth: 575 }}
         >
           <div className="modal-content">
             <div className="modal-body similar__site__popup">
@@ -4211,7 +4248,7 @@ function NFTDetails() {
       >
         <div
           className="modal-dialog modal-dialog-centered"
-          style={{maxWidth: 1180}}
+          style={{ maxWidth: 1180 }}
         >
           <div className="modal-content">
             <div className="modal-body similar__site__popup">
@@ -4308,7 +4345,7 @@ function NFTDetails() {
                               type="file"
                               id="discription-image"
                               ref={discriptionImageRef}
-                              style={{display: "none"}}
+                              style={{ display: "none" }}
                               onChange={e =>
                                 setDiscriptionImage([
                                   ...discriptionImage,
@@ -4376,7 +4413,7 @@ function NFTDetails() {
       >
         <div
           className="modal-dialog modal-dialog-centered"
-          style={{maxWidth: 1180}}
+          style={{ maxWidth: 1180 }}
         >
           <div className="modal-content">
             <div className="modal-body similar__site__popup">
@@ -4576,7 +4613,7 @@ function NFTDetails() {
       >
         <div
           className="modal-dialog modal-dialog-centered"
-          style={{maxWidth: 780}}
+          style={{ maxWidth: 780 }}
         >
           <div className="modal-content">
             <div className="modal-body similar__site__popup">

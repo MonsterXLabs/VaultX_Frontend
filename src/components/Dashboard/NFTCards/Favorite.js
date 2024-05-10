@@ -88,7 +88,7 @@ function Favorite({searchInput, filter}) {
           <div className="categorie__card__blk">
             <div className="row g-4">
               {nfts?.length > 0 &&
-                nfts.map((nft, index) => {
+                nfts.filter((nft)=>(!nft?.nftId?.active && !nft.nftId?.owner?.active && !nft.nftId?.curationInfo?.active )).map((nft, index) => {
                     return (
                       <div
                         className="col-lg-3 col-md-4 col-sm-6"
@@ -132,7 +132,7 @@ function Favorite({searchInput, filter}) {
         >
           <div className="curation__area">
             <div className="row g-4">
-              {curations?.map((curation, index) => (
+              {curations.filter(item=>item.collectionId)?.map((curation, index) => (
                 <div className="col-xxl-4 col-xl-6 col-lg-4 col-md-6" onClick={()=>navigate('/dashboard/curation/'+curation?.collectionId?._id)}>
                   <div className="curation__card__blk">
                     <div className="curation__thumb">

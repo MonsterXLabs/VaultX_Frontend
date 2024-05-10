@@ -1,199 +1,222 @@
-import { useContext, useEffect, useRef, useState } from "react"
-import MainSearch from "../Search/MainSearch"
+import { useContext, useEffect, useRef, useState } from "react";
+import MainSearch from "../Search/MainSearch";
 import {
   CategoryService,
   CreateNftServices,
   collectionServices,
-} from "../../../services/supplier"
-import * as bootstrap from "bootstrap"
-import { getEventValue, listNft, trimString } from "../../../utils/helpers"
-import { useAccount, useSwitchChain } from "wagmi"
-import _ from "lodash"
-import { useNavigate, useSearchParams } from "react-router-dom"
-import { City, Country, State } from "country-state-city"
-import { WalletContext } from "../../../Context/WalletConnect"
-import { network } from "../../../utils/config"
-import UploadImage from "../../../utils/uploadImage"
-import ErrorPopup from "./Popup"
-import { strDoesExist, validateEmail, validateUrl } from "../../../utils/checkUrl"
-import Banner from "../../../utils/bannerUpload"
-import { io } from "socket.io-client"
-import PhoneInput from 'react-phone-input-2'
-import 'react-phone-input-2/lib/style.css'
+} from "../../../services/supplier";
+import * as bootstrap from "bootstrap";
+import {
+  getEventValue,
+  listNft,
+  trimString,
+  getMarketPlaceFee,
+} from "../../../utils/helpers";
+import { useAccount, useSwitchChain } from "wagmi";
+import _ from "lodash";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { City, Country, State } from "country-state-city";
+import { WalletContext } from "../../../Context/WalletConnect";
+import { network } from "../../../utils/config";
+import UploadImage from "../../../utils/uploadImage";
+import ErrorPopup from "./Popup";
+import {
+  strDoesExist,
+  validateEmail,
+  validateUrl,
+} from "../../../utils/checkUrl";
+import Banner from "../../../utils/bannerUpload";
+import { io } from "socket.io-client";
+import PhoneInput from "react-phone-input-2";
+import "react-phone-input-2/lib/style.css";
 
 function Create(props) {
-  const [bannerImage, setBannerImage] = useState(null)
-  const [showErrorPopup, setShowErrorPopup] = useState(false)
-  const countries = Country.getAllCountries()
-  const [step, setStep] = useState(0)
-  const [states, setStates] = useState([])
-  const [cities, setCities] = useState([])
-  const [collectionId, setCollectionId] = useState("")
-  const [countryCode, setCountryCode] = useState("")
-  const [selectedType, setSelectedType] = useState("")
+  const [bannerImage, setBannerImage] = useState(null);
+  const [showErrorPopup, setShowErrorPopup] = useState(false);
+  const countries = Country.getAllCountries();
+  const [step, setStep] = useState(0);
+  const [states, setStates] = useState([]);
+  const [cities, setCities] = useState([]);
+  const [collectionId, setCollectionId] = useState("");
+  const [countryCode, setCountryCode] = useState("");
+  const [selectedType, setSelectedType] = useState("");
+  const [fee, setFee] = useState(0);
   //Curation states
-  const [file, setFile] = useState()
-  const [discriptionImage, setDiscriptionImage] = useState([])
-  const [discriptionImage1, setDiscriptionImage1] = useState([])
-  const [collectionName, setCollectionName] = useState("")
-  const [symbol, setSymbol] = useState("")
-  const [discription, setDiscription] = useState("")
-  const [errorCuration, setErrorCuration] = useState([])
+  const [file, setFile] = useState();
+  const [discriptionImage, setDiscriptionImage] = useState([]);
+  const [discriptionImage1, setDiscriptionImage1] = useState([]);
+  const [collectionName, setCollectionName] = useState("");
+  const [symbol, setSymbol] = useState("");
+  const [discription, setDiscription] = useState("");
+  const [errorCuration, setErrorCuration] = useState([]);
   const [links, setLinks] = useState({
     website: "",
     instagram: "",
     facebook: "",
     twitter: "",
-  })
+  });
   const [youtube, setYoutube] = useState([
     {
       title: "",
       url: "",
     },
-  ])
-  const [numberOfInputs, setNumberOfInputs] = useState(1)
-  const [numberOfInputs1, setNumberOfInputs1] = useState(1)
-  const navigate = useNavigate()
-  const [createNftStep1, setCreateNftStep1] = useState({})
-  const [createNftStep1Attachments, setCreateNftStep1Attachments] = useState([])
+  ]);
+  const [numberOfInputs, setNumberOfInputs] = useState(1);
+  const [numberOfInputs1, setNumberOfInputs1] = useState(1);
+  const navigate = useNavigate();
+  const [createNftStep1, setCreateNftStep1] = useState({});
+  const [createNftStep1Attachments, setCreateNftStep1Attachments] = useState(
+    []
+  );
 
-  const [createNftStep1File, setCreateNftStep1File] = useState()
+  const [createNftStep1File, setCreateNftStep1File] = useState();
 
-  const [params, setParams] = useSearchParams()
+  const [params, setParams] = useSearchParams();
   const [createNftStep2Conditions, setCreateNftStep2Conditions] = useState({
     freeMint: false,
     royalties: false,
     unlockable: false,
     category: false,
     split: false,
-  })
-  const [createNftStep2, setCreateNftStep2] = useState({})
+  });
+  const [createNftStep2, setCreateNftStep2] = useState({});
   const [createNftStep2PropertiesInput, setCreateNftStep2PropertiesInput] =
     useState({
       type: "",
       value: "",
-    })
+    });
   const [createNftStep2SplitInput, setCreateNftStep2SplitInput] = useState({
     address: "",
     percent: "",
-  })
-  const [createNftStep2Split, setCreateNftStep2Split] = useState([])
-  const [createNftStep2Properties, setCreateNftStep2Properties] = useState([])
+  });
+  const [createNftStep2Split, setCreateNftStep2Split] = useState([]);
+  const [createNftStep2Properties, setCreateNftStep2Properties] = useState([]);
 
   const [banner, setBanner] = useState({
     image: "",
     link: "#",
-  })
-  const [message, setMessage] = useState()
-  const { fetchImages } = useContext(WalletContext)
+  });
+  const [message, setMessage] = useState();
+  const { fetchImages } = useContext(WalletContext);
 
   const fetchMedia = async () => {
-    const images = await fetchImages()
-    setBanner(images?.mintingBanner)
-  }
+    const images = await fetchImages();
+    setBanner(images?.mintingBanner);
+  };
 
+  const getFee = async () => {
+    try {
+      const fee = await getMarketPlaceFee();
+      setFee(Number(fee) / 100);
+    } catch (error) {
+      console.log({ error });
+    }
+  };
+  useEffect(() => {
+    getFee();
+  }, []);
   const validateData = () => {
-    const arr = []
-    strDoesExist("Curation Name", collectionName, arr)
-    strDoesExist("Symbol", symbol, arr)
-    strDoesExist("Description", discription, arr)
-    links?.facebook && validateUrl("Facebook", links.facebook, arr)
-    links?.instagram && validateUrl("Instagram", links.instagram, arr)
-    links?.twitter && validateUrl("Twitter", links.twitter, arr)
-    links?.website && validateUrl("Website", links.website, arr)
+    const arr = [];
+    strDoesExist("Curation Name", collectionName, arr);
+    strDoesExist("Symbol", symbol, arr);
+    strDoesExist("Description", discription, arr);
+    links?.facebook && validateUrl("Facebook", links.facebook, arr);
+    links?.instagram && validateUrl("Instagram", links.instagram, arr);
+    links?.twitter && validateUrl("Twitter", links.twitter, arr);
+    links?.website && validateUrl("Website", links.website, arr);
     youtube[0]?.title?.length > 0 &&
       youtube.forEach((item, idx) => {
-        strDoesExist(`Youtube title ${idx + 1}`, item.title, arr)
-        validateUrl(`Youtube url ${idx + 1}`, item.url, arr)
-      })
-    if (discriptionImage.length === 0) arr.push("Description Image is Needed")
-    if (!bannerImage) arr.push("Banner Image is Needed")
-    if (!file) arr.push("Cover Image is Needed")
-    setErrorCuration([...arr])
-    if (arr.length > 0) return false
-    return true
-  }
+        strDoesExist(`Youtube title ${idx + 1}`, item.title, arr);
+        validateUrl(`Youtube url ${idx + 1}`, item.url, arr);
+      });
+    if (discriptionImage.length === 0) arr.push("Description Image is Needed");
+    if (!bannerImage) arr.push("Banner Image is Needed");
+    if (!file) arr.push("Cover Image is Needed");
+    setErrorCuration([...arr]);
+    if (arr.length > 0) return false;
+    return true;
+  };
 
   const validateUpdateData = () => {
-    const arr = []
-    strDoesExist("Curation Name", collectionName, arr)
-    strDoesExist("Symbol", symbol, arr)
-    strDoesExist("Description", discription, arr)
-    links?.facebook && validateUrl("Facebook", links.facebook, arr)
-    links?.instagram && validateUrl("Instagram", links.instagram, arr)
-    links?.twitter && validateUrl("Twitter", links.twitter, arr)
-    links?.website && validateUrl("Website", links.website, arr)
+    const arr = [];
+    strDoesExist("Curation Name", collectionName, arr);
+    strDoesExist("Symbol", symbol, arr);
+    strDoesExist("Description", discription, arr);
+    links?.facebook && validateUrl("Facebook", links.facebook, arr);
+    links?.instagram && validateUrl("Instagram", links.instagram, arr);
+    links?.twitter && validateUrl("Twitter", links.twitter, arr);
+    links?.website && validateUrl("Website", links.website, arr);
     youtube?.length > 0 &&
       youtube.forEach((item, idx) => {
-        strDoesExist(`Youtube title ${idx + 1}`, item.title, arr)
+        strDoesExist(`Youtube title ${idx + 1}`, item.title, arr);
         // validateUrl(`Youtube url ${idx + 1}`, item.url, arr)
-      })
-    setErrorCuration([...arr])
-    if (arr.length > 0) return false
-    return true
-  }
+      });
+    setErrorCuration([...arr]);
+    if (arr.length > 0) return false;
+    return true;
+  };
 
   const validateCreateBasicDetails = () => {
-    const arr = []
-    strDoesExist("Name", createNftStep1.productName, arr)
-    strDoesExist("Description", createNftStep1.productDescription, arr)
-    strDoesExist("Artist", createNftStep1.artistName, arr)
-    strDoesExist("Price", createNftStep1.price, arr)
-    strDoesExist("curation", createNftStep1.curation, arr)
-    strDoesExist("File", createNftStep1File, arr, "is empty")
-    setErrorCuration([...arr])
-    if (arr.length > 0) return false
-    return true
-  }
+    const arr = [];
+    strDoesExist("Name", createNftStep1.productName, arr);
+    strDoesExist("Description", createNftStep1.productDescription, arr);
+    strDoesExist("Artist", createNftStep1.artistName, arr);
+    strDoesExist("Price", createNftStep1.price, arr);
+    strDoesExist("curation", createNftStep1.curation, arr);
+    strDoesExist("File", createNftStep1File, arr, "is empty");
+    setErrorCuration([...arr]);
+    if (arr.length > 0) return false;
+    return true;
+  };
 
   const validateCreateAdvanceDetails = () => {
-    const arr = []
+    const arr = [];
     if (createNftStep2Conditions.royalties) {
-      strDoesExist("Royalty", createNftStep2.royalty, arr)
+      strDoesExist("Royalty", createNftStep2.royalty, arr);
     }
     if (createNftStep2Conditions.category) {
-      strDoesExist("Category", createNftStep2.category, arr)
+      strDoesExist("Category", createNftStep2.category, arr);
     }
     if (createNftStep2Conditions.unlockable) {
       if (!createNftStep2.unlockable)
-        strDoesExist("Unlockable Content", createNftStep2.unlockable, arr)
+        strDoesExist("Unlockable Content", createNftStep2.unlockable, arr);
       strDoesExist(
         "Unlockable Content Certificates",
         discriptionImage1[0],
         arr,
         "is empty"
-      )
+      );
     }
     if (createNftStep2Conditions.split) {
-      const newArr = createNftStep2Split.map(item => ({
+      const newArr = createNftStep2Split.map((item) => ({
         address: item.address,
         percentage: item.percent,
-      }))
-      strDoesExist("Split Payment Details", newArr, arr, "is empty")
+      }));
+      strDoesExist("Split Payment Details", newArr, arr, "is empty");
     }
     createNftStep2Properties.forEach((item, idx) => {
-      strDoesExist(`Attributes type ${idx}`, item.type, arr)
-      strDoesExist(`Attributes value ${idx}`, item.value, arr)
-    })
-    setErrorCuration([...arr])
-    if (arr.length > 0) return false
-    return true
-  }
+      strDoesExist(`Attributes type ${idx}`, item.type, arr);
+      strDoesExist(`Attributes value ${idx}`, item.value, arr);
+    });
+    setErrorCuration([...arr]);
+    if (arr.length > 0) return false;
+    return true;
+  };
 
   const validateCreateSellerDetails = () => {
-    const arr = []
-    strDoesExist("Name", sellerInfo.name, arr)
-    validateEmail("Email", sellerInfo.email, arr)
-    strDoesExist("Country", JSON.parse(sellerInfo.country).name, arr)
-    strDoesExist("Address Line 1", sellerInfo.address1, arr)
-    strDoesExist("city", sellerInfo.city, arr)
-    strDoesExist("state", JSON.parse(sellerInfo.state).name, arr)
+    const arr = [];
+    strDoesExist("Name", sellerInfo.name, arr);
+    validateEmail("Email", sellerInfo.email, arr);
+    strDoesExist("Country", JSON.parse(sellerInfo.country).name, arr);
+    strDoesExist("Address Line 1", sellerInfo.address1, arr);
+    strDoesExist("city", sellerInfo.city, arr);
+    strDoesExist("state", JSON.parse(sellerInfo.state).name, arr);
     // numberValidator("Postal Code", sellerInfo.postalCode, arr, "postal")
     // numberValidator("Phone Number", sellerInfo.phone, arr, "phone")
-    setErrorCuration([...arr])
-    if (arr.length > 0) return false
-    return true
-  }
+    setErrorCuration([...arr]);
+    if (arr.length > 0) return false;
+    return true;
+  };
 
   const [sellerInfo, setSellerInfo] = useState({
     name: "",
@@ -211,267 +234,285 @@ function Create(props) {
     weight: "",
     contactInfo: "",
     consent: "",
-  })
+  });
 
-  const [nftId, setNftId] = useState("")
-  const imgRef = useRef(null)
+  const [nftId, setNftId] = useState("");
+  const imgRef = useRef(null);
 
   // Nft states
-  const [uri, setUri] = useState("")
+  const [uri, setUri] = useState("");
 
-  const [userCollection, setUserCollection] = useState([])
-  const [categories, setCategories] = useState([])
+  const [userCollection, setUserCollection] = useState([]);
+  const [categories, setCategories] = useState([]);
 
-  const step1AttachmentRef = useRef(null)
-  const nftService = new CreateNftServices()
+  const step1AttachmentRef = useRef(null);
+  const nftService = new CreateNftServices();
 
-  const handleUpdateValues = e => {
-    const { name, value } = e.target
+  const handleUpdateValues = (e) => {
+    const { name, value } = e.target;
     setCreateNftStep1({
       ...createNftStep1,
       [name]: value,
-    })
-  }
+    });
+  };
 
-  const handleUpdateValuesStep2 = e => {
-    const { name, value } = e.target
+  const handleUpdateValuesStep2 = (e) => {
+    const { name, value } = e.target;
     setCreateNftStep2({
       ...createNftStep2,
       [name]: value,
-    })
-  }
+    });
+  };
 
-  const handleUpdateSeller = e => {
-    const { name, value } = e.target
+  const handleUpdateSeller = (e) => {
+    const { name, value } = e.target;
     if (name === "country") {
-      const parsedVal = JSON.parse(value)
-      const countryStates = State.getStatesOfCountry(parsedVal.isoCode)
-      setStates(countryStates)
-      setCountryCode(parsedVal.isoCode)
+      const parsedVal = JSON.parse(value);
+      const countryStates = State.getStatesOfCountry(parsedVal.isoCode);
+      setStates(countryStates);
+      setCountryCode(parsedVal.isoCode);
     } else if (name === "state") {
-      const parsedVal = JSON.parse(value)
-      const stateCities = City.getCitiesOfState(countryCode, parsedVal.isoCode)
-      setCities(stateCities)
+      const parsedVal = JSON.parse(value);
+      const stateCities = City.getCitiesOfState(countryCode, parsedVal.isoCode);
+      setCities(stateCities);
     }
     setSellerInfo({
       ...sellerInfo,
       [name]: value,
-    })
-  }
-  const handlePhoneInput = value=>{
+    });
+  };
+  const handlePhoneInput = (value) => {
     setSellerInfo({
       ...sellerInfo,
       phone: value,
-    })
-  }
-  const handleUpdateValuesStep2Split = e => {
-    const { name, value } = e.target
+    });
+  };
+  const handleUpdateValuesStep2Split = (e) => {
+    const { name, value } = e.target;
     setCreateNftStep2SplitInput({
       ...createNftStep2SplitInput,
       [name]: value,
-    })
-  }
+    });
+  };
 
-  const handleUpdateValuesStep2Properties = e => {
-    const { name, value } = e.target
+  const handleUpdateValuesStep2Properties = (e) => {
+    const { name, value } = e.target;
     setCreateNftStep2PropertiesInput({
       ...createNftStep2PropertiesInput,
       [name]: value,
-    })
-  }
+    });
+  };
 
-  const handleChangeStep1Attachment = i => {
-    const tempArr = [...createNftStep1Attachments]
-    tempArr.splice(i, 1)
+  const handleChangeStep1Attachment = (i) => {
+    const tempArr = [...createNftStep1Attachments];
+    tempArr.splice(i, 1);
 
-    setCreateNftStep1Attachments([...tempArr])
-  }
+    setCreateNftStep1Attachments([...tempArr]);
+  };
 
-  const handleDiscriptionImage = i => {
-    const tempArr = [...discriptionImage]
-    tempArr.splice(i, 1)
+  const handleDiscriptionImage = (i) => {
+    const tempArr = [...discriptionImage];
+    tempArr.splice(i, 1);
 
-    setDiscriptionImage([...tempArr])
-    setNumberOfInputs(numberOfInputs - 1)
-  }
+    setDiscriptionImage([...tempArr]);
+    setNumberOfInputs(numberOfInputs - 1);
+  };
 
-  const [agree, setAgree] = useState(false)
-  const { address } = useAccount()
+  const [agree, setAgree] = useState(false);
+  const { address } = useAccount();
 
-  const discriptionImageRef = useRef()
+  const discriptionImageRef = useRef();
 
   const createCollection = async () => {
-    setErrorCuration([])
-    const valid = validateData()
+    setErrorCuration([]);
+    const valid = validateData();
     const errElem = new bootstrap.Modal(
       document.getElementById("errorCreatingCurationModal")
-    )
-    if (!valid) return errElem.show()
+    );
+    if (!valid) return errElem.show();
     const element4 = new bootstrap.Modal(
       document.getElementById("exampleModalToggle4")
-    )
+    );
     const element1 = new bootstrap.Modal(
       document.getElementById("exampleModalToggl1")
-    )
+    );
     try {
-      element4.show()
-      const data = new FormData()
-      data.append("name", collectionName)
-      data.append("symbol", symbol)
-      data.append("discription", discription)
-      data.append("instagram", links.instagram)
-      data.append("facebook", links.facebook)
-      data.append("website", links.website)
-      data.append("twitter", links.twitter)
-      data.append("youtube", JSON.stringify(youtube))
-      data.append("logo", file)
-      data.append("bannerImage", bannerImage)
+      element4.show();
+      const data = new FormData();
+      data.append("name", collectionName);
+      data.append("symbol", symbol);
+      data.append("discription", discription);
+      data.append("instagram", links.instagram);
+      data.append("facebook", links.facebook);
+      data.append("website", links.website);
+      data.append("twitter", links.twitter);
+      data.append("youtube", JSON.stringify(youtube));
+      data.append("logo", file);
+      data.append("bannerImage", bannerImage);
       for (let i = 0; i < numberOfInputs; i++) {
-        data.append("descriptionImage", discriptionImage[i])
+        data.append("descriptionImage", discriptionImage[i]);
       }
 
-      await collectionServices.create(data)
-      element4.hide()
-      element1.show()
+      await collectionServices.create(data);
+      element4.hide();
+      element1.show();
       setTimeout(() => {
-        element1.hide()
-      }, 1000)
-      props?.render?.props?.onClickMenuButton("myProfile")
-      props.setProfileTab("Curation")
+        element1.hide();
+      }, 1000);
+      props?.render?.props?.onClickMenuButton("myProfile");
+      props.setProfileTab("Curation");
     } catch (error) {
-      element1.hide()
-      console.log({ error })
+      element1.hide();
+      console.log({ error });
     }
-  }
+  };
 
   const createBasicDetails = async () => {
-    setErrorCuration([])
-    const valid = validateCreateBasicDetails()
+    console.log("here is creae basic deteails ----->");
+    setErrorCuration([]);
+    const valid = validateCreateBasicDetails();
+    console.log("valid is", valid);
     const errElem = new bootstrap.Modal(
       document.getElementById("errorCreatingCurationModal")
-    )
-    if (!valid) return errElem.show()
+    );
+    if (!valid) {
+      return errElem.show();
+    }
     const element1 = new bootstrap.Modal(
       document.getElementById("exampleModalToggle4")
-    )
-    element1.show()
-    const formData = new FormData()
+    );
+    element1.show();
+    const formData = new FormData();
     // formData.append("nftImage", createNftStep1File)
-    formData.append("name", createNftStep1.productName)
-    formData.append("description", createNftStep1.productDescription)
-    formData.append("artist", createNftStep1.artistName)
-    formData.append("price", createNftStep1.price)
-    formData.append("curation", createNftStep1.curation)
+    formData.append("name", createNftStep1.productName);
+    formData.append("description", createNftStep1.productDescription);
+    formData.append("artist", createNftStep1.artistName);
+    formData.append("price", createNftStep1.price);
+    formData.append("curation", createNftStep1.curation);
     // createNftStep1Attachments.length > 0 &&
-    const allFiles = [createNftStep1File, ...createNftStep1Attachments]
+    const allFiles = [createNftStep1File, ...createNftStep1Attachments];
     for (const file of allFiles) {
-      formData.append("files", file)
+      formData.append("files", file);
     }
 
     try {
-      const res = await nftService.createBasicDetails(formData)
-      setNftId(res.data.data._id)
-      setStep(2)
-      element1.hide()
+      const res = await nftService.createBasicDetails(formData);
+      setNftId(res.data.data._id);
+      setStep(2);
+      element1.hide();
     } catch (error) {
-      console.log(error)
-      element1.hide()
+      element1.hide();
+      
+           
+      if (
+        error?.response?.status ==
+       400
+      ) {
+        console.log("herer in modal")
+        const element5 = new bootstrap.Modal(
+          document.getElementById("exampleModalToggl5")
+        );
+        element5.show();
+      } else {
+        errElem.show();
+      }
     }
-  }
+  };
 
   const fetchUserCollections = async () => {
     try {
-      const res = await collectionServices.getUserCollections()
-      console.log('curations', res)
+      const res = await collectionServices.getUserCollections();
+      console.log("curations", res);
       setUserCollection(
         res.data.collection.length > 0 ? res.data.collection : []
-      )
+      );
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-  }
+  };
 
   const fetchCategories = async () => {
     try {
-      const categoryService = new CategoryService()
+      const categoryService = new CategoryService();
       const {
         data: { categories },
-      } = await categoryService.getAllCategories(0, 0)
-      setCategories(categories)
+      } = await categoryService.getAllCategories(0, 0);
+      setCategories(categories);
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-  }
+  };
 
   const createAdvancedDetails = async () => {
-    setErrorCuration([])
-    const valid = validateCreateAdvanceDetails()
+    setErrorCuration([]);
+    const valid = validateCreateAdvanceDetails();
     const errElem = new bootstrap.Modal(
       document.getElementById("errorCreatingCurationModal")
-    )
-    if (!valid) return errElem.show()
-    const formData = new FormData()
-    formData.append("nftId", nftId)
+    );
+    if (!valid) return errElem.show();
+    const formData = new FormData();
+    formData.append("nftId", nftId);
 
     if (createNftStep2Conditions.freeMint) {
-      formData.append("freeMinting", createNftStep2Conditions.freeMint)
+      formData.append("freeMinting", createNftStep2Conditions.freeMint);
     }
     if (createNftStep2Conditions.royalties) {
-      if (!createNftStep2.royalty) return
-      formData.append("royalty", createNftStep2.royalty)
+      if (!createNftStep2.royalty) return;
+      formData.append("royalty", createNftStep2.royalty);
     }
     if (createNftStep2Conditions.category) {
-      if (!createNftStep2.category) return
-      formData.append("category", createNftStep2.category)
+      if (!createNftStep2.category) return;
+      formData.append("category", createNftStep2.category);
     }
     if (createNftStep2Conditions.unlockable) {
-      if (!createNftStep2.unlockable) return
-      formData.append("unlockableContent", createNftStep2.unlockable)
+      if (!createNftStep2.unlockable) return;
+      formData.append("unlockableContent", createNftStep2.unlockable);
       for (let i = 0; i < numberOfInputs1; i++) {
-        formData.append("certificates", discriptionImage1[i])
+        formData.append("certificates", discriptionImage1[i]);
       }
     }
-    formData.append("attributes", JSON.stringify(createNftStep2Properties))
+    formData.append("attributes", JSON.stringify(createNftStep2Properties));
 
     const element2 = new bootstrap.Modal(
       document.getElementById("exampleModalToggle4")
-    )
-    element2.show()
+    );
+    element2.show();
 
     try {
-      const res = await nftService.createAdvancedDetails(formData)
+      const res = await nftService.createAdvancedDetails(formData);
 
-      setStep(3)
+      setStep(3);
       setTimeout(() => {
-        element2.hide()
-      }, 1000)
+        element2.hide();
+      }, 1000);
     } catch (error) {
-      console.log(error)
-      element2.hide()
+      console.log(error);
+      element2.hide();
     }
-  }
+  };
 
   const createSellerInfo = async () => {
-    setErrorCuration([])
-    const valid = validateCreateSellerDetails()
+    console.log("hello---->>>")
+    setErrorCuration([]);
+    const valid = validateCreateSellerDetails();
     const errElem = new bootstrap.Modal(
       document.getElementById("errorCreatingCurationModal")
-    )
-    if (!valid) return errElem.show()
+    );
+    if (!valid) return errElem.show();
     const element1 = new bootstrap.Modal(
       document.getElementById("exampleModalToggle1")
-    )
+    );
     const element = new bootstrap.Modal(
       document.getElementById("exampleModalToggle3")
-    )
-    element1.show()
-    let splitPayments = []
+    );
+    element1.show();
+    let splitPayments = [];
     if (createNftStep2Conditions.split) {
-      const newArr = createNftStep2Split.map(item => ({
+      const newArr = createNftStep2Split.map((item) => ({
         address: item.address,
         percentage: item.percent,
-      }))
-      splitPayments = newArr
+      }));
+      splitPayments = newArr;
     }
     const data = {
       name: sellerInfo.name,
@@ -493,86 +534,89 @@ function Create(props) {
       },
       splitPayments,
       nftId,
-    }
+    };
 
-    let nftUri = ""
+    console.log("here 111------->>>")
+
+    let nftUri = "";
 
     try {
       const {
         data: { uri },
-      } = await nftService.createSellerDetails(data)
-      setUri(uri)
-      nftUri = uri
+      } = await nftService.createSellerDetails(data);
+      setUri(uri);
+      nftUri = uri;
+      console.log("here 2222222")
       if (!createNftStep2Conditions?.freeMint) {
-        await handleMint(uri)
+        await handleMint(uri);
       } else {
         setTimeout(() => {
-          element1.hide()
-        }, 100)
-        element.show()
-        setTimeout(() => window.location.reload(), 3000)
+          element1.hide();
+        }, 100);
+        element.show();
+        setTimeout(() => window.location.reload(), 3000);
       }
     } catch (error) {
-      console.log({ error })
+      console.log("error is--->>",{ error });
       if (
         error?.response?.data?.message?.includes(
           "Advance details not found or already minted"
         )
       ) {
         if (!createNftStep2Conditions?.freeMint) {
-          await handleMint(nftUri)
-        } else element1.hide()
-      } else element1.hide()
+          await handleMint(nftUri);
+        } else element1.hide();
+      } else element1.hide();
     }
-  }
+  };
 
   const discardData = async () => {
-    const nftService = new CreateNftServices()
+    const nftService = new CreateNftServices();
     try {
-      nftId && (await nftService.removeFromDb({ nftId }))
-      navigate("/dashboard?tab=create")
-      window.location.reload()
+      nftId && (await nftService.removeFromDb({ nftId }));
+      navigate("/dashboard?tab=create");
+      window.location.reload();
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-  }
+  };
 
-  const handleYoutube = newYoutube => {
-    if (youtube !== newYoutube && youtube.length <= 2) setYoutube(newYoutube)
-  }
+  const handleYoutube = (newYoutube) => {
+    if (youtube !== newYoutube && youtube.length <= 2) setYoutube(newYoutube);
+  };
 
   const handleYoutubeInput = (tag, value, index) => {
-    console.log({ tag, value, index })
-    const newYoutube = youtube
-    if (tag === "title") newYoutube[index].title = value
-    else newYoutube[index].url = value
-    console.log(newYoutube, 'newYoutube')
-    setYoutube(newYoutube)
-  }
+    console.log({ tag, value, index });
+    const newYoutube = youtube;
+    if (tag === "title") newYoutube[index].title = value;
+    else newYoutube[index].url = value;
+    console.log(newYoutube, "newYoutube");
+    setYoutube(newYoutube);
+  };
 
   const getCuration = async (curationId) => {
     try {
       const {
         data: { collection },
-      } = await collectionServices.getCollectionById(curationId)
-      setCollectionName(collection?.name)
-      setSymbol(collection?.symbol)
-      setDiscription(collection?.description)
+      } = await collectionServices.getCollectionById(curationId);
+      setCollectionName(collection?.name);
+      setSymbol(collection?.symbol);
+      setDiscription(collection?.description);
       setLinks({
         twitter: collection?.twitter,
         instagram: collection?.instagram,
         facebook: collection?.facebook,
         website: collection?.website,
-      })
-      setYoutube(collection?.youtube)
-      setFile(collection?.logo)
-      setDiscriptionImage(collection?.descriptionImage)
-      setNumberOfInputs(collection?.descriptionImage.length)
-      setBannerImage(collection?.bannerImage)
+      });
+      setYoutube(collection?.youtube);
+      setFile(collection?.logo);
+      setDiscriptionImage(collection?.descriptionImage);
+      setNumberOfInputs(collection?.descriptionImage.length);
+      setBannerImage(collection?.bannerImage);
     } catch (error) {
-      console.log({ error })
+      console.log({ error });
     }
-  }
+  };
 
   // useEffect(() => {
   //   if (agree) {
@@ -590,27 +634,27 @@ function Create(props) {
   const viewNft = () => {
     const element = new bootstrap.Modal(
       document.getElementById("exampleModalToggle3")
-    )
-    element.hide()
-    props?.render?.props?.onClickMenuButton("myProfile")
-    props.setProfileTab("Created")
-  }
+    );
+    element.hide();
+    props?.render?.props?.onClickMenuButton("myProfile");
+    props.setProfileTab("Created");
+  };
 
-  const handleMint = async uri => {
+  const handleMint = async (uri) => {
     const element1 = new bootstrap.Modal(
       document.getElementById("exampleModalToggle1")
-    )
+    );
     const element2 = new bootstrap.Modal(
       document.getElementById("exampleModalToggle3")
-    )
-    let splitPayments = []
+    );
+    let splitPayments = [];
     try {
       if (createNftStep2Conditions.split) {
-        const newArr = createNftStep2Split.map(item => ({
+        const newArr = createNftStep2Split.map((item) => ({
           paymentWallet: item.address,
           paymentPercentage: item.percent,
-        }))
-        splitPayments = newArr
+        }));
+        splitPayments = newArr;
       }
       const result = await listNft(
         uri,
@@ -618,123 +662,123 @@ function Create(props) {
         createNftStep2Conditions?.royalties ? createNftStep2.royalty : 0,
         splitPayments,
         address
-      )
-      const mintLogs = getEventValue(result.logs, "AssetTokenized")
+      );
+      const mintLogs = getEventValue(result.logs, "AssetTokenized");
       await nftService.mintAndSale({
         nftId,
         mintHash: result.transactionHash,
         tokenId: Number(mintLogs.tokenId),
-      })
+      });
       const elem = new bootstrap.Modal(
         document.getElementById("exampleModalToggle1")
-      )
-      elem.hide()
-      element2.show()
+      );
+      elem.hide();
+      element2.show();
       setTimeout(() => {
-        window.location.reload()
-      }, 3000)
+        window.location.reload();
+      }, 3000);
     } catch (error) {
-      console.log("error for delete nft",error)
-      await nftService.removeFromDb({ nftId })
-      element1.hide()
+      console.log("error for delete nft", error);
+      alert(error);
+      await nftService.removeFromDb({ nftId });
+      element1.hide();
       setTimeout(() => {
-        element2.hide()
-      }, 100)
-      throw new Error(error)
+        element2.hide();
+      }, 100);
+      throw new Error(error);
     }
-  }
+  };
 
   const joinCreate = async () => {
     try {
-      let user = localStorage.getItem("user")
-      const token = localStorage.getItem("token")
-      user = user && JSON.parse(user)
-      const socketUrl = process.env.REACT_APP_SOCKET_URL
+      let user = localStorage.getItem("user");
+      const token = localStorage.getItem("token");
+      user = user && JSON.parse(user);
+      const socketUrl = process.env.REACT_APP_SOCKET_URL;
       const socket = io(socketUrl, {
         query: { token },
-      })
-      socket.emit(user._id, user._id)
-      socket.on(user?._id, async data => {
-        setMessage(data?.message)
-      })
+      });
+      socket.emit(user._id, user._id);
+      socket.on(user?._id, async (data) => {
+        setMessage(data?.message);
+      });
     } catch (error) {
-      console.log({ error }, 2423534)
+      console.log({ error }, 2423534);
     }
-  }
+  };
 
   useEffect(() => {
-    joinCreate()
-    fetchMedia()
-    fetchUserCollections()
-    fetchCategories()
-  }, [])
+    joinCreate();
+    fetchMedia();
+    fetchUserCollections();
+    fetchCategories();
+  }, []);
 
   useEffect(() => {
-    const val = params.get("type")
+    const val = params.get("type");
     if (val === "createCuration") {
-      setStep(1)
-      setSelectedType(val)
+      setStep(1);
+      setSelectedType(val);
     }
-    const curationId = params.get("curationId")
-    setCollectionId(curationId)
-    getCuration(curationId)
-  }, [params])
+    const curationId = params.get("curationId");
+    setCollectionId(curationId);
+    getCuration(curationId);
+  }, [params]);
 
   const updateCuration = async () => {
-    setErrorCuration([])
-    const valid = validateUpdateData()
+    setErrorCuration([]);
+    const valid = validateUpdateData();
     const errElem = new bootstrap.Modal(
       document.getElementById("errorCreatingCurationModal")
-    )
-    if (!valid) return errElem.show()
+    );
+    if (!valid) return errElem.show();
     const element4 = new bootstrap.Modal(
       document.getElementById("exampleModalToggle4")
-    )
+    );
     const element1 = new bootstrap.Modal(
       document.getElementById("exampleModalToggl1")
-    )
+    );
     try {
-      element4.show()
-      const data = new FormData()
-      data.append("curationId", collectionId)
-      collectionName && data.append("name", collectionName)
-      symbol && data.append("symbol", symbol)
-      discription && data.append("discription", discription)
-      links.instagram && data.append("instagram", links.instagram)
-      links.facebook && data.append("facebook", links.facebook)
-      links.website && data.append("website", links.website)
-      links.twitter && data.append("twitter", links.twitter)
-      bannerImage && data.append("bannerImage", bannerImage)
-      youtube?.length > 0 && data.append("youtube", JSON.stringify(youtube))
-      file && data.append("logo", file)
+      element4.show();
+      const data = new FormData();
+      data.append("curationId", collectionId);
+      collectionName && data.append("name", collectionName);
+      symbol && data.append("symbol", symbol);
+      discription && data.append("discription", discription);
+      links.instagram && data.append("instagram", links.instagram);
+      links.facebook && data.append("facebook", links.facebook);
+      links.website && data.append("website", links.website);
+      links.twitter && data.append("twitter", links.twitter);
+      bannerImage && data.append("bannerImage", bannerImage);
+      youtube?.length > 0 && data.append("youtube", JSON.stringify(youtube));
+      file && data.append("logo", file);
       for (let i = 0; i < numberOfInputs; i++) {
-        data.append("descriptionImage", discriptionImage[i])
+        data.append("descriptionImage", discriptionImage[i]);
       }
 
-      await collectionServices.update(data)
-      element4.hide()
-      element1.show()
+      await collectionServices.update(data);
+      element4.hide();
+      element1.show();
       setTimeout(() => {
-        element1.hide()
-      }, 1000)
-      props?.render?.props?.onClickMenuButton("myProfile")
-      props.setProfileTab("Curation")
+        element1.hide();
+      }, 1000);
+      props?.render?.props?.onClickMenuButton("myProfile");
+      props.setProfileTab("Curation");
     } catch (error) {
-      element1.hide()
-      console.log({ error })
+      element1.hide();
+      console.log({ error });
     }
-  }
+  };
 
   const handleCuration = async () => {
-    const val = params.get("type")
-    if (val === "createCuration") await updateCuration()
-    else await createCollection()
-  }
-  const { chains, switchChain } = useSwitchChain()
+    const val = params.get("type");
+    console.log("value is----->", val);
+    if (val === "createCuration") await updateCuration();
+    else await createCollection();
+  };
+  const { chains, switchChain } = useSwitchChain();
 
-  const handleNetworkChange = () => {
-
-  }
+  const handleNetworkChange = () => {};
 
   return (
     <div className="profile__wrapper">
@@ -751,8 +795,7 @@ function Create(props) {
                 <h4>Create</h4>
               </div>
               <div className="single__create__card">
-              <span class="svg-container">
-              </span>
+                <span class="svg-container"></span>
                 <div className="create__content__blk">
                   <div className="create__content">
                     <h4>Create Curation</h4>
@@ -764,8 +807,8 @@ function Create(props) {
                   <a
                     href="#"
                     onClick={() => {
-                      setSelectedType("createCuration")
-                      setStep(1)
+                      setSelectedType("createCuration");
+                      setStep(1);
                     }}
                   >
                     <img src="assets/img/arrow-right-ico.svg" alt="" />
@@ -773,8 +816,7 @@ function Create(props) {
                 </div>
               </div>
               <div className="single__create__card">
-                <span className="svg-container-art">
-                </span>
+                <span className="svg-container-art"></span>
                 <div className="create__content__blk">
                   <div className="create__content">
                     <h4>Create Artwork NFTs</h4>
@@ -786,8 +828,8 @@ function Create(props) {
                   <a
                     href="#"
                     onClick={() => {
-                      setSelectedType("createNFT")
-                      setStep(1)
+                      setSelectedType("createNFT");
+                      setStep(1);
                     }}
                   >
                     <img src="assets/img/arrow-right-ico.svg" alt="" />
@@ -795,9 +837,7 @@ function Create(props) {
                 </div>
               </div>
               <div className="single__create__card">
-                <span className="svg-container-mint">
-                 
-                </span>
+                <span className="svg-container-mint"></span>
                 <div className="create__content__blk">
                   <div className="create__content">
                     <h4>Mint NFTs Using NFC</h4>
@@ -834,7 +874,10 @@ function Create(props) {
       <div className={selectedType === "createCuration" ? "" : "d-none"}>
         <div className="edit__profile__wrapper">
           <div className="edit__profile__title ">
-            <h4>{selectedType === "createCuration" ? "Edit" : "Create"} Your Collection</h4>
+            <h4>
+              {selectedType === "createCuration" ? "Edit" : "Create"} Your
+              Collection
+            </h4>
           </div>
           <div className="connected__top__blk mb-4">
             <div className="connected__left__blk">
@@ -849,14 +892,11 @@ function Create(props) {
               </div>
             </div>
             <div className="connected__right__blk">
-              <a data-bs-toggle="modal" role="button">
-                Connected
-              </a>
-              <span className="angle_down" onClick={handleNetworkChange}>
+              <a href="#">Connected</a>
+              {/* <span className="angle_down" onClick={handleNetworkChange}>
                 <img src="assets/img/angle_down.svg" alt="" />
 
-              </span>
-
+              </span> */}
             </div>
           </div>
           {/* <div className="connected__bottom__btn">
@@ -926,7 +966,7 @@ function Create(props) {
                           <input
                             type="text"
                             placeholder="Enter Collection Name"
-                            onChange={e => setCollectionName(e.target.value)}
+                            onChange={(e) => setCollectionName(e.target.value)}
                             value={collectionName}
                           />
                         </div>
@@ -937,13 +977,16 @@ function Create(props) {
                           <input
                             type="text"
                             placeholder="i.e: TAT"
-                            onChange={e => setSymbol(e.target.value)}
+                            onChange={(e) => setSymbol(e.target.value)}
                             value={symbol}
                           />
                         </div>
                       </div>
 
-                      <Banner bannerImage={bannerImage} setBannerImage={setBannerImage} />
+                      <Banner
+                        bannerImage={bannerImage}
+                        setBannerImage={setBannerImage}
+                      />
 
                       <div className="col-md-12">
                         <div className="single__edit__profile__step">
@@ -954,7 +997,7 @@ function Create(props) {
                             id=""
                             cols={30}
                             rows={10}
-                            onChange={e => setDiscription(e.target.value)}
+                            onChange={(e) => setDiscription(e.target.value)}
                             value={discription}
                           />
                         </div>
@@ -991,7 +1034,7 @@ function Create(props) {
                               type="text"
                               placeholder="Enter your website link"
                               value={links.website}
-                              onChange={e =>
+                              onChange={(e) =>
                                 setLinks({ ...links, website: e.target.value })
                               }
                             />
@@ -1007,7 +1050,7 @@ function Create(props) {
                               type="text"
                               placeholder="Enter your twitter link"
                               value={links.twitter}
-                              onChange={e =>
+                              onChange={(e) =>
                                 setLinks({ ...links, twitter: e.target.value })
                               }
                             />
@@ -1023,7 +1066,7 @@ function Create(props) {
                               type="text"
                               placeholder="Enter your facebook link"
                               value={links.facebook}
-                              onChange={e =>
+                              onChange={(e) =>
                                 setLinks({ ...links, facebook: e.target.value })
                               }
                             />
@@ -1039,7 +1082,7 @@ function Create(props) {
                               type="text"
                               placeholder="Enter your instagram link"
                               value={links.instagram}
-                              onChange={e =>
+                              onChange={(e) =>
                                 setLinks({
                                   ...links,
                                   instagram: e.target.value,
@@ -1105,7 +1148,7 @@ function Create(props) {
                                   type="text"
                                   placeholder="Enter video title"
                                   defaultValue={value.title}
-                                  onChange={e =>
+                                  onChange={(e) =>
                                     handleYoutubeInput(
                                       "title",
                                       e.target.value,
@@ -1122,7 +1165,7 @@ function Create(props) {
                                   type="text"
                                   placeholder="Enter your website link"
                                   defaultValue={value.url}
-                                  onChange={e =>
+                                  onChange={(e) =>
                                     handleYoutubeInput(
                                       "url",
                                       e.target.value,
@@ -1133,12 +1176,11 @@ function Create(props) {
                                 <button className="link_ico" type="button">
                                   <img src="assets/img/link_ico.svg" alt="" />
                                 </button>
-
                               </div>
                             </div>
                           </div>
                         </div>
-                      )
+                      );
                     })}
                   </div>
 
@@ -1192,17 +1234,17 @@ function Create(props) {
                                 id="discription-image"
                                 ref={discriptionImageRef}
                                 style={{ display: "none" }}
-                                onChange={e => {
-                                  const file = e.target.files[0]
-                                  if (!file) return
+                                onChange={(e) => {
+                                  const file = e.target.files[0];
+                                  if (!file) return;
                                   if (file.size > 10 * 1024 * 1024) {
-                                    setShowErrorPopup(true)
-                                    return
+                                    setShowErrorPopup(true);
+                                    return;
                                   }
                                   setDiscriptionImage([
                                     ...discriptionImage,
                                     e.target.files[0],
-                                  ])
+                                  ]);
                                 }}
                               />
                             )}
@@ -1231,7 +1273,7 @@ function Create(props) {
                             />
                           </div>
                         </div>
-                      )
+                      );
                     })}
                   </div>
 
@@ -1317,10 +1359,10 @@ function Create(props) {
             </div>
             <div className="connected__right__blk">
               <a href="#">Connected</a>
-              <span className="angle_down">
+              {/* <span className="angle_down">
                 <img src="assets/img/angle_down.svg" alt="" />
 
-              </span>
+              </span> */}
             </div>
           </div>
           {/* Step 1 */}
@@ -1410,13 +1452,13 @@ function Create(props) {
                             placeholder={0}
                             name="price"
                             value={createNftStep1.price}
-                            onChange={e =>
+                            onChange={(e) =>
                               Number(e.target.value) >= 0
                                 ? handleUpdateValues(e)
                                 : setCreateNftStep1({
-                                  ...createNftStep1,
-                                  price: "",
-                                })
+                                    ...createNftStep1,
+                                    price: "",
+                                  })
                             }
                           />
                           <button className="eth" type="button">
@@ -1427,14 +1469,14 @@ function Create(props) {
                       <div className="col-md-12">
                         <div className="listing__fee__blk">
                           <p>
-                            Plateform Fee <span>2%</span>
+                            Plateform Fee <span>{fee}%</span>
                           </p>
                           <p>
                             You will recieve{" "}
                             <span>
                               {createNftStep1.price
                                 ? createNftStep1.price -
-                                (2 * createNftStep1.price) / 100
+                                  (fee * createNftStep1.price) / 100
                                 : 0}
                             </span>
                           </p>
@@ -1463,12 +1505,12 @@ function Create(props) {
                             onChange={handleUpdateValues}
                           >
                             <option value="">Select Curation</option>
-                            {userCollection.map(item => {
+                            {userCollection.map((item) => {
                               return (
                                 <option key={item._id} value={item._id}>
                                   {item.name}
                                 </option>
-                              )
+                              );
                             })}
                           </select>
                         </div>
@@ -1499,7 +1541,7 @@ function Create(props) {
                               </div>
                               <div className="attachment__content">
                                 <a
-                                  style={{color : '#ddf247'}}
+                                  style={{ color: "#ddf247" }}
                                   onClick={() => handleChangeStep1Attachment(i)}
                                 >
                                   Change{" "}
@@ -1511,38 +1553,41 @@ function Create(props) {
                             </div>
                           </div>
                         ))}
-                          {createNftStep1Attachments.length > 4 ? '' :  
-                        <div className="col-xxl-3 col-xl-4 col-lg-4 col-md-6 col-sm-6">
-                          <div className="single__attachment__cird__blk">
-                            <div className="attachment_upload_thumb">
-                              <div className="imageWrapper">
-                                <img
-                                  className="image-2"
-                                  src="https://i.ibb.co/c8FMdw1/attachment-link.png"
-                                />
+                        {createNftStep1Attachments.length > 4 ? (
+                          ""
+                        ) : (
+                          <div className="col-xxl-3 col-xl-4 col-lg-4 col-md-6 col-sm-6">
+                            <div className="single__attachment__cird__blk">
+                              <div className="attachment_upload_thumb">
+                                <div className="imageWrapper">
+                                  <img
+                                    className="image-2"
+                                    src="https://i.ibb.co/c8FMdw1/attachment-link.png"
+                                  />
+                                </div>
                               </div>
+                              <button className="file-upload">
+                                <input
+                                  type="file"
+                                  className="file-input-2"
+                                  ref={step1AttachmentRef}
+                                  onChange={(e) =>
+                                    setCreateNftStep1Attachments([
+                                      ...createNftStep1Attachments,
+                                      e.target.files[0],
+                                    ])
+                                  }
+                                />
+                                <span>
+                                  Upload{" "}
+                                  <small>
+                                    <img src="assets/img/Upload.svg" alt="" />
+                                  </small>
+                                </span>
+                              </button>
                             </div>
-                            <button className="file-upload">
-                              <input
-                                type="file"
-                                className="file-input-2"
-                                ref={step1AttachmentRef}
-                                onChange={e =>
-                                  setCreateNftStep1Attachments([
-                                    ...createNftStep1Attachments,
-                                    e.target.files[0],
-                                  ])
-                                }
-                              />
-                              <span>
-                                Upload{" "}
-                                <small>
-                                  <img src="assets/img/Upload.svg" alt="" />
-                                </small>
-                              </span>
-                            </button>
                           </div>
-                        </div> }
+                        )}
                       </div>
                     </div>
                   </div>
@@ -1584,11 +1629,11 @@ function Create(props) {
                             type="checkbox"
                             id="flexSwitchCheckChecked"
                             checked={createNftStep2Conditions.freeMint}
-                            onChange={e => {
+                            onChange={(e) => {
                               setCreateNftStep2Conditions({
                                 ...createNftStep2Conditions,
                                 freeMint: !createNftStep2Conditions.freeMint,
-                              })
+                              });
                             }}
                           />
                         </div>
@@ -1608,7 +1653,7 @@ function Create(props) {
                             type="checkbox"
                             id="flexSwitchCheckChecked"
                             checked={createNftStep2Conditions.royalties}
-                            onChange={e =>
+                            onChange={(e) =>
                               setCreateNftStep2Conditions({
                                 ...createNftStep2Conditions,
                                 royalties: !createNftStep2Conditions.royalties,
@@ -1633,7 +1678,7 @@ function Create(props) {
                             type="checkbox"
                             id="flexSwitchCheckChecked"
                             checked={createNftStep2Conditions.unlockable}
-                            onChange={e =>
+                            onChange={(e) =>
                               setCreateNftStep2Conditions({
                                 ...createNftStep2Conditions,
                                 unlockable:
@@ -1675,7 +1720,7 @@ function Create(props) {
                             type="checkbox"
                             id="flexSwitchCheckChecked"
                             checked={createNftStep2Conditions.category}
-                            onChange={e =>
+                            onChange={(e) =>
                               setCreateNftStep2Conditions({
                                 ...createNftStep2Conditions,
                                 category: !createNftStep2Conditions.category,
@@ -1699,7 +1744,7 @@ function Create(props) {
                             type="checkbox"
                             id="flexSwitchCheckChecked"
                             checked={createNftStep2Conditions.split}
-                            onChange={e =>
+                            onChange={(e) =>
                               setCreateNftStep2Conditions({
                                 ...createNftStep2Conditions,
                                 split: !createNftStep2Conditions.split,
@@ -1724,13 +1769,13 @@ function Create(props) {
                           placeholder="Earn Royalties Percentage(%)"
                           name="royalty"
                           value={createNftStep2.royalty}
-                          onChange={e =>
+                          onChange={(e) =>
                             Number(e.target.value) >= 0
                               ? handleUpdateValuesStep2(e)
                               : setCreateNftStep1({
-                                ...createNftStep1,
-                                royalty: "",
-                              })
+                                  ...createNftStep1,
+                                  royalty: "",
+                                })
                           }
                         />
                       </div>
@@ -1764,7 +1809,7 @@ function Create(props) {
                                 <input
                                   type="file"
                                   multiple
-                                  onChange={e =>
+                                  onChange={(e) =>
                                     setDiscriptionImage1([
                                       ...discriptionImage1,
                                       e.target.files[0],
@@ -1839,7 +1884,7 @@ function Create(props) {
                               <option key={index} value={value._id}>
                                 {value.name}
                               </option>
-                            )
+                            );
                           })}
                         </select>
                       </div>
@@ -1879,11 +1924,11 @@ function Create(props) {
                               setCreateNftStep2Split([
                                 ...createNftStep2Split,
                                 createNftStep2SplitInput,
-                              ])
+                              ]);
                               setCreateNftStep2SplitInput({
                                 address: "",
                                 percent: "",
-                              })
+                              });
                             }}
                           >
                             <span>
@@ -1908,9 +1953,9 @@ function Create(props) {
                         <div className="input__add__btn">
                           <a
                             onClick={() => {
-                              const tempArr = [...createNftStep2Split]
-                              tempArr.splice(i, 1)
-                              setCreateNftStep2Split([...tempArr])
+                              const tempArr = [...createNftStep2Split];
+                              tempArr.splice(i, 1);
+                              setCreateNftStep2Split([...tempArr]);
                             }}
                           >
                             <img src="assets/img/Trash.svg" alt="" />
@@ -1953,11 +1998,11 @@ function Create(props) {
                             onClick={() => {
                               createNftStep2Properties.push(
                                 createNftStep2PropertiesInput
-                              )
+                              );
                               setCreateNftStep2PropertiesInput({
                                 type: "",
                                 value: "",
-                              })
+                              });
                             }}
                           >
                             <span>
@@ -1977,9 +2022,9 @@ function Create(props) {
                               <div className="nft__single__option">
                                 <a
                                   onClick={() => {
-                                    const temp = [...createNftStep2Properties]
-                                    temp.splice(i, 1)
-                                    setCreateNftStep2Properties([...temp])
+                                    const temp = [...createNftStep2Properties];
+                                    temp.splice(i, 1);
+                                    setCreateNftStep2Properties([...temp]);
                                   }}
                                 >
                                   <h4>{item.type}</h4>
@@ -2071,7 +2116,7 @@ function Create(props) {
                           onChange={handleUpdateSeller}
                         >
                           <option value="">Select</option>
-                          {countries.map(item => (
+                          {countries.map((item) => (
                             <option
                               key={item.isoCode}
                               value={JSON.stringify(item)}
@@ -2135,7 +2180,7 @@ function Create(props) {
                           onChange={handleUpdateSeller}
                         >
                           <option value="">Select</option>
-                          {states.map(item => (
+                          {states.map((item) => (
                             <option
                               key={item.isoCode}
                               value={JSON.stringify(item)}
@@ -2157,7 +2202,7 @@ function Create(props) {
                           onChange={handleUpdateSeller}
                         >
                           <option value="">Select</option>
-                          {cities.map(item => (
+                          {cities.map((item) => (
                             <option key={item.isoCode} value={item.name}>
                               {item.name}
                             </option>
@@ -2195,7 +2240,7 @@ function Create(props) {
                           containerClass="phone-container"
                           buttonClass="phone-dropdown"
                           inputClass="phone-control"
-                          country={'us'}
+                          country={"us"}
                           value={sellerInfo.phone}
                           onChange={handlePhoneInput}
                         />
@@ -2475,7 +2520,7 @@ function Create(props) {
         </div>
       </div>
       <div
-        className="modal fade common__popup__blk"
+        className="modal  common__popup__blk"
         id="exampleModalToggle1"
         aria-hidden="true"
         aria-labelledby="exampleModalToggleLabel"
@@ -2611,9 +2656,9 @@ function Create(props) {
                     onClick={() => {
                       const elem = new bootstrap.Modal(
                         document.getElementById("exampleModalToggle3")
-                      )
-                      elem.show()
-                      setAgree(true)
+                      );
+                      elem.show();
+                      setAgree(true);
                     }}
                   >
                     I Agree
@@ -2643,7 +2688,7 @@ function Create(props) {
                     <span>
                       <img src="assets/img/information_icon_1.svg" alt="" />
                     </span>{" "}
-                    Error in Creating Caution
+                    Error in Creating Caution is find
                   </h5>
                 </div>
                 <div className="popup__information__content">
@@ -2717,7 +2762,7 @@ function Create(props) {
         </div>
       </div>
       <div
-        className="modal fade common__popup__blk"
+        className="modal  common__popup__blk"
         id="exampleModalToggle4"
         aria-hidden="true"
         aria-labelledby="exampleModalToggleLabel"
@@ -2731,7 +2776,9 @@ function Create(props) {
                   <img src="assets/img/refresh_ico_1.svg" alt="" />
                 </div>
                 <div className="popup__common__title mt-20">
-                  <h4>{message ? message : "In Progress Please Wait ..."}</h4>
+                  <h4>
+                    {message ? message : "In Progress Please Wait ssss ..."}
+                  </h4>
                 </div>
               </div>
             </div>
@@ -2794,7 +2841,7 @@ function Create(props) {
         messege={"Please upload an image with Size less than 10MB"}
       />
     </div>
-  )
+  );
 }
 
-export default Create
+export default Create;
