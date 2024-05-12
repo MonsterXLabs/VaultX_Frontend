@@ -22,7 +22,11 @@ function Footer () {
                 >Magazine</a>
               </li>
               <li>
-                <a href="https://www.monsterx.io/">Who We Are</a>
+                <a
+                 href="https://www.monsterx.io/"
+                 target="_blank"
+                 rel="noopener noreferrer"
+                >Who We Are</a>
               </li>
             </ul>
           </div>
