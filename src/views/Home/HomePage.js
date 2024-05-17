@@ -351,7 +351,9 @@ function HomePage() {
         <div className="container">
           <div className="section__title text-center">
             <h3>
-              Inspiring <span>{section1?.title}</span> Interviews
+              <span style={
+                section1?.color ? { color: section1?.color } : {}
+              }>{section1?.title}</span>
             </h3>
             <p>{section1?.description}</p>
           </div>
