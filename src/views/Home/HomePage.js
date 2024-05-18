@@ -32,6 +32,7 @@ function HomePage() {
   const [curations, setCurations] = useState([])
   const [initial, setInitial] = useState(true)
   const [section4, setSection4] = useState()
+  const [section3, setSection3] = useState()
   const [section1, setSection1] = useState()
   const [carousel, setCarousel] = useState([
     {
@@ -75,6 +76,10 @@ function HomePage() {
     try {
       const { section1, section2, section3, section4 } = await getSections()
       setSection1(section1)
+      setCollectionHeader({
+        title: section3?.title,
+        description: section3?.description,
+      })
       const tempNfts = []
       for (let i = 0; i < section2?.box?.length; i++) {
         console.log(section2?.box[i]?.split("/")[5])
@@ -155,7 +160,7 @@ function HomePage() {
     const images = await fetchImages();
     console.log('image', images)
     setCarousel(images?.homeAutority);
-    setBottomBanner(images?.bottomBaner?.image);
+    setBottomBanner(images?.bottomBaner);
     setInitial(false);
   };
 
@@ -326,7 +331,7 @@ function HomePage() {
                     // style={{ backgroundImage: item.image }}
                   >
                     <img
-                      src={item.image}
+                      src={item.link ? item.link : item.image}
                       className="absolute z-0 left-0 right-0 top-0 bottom-0 object-cover w-full h-full"
                       alt=""
                     />
@@ -437,9 +442,9 @@ function HomePage() {
         <div className="container">
           <div className="section__title">
             <h3>
-              Exceptional Art <span>Curation</span>
+              <span>{collectionHeader?.title}</span>
             </h3>
-            <p>Experience artistic brilliance in curated collections</p>
+            <p>{collectionHeader?.description}</p>
           </div>
           <div className="exceptional__shape flex justify-center">
             <img src="assets/img/exceptional_shape.png" alt="" />
@@ -562,7 +567,7 @@ function HomePage() {
         <div className="container">
           <div className="section__title text-center">
             <h3>{section4?.title}</h3>
-            <h3>{section4?.description}</h3>
+            <p>{section4?.description}</p>
           </div>
           <div className="row g-4">
             <div className="col-xl-7">
@@ -692,25 +697,13 @@ function HomePage() {
           >
             <img
               src={
-                bottomBanner
-                  ? bottomBanner
-                  : "../../assets/img/newsletter_thumb.png"
+                bottomBanner.link 
+                  ? bottomBanner.link
+                  : bottomBanner.image
               }
               className="left-0 right-0 bottom-0 top-0 object-cover absolute w-full h-full"
               alt=""
             />
-            <div className="newsletter__form relative z-10">
-              <h4>
-                Join our newsletter to stay up to date on features and releases
-              </h4>
-              <form action="#">
-                <input type="text" placeholder="abcd@gmail.com" />
-                <a href="#">
-                  <img src="../../assets/img/mail.svg" alt="" />
-                </a>
-                <button type="button">Subscribe</button>
-              </form>
-            </div>
           </div>
         </div>
       </section>
