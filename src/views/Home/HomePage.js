@@ -49,7 +49,7 @@ function HomePage() {
         "660d4c79f6d04abe2e537aaf"
     }
   ]);
-  const [bottomBanner, setBottomBanner] = useState("");
+  const [bottomBanner, setBottomBanner] = useState({});
   const navigate = useNavigate();
   const options = {
     loop: true,
@@ -326,18 +326,22 @@ function HomePage() {
             </OwlCarousel>
           ) : (
             <OwlCarousel className="hero__inner__blk" {...options}>
-              {carousel?.map((item, i) => {
+              {carousel?.filter(item => item.image).map((item, i) => {
                 return (
                   <div
                     key={i}
                     className="hero__content__blk md:p-20 p-8 h-full relative min-h-[500px] md:min-h-[600px] mmd:min-h-[700px]"
                     // style={{ backgroundImage: item.image }}
                   >
+                    <a 
+                    href={item.link ? item.link : "#"}
+                    target="_blank">
                     <img
-                      src={item.link ? item.link : item.image}
+                      src={item.image}
                       className="absolute z-0 left-0 right-0 top-0 bottom-0 object-cover w-full h-full"
                       alt=""
                     />
+                    </a>
                     <div className="h-1/4 bg-gradient-to-b from-transparent via-[#121211aa] to-[#121211] absolute bottom-0 left-0 right-0 z-10"></div>
                     {/* <h1 className="relative z-10">
                       The First <span>RWA </span> Collection of{" "}
@@ -372,7 +376,7 @@ function HomePage() {
             <p>{section1?.description}</p>
           </div>
           <div className="row g-4">
-            {section1?.box?.map((value, index) => {
+            {section1?.box?.map((value, index) => { 
               return (
                 <a
                   key={index}
@@ -723,15 +727,15 @@ function HomePage() {
             //   backgroundImage: "url(../../assets/img/newsletter_thumb.png)",
             // }}
           >
+            <a 
+            href={bottomBanner.link ? bottomBanner.link : "#"}
+            target="_blank">
             <img
-              src={
-                bottomBanner.link 
-                  ? bottomBanner.link
-                  : bottomBanner.image
-              }
+              src={bottomBanner.image}
               className="left-0 right-0 bottom-0 top-0 object-cover absolute w-full h-full"
               alt=""
             />
+            </a>
           </div>
         </div>
       </section>
