@@ -77,6 +77,7 @@ function HomePage() {
       const { section1, section2, section3, section4 } = await getSections()
       setSection1(section1)
       setCollectionHeader({
+        color: section3?.color,
         title: section3?.title,
         description: section3?.description,
       })
@@ -95,6 +96,7 @@ function HomePage() {
       }
       setICAFNfts(tempNfts);
       setNftHeader({
+        color: section2?.color,
         title: section2?.title,
         description: section2?.description,
       });
@@ -113,6 +115,7 @@ function HomePage() {
       }
       setCurations(tempCurations);
       setCollectionHeader({
+        color: section3?.color,
         title: section3?.title,
         description: section3?.description,
       });
@@ -356,9 +359,15 @@ function HomePage() {
         <div className="container">
           <div className="section__title text-center">
             <h3>
-              <span style={
-                section1?.color ? { color: section1?.color } : {}
-              }>{section1?.title}</span>
+              {
+                section1 ? 
+                section1.title ? (section1.title.length > 0 ? 
+                section1.title.split(" ").map((word, idx) => {
+                  const color = section1.color.find(item => item.word === idx + 1)
+                  return <span style={{color: color?.color ? color.color : "#DDF247"}}>{word}&nbsp;</span>
+                  })
+                 : null) : null : null
+              }
             </h3>
             <p>{section1?.description}</p>
           </div>
@@ -411,14 +420,15 @@ function HomePage() {
           <div className="sport__title">
             <div className="section__title m-0">
               <h3 className="m-0">
-                {nftHeader?.title?.split(" ").slice(0, -1)?.join(" ")}{" "}
-                <span>
-                  {
-                    nftHeader?.title?.split(" ")[
-                      nftHeader?.title?.split(" ").length - 1
-                    ]
-                  }
-                </span>
+                {
+                  nftHeader ? 
+                  nftHeader.title ? (nftHeader.title.length > 0 ? 
+                  nftHeader.title.split(" ").map((word, idx) => {
+                    const color = nftHeader.color.find(item => item.word === idx + 1)
+                    return <span style={{color: color?.color ? color.color : "#DDF247"}}>{word}&nbsp;</span>
+                    })
+                  : null) : null : null
+                }
               </h3>
             </div>
             <div className="discover__btn">
@@ -442,7 +452,15 @@ function HomePage() {
         <div className="container">
           <div className="section__title">
             <h3>
-              <span>{collectionHeader?.title}</span>
+                {
+                  collectionHeader ? 
+                  collectionHeader.title ? (collectionHeader.title.length > 0 ? 
+                  collectionHeader.title.split(" ").map((word, idx) => {
+                    const color = collectionHeader.color.find(item => item.word === idx + 1)
+                    return <span style={{color: color?.color ? color.color : "#DDF247"}}>{word}&nbsp;</span>
+                    })
+                  : null) : null : null
+                }
             </h3>
             <p>{collectionHeader?.description}</p>
           </div>
@@ -566,7 +584,17 @@ function HomePage() {
       <section className="event__area">
         <div className="container">
           <div className="section__title text-center">
-            <h3>{section4?.title}</h3>
+            <h3>
+                {
+                  section4 ? 
+                  section4.title ? (section4.title.length > 0 ? 
+                  section4.title.split(" ").map((word, idx) => {
+                    const color = section4.color.find(item => item.word === idx + 1)
+                    return <span style={{color: color?.color ? color.color : "#DDF247"}}>{word}&nbsp;</span>
+                    })
+                  : null) : null : null
+                }
+            </h3>
             <p>{section4?.description}</p>
           </div>
           <div className="row g-4">
