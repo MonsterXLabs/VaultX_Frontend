@@ -32,6 +32,7 @@ function HomePage() {
   const [curations, setCurations] = useState([])
   const [initial, setInitial] = useState(true)
   const [section4, setSection4] = useState()
+  const [section3, setSection3] = useState()
   const [section1, setSection1] = useState()
   const [carousel, setCarousel] = useState([
     {
@@ -48,7 +49,7 @@ function HomePage() {
         "660d4c79f6d04abe2e537aaf"
     }
   ]);
-  const [bottomBanner, setBottomBanner] = useState("");
+  const [bottomBanner, setBottomBanner] = useState({});
   const navigate = useNavigate();
   const options = {
     loop: true,
@@ -75,6 +76,11 @@ function HomePage() {
     try {
       const { section1, section2, section3, section4 } = await getSections()
       setSection1(section1)
+      setCollectionHeader({
+        color: section3?.color,
+        title: section3?.title,
+        description: section3?.description,
+      })
       const tempNfts = []
       for (let i = 0; i < section2?.box?.length; i++) {
         console.log(section2?.box[i]?.split("/")[5])
@@ -90,6 +96,7 @@ function HomePage() {
       }
       setICAFNfts(tempNfts);
       setNftHeader({
+        color: section2?.color,
         title: section2?.title,
         description: section2?.description,
       });
@@ -108,6 +115,7 @@ function HomePage() {
       }
       setCurations(tempCurations);
       setCollectionHeader({
+        color: section3?.color,
         title: section3?.title,
         description: section3?.description,
       });
@@ -155,7 +163,7 @@ function HomePage() {
     const images = await fetchImages();
     console.log('image', images)
     setCarousel(images?.homeAutority);
-    setBottomBanner(images?.bottomBaner?.image);
+    setBottomBanner(images?.bottomBaner);
     setInitial(false);
   };
 
@@ -318,18 +326,22 @@ function HomePage() {
             </OwlCarousel>
           ) : (
             <OwlCarousel className="hero__inner__blk" {...options}>
-              {carousel?.map((item, i) => {
+              {carousel?.filter(item => item.image).map((item, i) => {
                 return (
                   <div
                     key={i}
                     className="hero__content__blk md:p-20 p-8 h-full relative min-h-[500px] md:min-h-[600px] mmd:min-h-[700px]"
                     // style={{ backgroundImage: item.image }}
                   >
+                    <a 
+                    href={item.link ? item.link : "#"}
+                    target="_blank">
                     <img
                       src={item.image}
                       className="absolute z-0 left-0 right-0 top-0 bottom-0 object-cover w-full h-full"
                       alt=""
                     />
+                    </a>
                     <div className="h-1/4 bg-gradient-to-b from-transparent via-[#121211aa] to-[#121211] absolute bottom-0 left-0 right-0 z-10"></div>
                     {/* <h1 className="relative z-10">
                       The First <span>RWA </span> Collection of{" "}
@@ -351,14 +363,20 @@ function HomePage() {
         <div className="container">
           <div className="section__title text-center">
             <h3>
-              <span style={
-                section1?.color ? { color: section1?.color } : {}
-              }>{section1?.title}</span>
+              {
+                section1 ? 
+                section1.title ? (section1.title.length > 0 ? 
+                section1.title.split(" ").map((word, idx) => {
+                  const color = section1.color.find(item => item.word === idx + 1)
+                  return <span style={{color: color?.color ? color.color : "#DDF247"}}>{word}&nbsp;</span>
+                  })
+                 : null) : null : null
+              }
             </h3>
             <p>{section1?.description}</p>
           </div>
           <div className="row g-4">
-            {section1?.box?.map((value, index) => {
+            {section1?.box?.map((value, index) => { 
               return (
                 <a
                   key={index}
@@ -406,14 +424,15 @@ function HomePage() {
           <div className="sport__title">
             <div className="section__title m-0">
               <h3 className="m-0">
-                {nftHeader?.title?.split(" ").slice(0, -1)?.join(" ")}{" "}
-                <span>
-                  {
-                    nftHeader?.title?.split(" ")[
-                      nftHeader?.title?.split(" ").length - 1
-                    ]
-                  }
-                </span>
+                {
+                  nftHeader ? 
+                  nftHeader.title ? (nftHeader.title.length > 0 ? 
+                  nftHeader.title.split(" ").map((word, idx) => {
+                    const color = nftHeader.color.find(item => item.word === idx + 1)
+                    return <span style={{color: color?.color ? color.color : "#DDF247"}}>{word}&nbsp;</span>
+                    })
+                  : null) : null : null
+                }
               </h3>
             </div>
             <div className="discover__btn">
@@ -437,9 +456,17 @@ function HomePage() {
         <div className="container">
           <div className="section__title">
             <h3>
-              Exceptional Art <span>Curation</span>
+                {
+                  collectionHeader ? 
+                  collectionHeader.title ? (collectionHeader.title.length > 0 ? 
+                  collectionHeader.title.split(" ").map((word, idx) => {
+                    const color = collectionHeader.color.find(item => item.word === idx + 1)
+                    return <span style={{color: color?.color ? color.color : "#DDF247"}}>{word}&nbsp;</span>
+                    })
+                  : null) : null : null
+                }
             </h3>
-            <p>Experience artistic brilliance in curated collections</p>
+            <p>{collectionHeader?.description}</p>
           </div>
           <div className="exceptional__shape flex justify-center">
             <img src="assets/img/exceptional_shape.png" alt="" />
@@ -561,8 +588,18 @@ function HomePage() {
       <section className="event__area">
         <div className="container">
           <div className="section__title text-center">
-            <h3>{section4?.title}</h3>
-            <h3>{section4?.description}</h3>
+            <h3>
+                {
+                  section4 ? 
+                  section4.title ? (section4.title.length > 0 ? 
+                  section4.title.split(" ").map((word, idx) => {
+                    const color = section4.color.find(item => item.word === idx + 1)
+                    return <span style={{color: color?.color ? color.color : "#DDF247"}}>{word}&nbsp;</span>
+                    })
+                  : null) : null : null
+                }
+            </h3>
+            <p>{section4?.description}</p>
           </div>
           <div className="row g-4">
             <div className="col-xl-7">
@@ -690,27 +727,15 @@ function HomePage() {
             //   backgroundImage: "url(../../assets/img/newsletter_thumb.png)",
             // }}
           >
+            <a 
+            href={bottomBanner.link ? bottomBanner.link : "#"}
+            target="_blank">
             <img
-              src={
-                bottomBanner
-                  ? bottomBanner
-                  : "../../assets/img/newsletter_thumb.png"
-              }
+              src={bottomBanner.image}
               className="left-0 right-0 bottom-0 top-0 object-cover absolute w-full h-full"
               alt=""
             />
-            <div className="newsletter__form relative z-10">
-              <h4>
-                Join our newsletter to stay up to date on features and releases
-              </h4>
-              <form action="#">
-                <input type="text" placeholder="abcd@gmail.com" />
-                <a href="#">
-                  <img src="../../assets/img/mail.svg" alt="" />
-                </a>
-                <button type="button">Subscribe</button>
-              </form>
-            </div>
+            </a>
           </div>
         </div>
       </section>

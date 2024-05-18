@@ -23,7 +23,7 @@ function Footer () {
               </li>
               <li>
                 <a
-                 href="https://www.monsterx.io/"
+                 href="https://www.monsterx.io"
                  target="_blank"
                  rel="noopener noreferrer"
                 >Who We Are</a>
