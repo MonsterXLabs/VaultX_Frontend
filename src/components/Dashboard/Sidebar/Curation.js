@@ -15,6 +15,7 @@ function Curation(props) {
     link: "#",
   })
   const { fetchImages } = useContext(WalletContext)
+  const [expandImage, setExpandImage] = useState(false)
 
   const fetchMedia = async () => {
     const images = await fetchImages()
@@ -31,20 +32,43 @@ function Curation(props) {
       <div className="overlay none__desk" />
       <div className="profile__wrapper">
         <MainSearch />
-        <a
-          href={banner.link ? banner.link : "#"}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="breadcrumb__area !h-auto !overflow-hidden !rounded-3xl pb-4"
+        <div
+          className="breadcrumb__area !h-auto !overflow-hidden !rounded-3xl pb-4 relative"
+          style={{
+            position: "relative"
+          }}
         >
           {banner.image && (
             <img
               src={banner.image}
-              className="breadcrumb__inner__wrap !p-0 !w-full object-cover"
+              className="breadcrumb__inner__wrap !p-0 !w-full object-cover "
+              style={{
+                width: '100%',
+                objectFit: 'cover',
+                height: expandImage ? '100%' : '400px',
+              }}
               alt=""
             />
           )}
-        </a>
+          <div className=" bg-white" style={{
+            borderRadius: "100%",
+            padding: "5px 5px",
+            position: "absolute",
+            right: "50%",
+            bottom: "45px",
+            cursor: "pointer"
+          }}>
+            {
+              expandImage ? (
+                <img src="assets/img/open.png" height={30} width={30} onClick={() => setExpandImage(!expandImage)} style={{
+                  transform: "rotate(180deg)"
+                }} />
+              ) : (
+                <img src="assets/img/open.png" height={30} width={30} onClick={() => setExpandImage(!expandImage)} />
+              )
+            }
+          </div>
+        </div>
         <div className="ctegorie__search__area mt-35">
           <div className="flex__filter">
             <h5>

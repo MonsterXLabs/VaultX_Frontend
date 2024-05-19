@@ -45,6 +45,25 @@ import {
 } from "../../utils/validators"
 import MainSearch from "../../components/Dashboard/Search/MainSearch"
 import { contractAddress, explorer, network } from "../../utils/config"
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
+import Modal from '@mui/material/Modal';
+import NftCarousel from "../../components/Modal/NftCarousel"
+
+const style = {
+  borderRadius: '10px',
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: "40%",
+  height: "70%",
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
+  boxShadow: 24,
+  p: 4,
+};
 
 /**
  * MyComponent functional component.
@@ -103,6 +122,8 @@ function NFTDetails() {
   const [categories, setCategories] = useState([])
   const [createNftStep1Attachments, setCreateNftStep1Attachments] = useState([])
   const [views, setViews] = useState(0)
+  const [activeImage, setActiveImage] = useState(null)
+  const [modalActive, setModalActive] = useState(false)
   /**
    * The state variable representing some value.
    * @type {'buy' | 'bid'}
@@ -153,7 +174,6 @@ function NFTDetails() {
       const {
         data: { views, ipAddress },
       } = await nftService.addView({ nftId: id, ip: previosIpAddress })
-      console.log({ ipAddress, views }, "rlafh")
       localStorage.setItem("ipAddress", ipAddress)
       setViews(views)
     } catch (error) {
@@ -217,7 +237,9 @@ function NFTDetails() {
       const {
         data: { nft },
       } = await nftService.getNftById(id)
+      setActiveImage(nft?.cloudinaryUrl)
       setNft(nft)
+      console.log(nft)
       setDiscription(nft?.description)
       setCreateNftStep1Attachments(nft?.attachments)
       console.log(nft?.category?.name, "name")
@@ -487,7 +509,6 @@ function NFTDetails() {
     try {
       const user = JSON.parse(getCookie("user"))
       const { logs, transactionHash } = await releaseEscrow(nft?.tokenId, address)
-      console.log("logs are---->", logs);
       let eventRoyaltyReceived = getEventArray(logs, "RoyaltyReceived")
       let eventPaymentSplitReceived = getEventArray(
         logs,
@@ -1038,21 +1059,34 @@ function NFTDetails() {
         </header>
         {/* =================== HEADER AREA END ===================== */}
         {/* =================== NFT DETAIL HERO AREA START ===================== */}
+        <Modal
+          open={modalActive}
+          onClose={() => setModalActive(false)}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description"
+        >
+          <Box sx={style}>
+            <NftCarousel images={[nft?.cloudinaryUrl, ...(nft?.attachments ? nft.attachments : [])]} />
+          </Box>
+        </Modal>
         <section className="nft__detail__hero__area">
           <div className="container">
             <div className="row g-4">
               <div className="col-lg-6">
                 <div className="nft__detail__thumb__blk">
                   <img
-                    src={nft?.cloudinaryUrl}
+                    src={activeImage}
                     className="!aspect-square"
+                    style={{
+                      cursor: "zoom-in"
+                    }}
+                    onClick={()=>{
+                      setModalActive(true)
+                    }}
                     alt=""
                   />
                   <div className="nft__heart__blk">
                     <div className="nft__compas">
-                      {/* <a href="#">
-                        <img src="../assets/img/MATIC.png" alt="" />
-                      </a> */}
                     </div>
                     <div className="heart__area">
                       <span>{likes}</span>
@@ -1097,9 +1131,6 @@ function NFTDetails() {
                         </div>
                       </div>
                     </div>
-                  </div>
-                  <div className="nft_ico">
-                    <img src="../../assets/img/nfc-icon.svg" alt="" />
                   </div>
                 </div>
               </div>
@@ -1405,7 +1436,7 @@ function NFTDetails() {
             <div className="nft__thumb__area">
               <div className="row g-3">
                 {nft?.attachments.map(item => (
-                  <div className="col-2">
+                  <div className="col-2" onClick={() => setActiveImage(item)}>
                     <div className="single__nft__thumb">
                       <img src={item} alt="" />
                     </div>
