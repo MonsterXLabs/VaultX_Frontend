@@ -15,6 +15,7 @@ import {
   userServices,
 } from "../../services/supplier"
 import { WalletContext } from "../../Context/WalletConnect"
+import NftCarousel from "../../components/Modal/NftCarousel";
 
 function HomePage() {
   const [artists, setArtists] = useState([]);
@@ -732,7 +733,10 @@ function HomePage() {
             target="_blank">
             <img
               src={bottomBanner.image}
-              className="left-0 right-0 bottom-0 top-0 object-cover absolute w-full h-full"
+              style={{
+                width: "100%",
+                height: "100%"
+              }}
               alt=""
             />
             </a>
