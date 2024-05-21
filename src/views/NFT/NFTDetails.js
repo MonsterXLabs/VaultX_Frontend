@@ -2005,7 +2005,7 @@ function NFTDetails() {
               </div>
             </div>
 
-            {(nft?.unlockableContent && JSON.parse(getCookie('user'))._id == nft?.owner?._id) &&
+            {(nft?.unlockableContent && JSON.parse(getCookie('user'))?._id == nft?.owner?._id) &&
               <div className="description__similar__blk">
                 <div className="description__title__blk">
                   <div className="description__title">
