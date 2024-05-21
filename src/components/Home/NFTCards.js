@@ -6,7 +6,6 @@ import {useNavigate} from "react-router-dom"
 function NFTCards(props) {
   const navigate = useNavigate()
   const options = {
-    loop: true,
     nav: true,
     navText: [
       '<i class="fa fa-long-arrow-left"></i>',
@@ -76,7 +75,10 @@ function NFTCards(props) {
             <div
               key={index}
               className="single__sport__blk"
-              onClick={() => navigate("/dashboard/nft/" + nft?._id)}
+              onClick={() => {
+                window.scrollTo(0, 0)
+                navigate("/dashboard/nft/" + nft?._id)
+              }}
             >
               <div className="sport__thumb">
                 <img className="w-full !aspect-[4/3] !object-cover" src={nft?.cloudinaryUrl} alt="" />
