@@ -57,12 +57,12 @@ const style = {
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
-  width: "40%",
-  height: "70%",
-  bgcolor: 'background.paper',
+  width: "100%",
+  height: "100%",
+  // bgcolor: 'background.paper',
+  bgcolor: 'rgba(200, 200, 200, 0.5)',
   border: '2px solid #000',
   boxShadow: 24,
-  p: 4,
 };
 
 /**
@@ -1066,6 +1066,20 @@ function NFTDetails() {
           aria-describedby="modal-modal-description"
         >
           <Box sx={style}>
+            <div style={{
+              position: "absolute",
+              top: "20px",
+              right: "20px",
+              backgroundColor: "white",
+              padding: "10px",
+              cursor: "pointer",
+              borderRadius: "100%",
+              zIndex: 100
+            }}
+            onClick={() => setModalActive(false)}
+            >
+            <img src="../../assets/img/delete_icon.svg" alt="" className="close__icon" />
+            </div>
             <NftCarousel images={[nft?.cloudinaryUrl, ...(nft?.attachments ? nft.attachments : [])]} />
           </Box>
         </Modal>

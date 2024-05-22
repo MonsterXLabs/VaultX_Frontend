@@ -48,6 +48,8 @@ function Curation() {
       console.log(error)
     }
   }
+  
+  const [expandImage, setExpandImage] = useState(false)
 
   const getCurationNfts = async () => {
     try {
@@ -390,17 +392,63 @@ function Curation() {
             </div>
           </div>
         </div>
-        <div className="art__bg__area">
+        <div>
+        <div style={{
+          position: 'relative',
+          overflow: !expandImage ? 'hidden' : 'visible',
+          borderRadius: '20px',
+          marginBottom: '60px',
+          height: !expandImage ? '300px' : '1225px',
+          backgroundRepeat: 'no-repeat',
+        }}>
           <img
             src={
               curation?.descriptionImage.length > 0 &&
               curation?.descriptionImage[0]
             }
             alt=""
+            style={{
+              borderRadius: "20px",
+              width: "100%",
+              objectPosition: "center",
+              position: 'absolute',
+              top: 0,
+            }}
           />
-          <a href="#">
-            <img src="../../assets/img/double_down_ico.svg" alt="" />
-          </a>
+          {
+            !expandImage ? 
+            <div style={{
+              position: 'absolute',
+              bottom: "10px",
+              zIndex: 10,
+              left: "45%",
+              cursor: "pointer",
+              
+            }}
+            onClick={() => setExpandImage(true)} 
+            >
+                <img src="../../assets/img/double_down_ico.svg" alt=""/> 
+            </div>
+            : 
+            <div style={{
+              position: 'absolute',
+              bottom: "10px",
+              zIndex: 10,
+              left: "45%",
+              cursor: "pointer",
+              
+            }}
+            onClick={() => setExpandImage(false)} 
+            >
+                <img src="../../assets/img/double_down_ico.svg" alt="" style={{ transform: "rotate(180deg)" }} /> 
+            </div>
+          }
+          <div style={{
+            position: "absolute",
+            zIndex: 5,
+            bottom: 0,
+          }} className="h-1/4 bg-gradient-to-b from-transparent via-[#121211aa] to-[#121211] absolute bottom-0 left-0 right-0 z-10"></div>
+        </div>
         </div>
         <div className="categorie__btn">
           <a
