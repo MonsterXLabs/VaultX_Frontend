@@ -73,6 +73,7 @@ function Curation() {
 
       getImageDimensions(data.collection.descriptionImage[0], (width, height) => {
         if (width !== null && height !== null) {
+          console.log(height)
           setHeightExpand(height)
         }
       });
@@ -446,6 +447,7 @@ function Curation() {
               width: "100%",
               objectPosition: "center",
               position: 'absolute',
+              height: !expandImage ? 'auto' : `${heightExpand}px`,
               top: 0,
             }}
           />
