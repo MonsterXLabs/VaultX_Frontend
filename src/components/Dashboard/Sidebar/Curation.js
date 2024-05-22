@@ -33,7 +33,7 @@ function Curation(props) {
       <div className="profile__wrapper">
         <MainSearch />
         <div
-          className="breadcrumb__area !h-auto !overflow-hidden !rounded-3xl pb-4 relative"
+          className="breadcrumb__area !h-auto !overflow-hidden !rounded-3xl relative"
           style={{
             position: "relative"
           }}
@@ -41,13 +41,11 @@ function Curation(props) {
           {banner.image && (
             <img
               src={banner.image}
-              className="breadcrumb__inner__wrap !p-0 !w-full object-cover "
-              style={{
-                width: '100%',
-                objectFit: 'fill',
-                height: '400px',
-              }}
+              className="breadcrumb__inner__wrap !p-0 !w-full"
               alt=""
+              style={{
+                objectFit: 'fill'
+              }}
             />
           )}
         </div>

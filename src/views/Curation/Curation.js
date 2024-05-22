@@ -38,12 +38,45 @@ function Curation() {
   }
   const {curationId} = useParams()
 
+  const [heightExpand, setHeightExpand] = useState(1000)
+
+  const getImageDimensions = (imageUrl, callback) => {
+    // Create a new Image object
+    const img = new Image();
+  
+    // Define the onload event handler
+    img.onload = function() {
+      // Image is loaded, retrieve the dimensions
+      const width = img.width;
+      const height = img.height;
+      
+      // Invoke the callback with the dimensions
+      callback(width, height);
+    };
+  
+    // Handle potential errors
+    img.onerror = function() {
+      console.error('Error loading the image.');
+      callback(null, null);
+    };
+  
+    // Set the image source to the provided URL
+    img.src = imageUrl;
+  }
+
   const getCuraion = async () => {
     try {
       const {data} = await collectionServices.getCollectionById(curationId)
       const res = await collectionServices.getCollectionInfo(curationId)
       setCurationInfo(res.data.collection)
       setCuration(data.collection)
+
+      getImageDimensions(data.collection.descriptionImage[0], (width, height) => {
+        if (width !== null && height !== null) {
+          setHeightExpand(height)
+        }
+      });
+
     } catch (error) {
       console.log(error)
     }
@@ -65,6 +98,7 @@ function Curation() {
       console.log(error)
     }
   }
+
 
   const getArtitsLikes = async () => {
     try {
@@ -398,7 +432,7 @@ function Curation() {
           overflow: !expandImage ? 'hidden' : 'visible',
           borderRadius: '20px',
           marginBottom: '60px',
-          height: !expandImage ? '300px' : '1225px',
+          height: !expandImage ? '300px' : `${heightExpand + 10}px`,
           backgroundRepeat: 'no-repeat',
         }}>
           <img

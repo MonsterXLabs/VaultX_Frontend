@@ -29,7 +29,6 @@ export default function NftCarousel(props) {
                 src={image}
                 alt="NFT"
                 style={{
-                  width: "80vw",
                   margin: "auto",
                   height: "100vh",
                 }}
