@@ -44,7 +44,10 @@ function Appreciate(props) {
         {banner?.image && (
           <img
             src={banner?.image}
-            className="breadcrumb__inner__wrap !p-0 !w-full object-cover"
+            className="breadcrumb__inner__wrap !p-0 !w-full"
+            style={{
+              objectFit: "fill",
+            }}
             alt=""
           />
         )}
