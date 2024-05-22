@@ -44,30 +44,12 @@ function Curation(props) {
               className="breadcrumb__inner__wrap !p-0 !w-full object-cover "
               style={{
                 width: '100%',
-                objectFit: 'cover',
-                height: expandImage ? '100%' : '400px',
+                objectFit: 'fill',
+                height: '400px',
               }}
               alt=""
             />
           )}
-          <div className=" bg-white" style={{
-            borderRadius: "100%",
-            padding: "5px 5px",
-            position: "absolute",
-            right: "50%",
-            bottom: "45px",
-            cursor: "pointer"
-          }}>
-            {
-              expandImage ? (
-                <img src="assets/img/open.png" height={30} width={30} onClick={() => setExpandImage(!expandImage)} style={{
-                  transform: "rotate(180deg)"
-                }} />
-              ) : (
-                <img src="assets/img/open.png" height={30} width={30} onClick={() => setExpandImage(!expandImage)} />
-              )
-            }
-          </div>
         </div>
         <div className="ctegorie__search__area mt-35">
           <div className="flex__filter">
