@@ -4,6 +4,7 @@ import "owl.carousel/dist/assets/owl.theme.default.css"
 import {useNavigate} from "react-router-dom"
 
 function NFTCards(props) {
+  console.log('Welcome')
   const navigate = useNavigate()
   const options = {
     nav: true,
