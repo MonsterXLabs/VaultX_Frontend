@@ -44,8 +44,9 @@ function Curation(props) {
               className="breadcrumb__inner__wrap !p-0 !w-full object-cover "
               style={{
                 width: '100%',
-                objectFit: 'fill',
+                objectFit: 'contain',
                 height: '400px',
+                borderRadius: '20px'
               }}
               alt=""
             />
