@@ -2,7 +2,7 @@ import axios from "axios"
 import { getCookie } from "../utils/cookie"
 import { data } from "jquery"
 const server_uri =
-  process.env.REACT_APP_BACKEND_URL || "http://localhost:4000/api/v1"
+  process.env.REACT_APP_BACKEND_URL || "https://api.vault-x.io/api/v1"
 const options = {
   baseUrl: server_uri,
   headers: {

@@ -15,7 +15,6 @@ import {
   userServices,
 } from "../../services/supplier"
 import { WalletContext } from "../../Context/WalletConnect"
-import NftCarousel from "../../components/Modal/NftCarousel";
 
 function HomePage() {
   const [artists, setArtists] = useState([]);
