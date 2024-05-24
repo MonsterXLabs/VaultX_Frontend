@@ -325,13 +325,13 @@ function Header() {
             <nav className="accordion">
               <ul>
                 <li>
-                  <a href="#">Appreciation</a>
+                  <span>Appreciation</span>
                 </li>
                 <li>
-                  <a href="#">Artist</a>
+                  <span>Artist</span>
                 </li>
                 <li>
-                  <a href="#">Curation</a>
+                  <span>Curation</span>
                 </li>
                 <li>
                   <a
@@ -343,7 +343,7 @@ function Header() {
                   </a>
                 </li>
                 <li>
-                  <a href="#">How to work</a>
+                  <span>How to work</span>
                 </li>
               </ul>
             </nav>
@@ -363,21 +363,21 @@ function Header() {
             </div>
           )}
           <div className="social__ico__blk">
-            <a href="#">
+            <span>
               <img src="../assets/img/social_ico_1.svg" alt="" />
-            </a>
-            <a href="#">
+            </span>
+            <span>
               <img src="../assets/img/social_ico_2.svg" alt="" />
-            </a>
-            <a href="#">
+            </span>
+            <span>
               <img src="../assets/img/social_ico_3.svg" alt="" />
-            </a>
-            <a href="#">
+            </span>
+            <span>
               <img src="../assets/img/social_ico_4.svg" alt="" />
-            </a>
-            <a href="#">
+            </span>
+            <span>
               <img src="../assets/img/social_ico_5.svg" alt="" />
-            </a>
+            </span>
           </div>
         </div>
         <div className="close__menu" onClick={closePopUp}>
@@ -392,8 +392,10 @@ function Header() {
       <header className="header__area">
         <div className="container lg:block !flex !flex-row-reverse items-center gap-3">
           <div className="header__inner__blk w-full">
-            <div className="header__logo">
-              <span onClick={() => navigate("/dashboard")}>
+            <div className="header__logo" onClick={() => navigate("/")} style={{
+              cursor: "pointer"
+            }}>
+              <span>
                 <img src="../../assets/img/brand.svg" alt="" />
               </span>
             </div>
@@ -402,34 +404,37 @@ function Header() {
               <nav>
                 <ul className="flex">
                   <li>
-                    <a
-                      href="#"
+                    <span
+                      className="cursor-pointer"
                       onClick={() => navigate("/dashboard?appreciate")}
                     >
                       Appreciation
-                    </a>
+                    </span>
                   </li>
                   {/* <li>
-                      <a href="#" onClick={() => navigate("/dashboard?artist")}>
+                      <span onClick={() => navigate("/dashboard?artist")}>
                         Artist
                       </a>
                     </li> */}
                   <li>
-                    <a href="#" onClick={() => navigate("/dashboard?curation")}>
+                    <span
+                    className="cursor-pointer"
+                    onClick={() => navigate("/dashboard?curation")}>
                       Curation
-                    </a>
+                    </span>
                   </li>
                   <li>
-                    <a
+                    <span
                       href="https://artistvaultx.wpcomstaging.com/"
                       target="_blank"
                       rel="noopener noreferrer"
+                      className="cursor-pointer"
                     >
                       Magazine
-                    </a>
+                    </span>
                   </li>
                   <li>
-                    <a href="#">How to work</a>
+                    <span className="cursor-pointer">How to work</span>
                   </li>
                   <li>{/* <div id="google_translate_element"></div> */}</li>
                 </ul>
@@ -732,7 +737,7 @@ function Header() {
                               </a>
                             </li>
                             <li className="flex_list">
-                              <a href="#">Language</a>
+                              <span>Language</span>
                               <div className="profile__list__inner__language">
                                 <div
                                   className={
@@ -821,12 +826,12 @@ function Header() {
                                 >
                                   <img src="../../assets/img/copy.svg" alt="" />
                                 </a>
-                                <a href="#" onClick={logoutOnConnect}>
+                                <span onClick={logoutOnConnect}>
                                   <img
                                     src="../../assets/img/power_btn.svg"
                                     alt=""
                                   />
-                                </a>
+                                </span>
                               </div>
                             </div>
                           </div>
@@ -902,7 +907,7 @@ function Header() {
                     <div className="popup__alart">
                       <p>
                         <span>*{errorMsg}</span>{" "}
-                        {/* <a href="#">Sign in</a> instead? */}
+                        {/* <span>Sign in</a> instead? */}
                       </p>
                     </div>
                   )}
