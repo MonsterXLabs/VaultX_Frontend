@@ -24,10 +24,10 @@ function Sidebar({onClickMenuButton, activeTab, openDialog, setOpenDialog}) {
         }
       >
         <div className="flex flex-col max-h-screen pt-12 pb-4">
-          <div className="sidebar__logo">
-            <a href="#" onClick={() => navigate("/")}>
+          <div className="sidebar__logo cursor-pointer">
+            <span onClick={() => navigate("/")}>
               <img src="../../assets/img/brand.svg" alt="" />
-            </a>
+            </span>
           </div>
           <div className="profile__search desk__none">
             <input type="text" placeholder="Search artwork, collection..." />
@@ -238,10 +238,10 @@ function Sidebar({onClickMenuButton, activeTab, openDialog, setOpenDialog}) {
         }
       />
       <div className={`sidebar__area flex flex-col max-h-screen`}>
-        <div className="sidebar__logo">
-          <a href="#" onClick={() => navigate("/")}>
+        <div className="sidebar__logo cursor-pointer">
+          <span onClick={() => navigate("/")}>
             <img src="../../assets/img/brand.svg" alt="" />
-          </a>
+          </span>
         </div>
         <div className="profile__search desk__none">
           <input type="text" placeholder="Search artwork, collection..." />

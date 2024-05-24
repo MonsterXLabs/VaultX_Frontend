@@ -29,6 +29,27 @@ import Banner from "../../../utils/bannerUpload";
 import { io } from "socket.io-client";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
+import { userServices } from "../../../services/supplier";
+import Box from '@mui/material/Box';
+import Modal from '@mui/material/Modal';
+import CurationPopup from "../../Modal/CurationPopup";
+import RwaPopup from "../../Modal/RwaPopup";
+
+const style = {
+  borderRadius: '10px',
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: "37rem",
+  height: "60vh",
+  bgcolor: '#121211',
+  border: '2px solid #000',
+  boxShadow: 24,
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center"
+};
 
 function Create(props) {
   const [bannerImage, setBannerImage] = useState(null);
@@ -238,6 +259,10 @@ function Create(props) {
 
   const [nftId, setNftId] = useState("");
   const imgRef = useRef(null);
+  const [popUp, setPopUp] = useState({
+    active: false,
+    type: null
+  })
 
   // Nft states
   const [uri, setUri] = useState("");
@@ -707,6 +732,12 @@ function Create(props) {
     }
   };
 
+  const checkIsCurator = async () => {
+    const user = await userServices.getSingleUser();
+
+    return user.data.user.isCurator
+  }
+
   useEffect(() => {
     joinCreate();
     fetchMedia();
@@ -784,6 +815,35 @@ function Create(props) {
     <div className="profile__wrapper">
       <MainSearch />
       {props.render}
+      <Modal
+          open={popUp.active}
+          onClose={() => setPopUp({ active: false, type: null })}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description"
+        >
+          <Box sx={style}>
+            <div style={{
+              position: "absolute",
+              top: "20px",
+              right: "20px",
+              backgroundColor: "white",
+              padding: "10px",
+              cursor: "pointer",
+              borderRadius: "100%",
+              zIndex: 100
+            }}
+            onClick={() => setPopUp({...popUp, active: false})}
+            >
+            <img src="../../assets/img/delete_icon.svg" alt="" className="close__icon" />
+            </div>
+            {
+              popUp.type === "curation" ? <CurationPopup /> : null
+            }
+            {
+              popUp.type === "rwa" ? <RwaPopup /> : null
+            }
+          </Box>
+        </Modal>
       <div className={step !== 0 ? "d-none" : "create__area"}>
         <div className="row g-0 align-items-center">
           <div className="col-md-6">
@@ -804,15 +864,23 @@ function Create(props) {
                       others to mint.
                     </p>
                   </div>
-                  <a
-                    href="#"
-                    onClick={() => {
-                      setSelectedType("createCuration");
-                      setStep(1);
+                  <div
+                    className="w-12 cursor-pointer"
+                    onClick={async () => {
+                      const isCurator = await checkIsCurator()
+                      if (isCurator) {
+                        setSelectedType("createCuration");
+                        setStep(1);
+                      } else {
+                        setPopUp({
+                          active: true,
+                          type: "curation"
+                        })
+                      }
                     }}
                   >
                     <img src="assets/img/arrow-right-ico.svg" alt="" />
-                  </a>
+                  </div>
                 </div>
               </div>
               <div className="single__create__card">
@@ -825,15 +893,23 @@ function Create(props) {
                       tap.
                     </p>
                   </div>
-                  <a
-                    href="#"
-                    onClick={() => {
-                      setSelectedType("createNFT");
-                      setStep(1);
+                  <div
+                    className="w-12 cursor-pointer"
+                    onClick={async () => {
+                      const isCurator = await checkIsCurator()
+                      if (isCurator) {
+                        setSelectedType("createNFT");
+                        setStep(1);
+                      } else {
+                        setPopUp({
+                          active: true,
+                          type: "rwa"
+                        })
+                      }
                     }}
                   >
                     <img src="assets/img/arrow-right-ico.svg" alt="" />
-                  </a>
+                  </div>
                 </div>
               </div>
               <div className="single__create__card">
@@ -846,9 +922,9 @@ function Create(props) {
                       tap.
                     </p>
                   </div>
-                  <a href="#">
+                  <div className="w-12 cursor-pointer">
                     <img src="assets/img/arrow-right-ico.svg" alt="" />
-                  </a>
+                  </div>
                 </div>
               </div>
             </div>

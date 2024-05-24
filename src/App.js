@@ -12,10 +12,13 @@ import Dashboard from "./views/Dashboard/Dashboard";
 import Curation from "./views/Curation/Curation";
 import NFTDetails from "./views/NFT/NFTDetails";
 import Profile from "./components/Dashboard/Sidebar/Profile";
+import ScrollToTop from "./Context/ScrollToTop";
+
 function App() {
   console.log("check for env is------>", process.env.REACT_APP_NODE_ENV);
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <Routes>
         <Route path="*" element={<Home />} />
         <Route path="/dashboard" element={<Dashboard />} />

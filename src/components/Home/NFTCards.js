@@ -77,7 +77,6 @@ function NFTCards(props) {
               key={index}
               className="single__sport__blk"
               onClick={() => {
-                window.scrollTo(0, 0)
                 navigate("/dashboard/nft/" + nft?._id)
               }}
             >

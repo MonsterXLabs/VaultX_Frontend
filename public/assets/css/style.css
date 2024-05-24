@@ -4780,3 +4780,13 @@ ion-icon {
   height: 100%;
   object-fit: cover;
 }
+
+span {
+  color: #fff;
+  font-family: Manrope;
+  font-weight: 500;
+}
+
+:root {
+  scroll-behavior: auto;
+}
