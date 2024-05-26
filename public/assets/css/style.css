@@ -4790,3 +4790,23 @@ span {
 :root {
   scroll-behavior: auto;
 }
+
+.mail_link {
+  color: #878787;
+  font-family: Manrope;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 162%;
+  transition: 0.3s all;
+}
+
+.header_item {
+  color: #fff;
+  font-family: Manrope;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+  transition: all .3s;
+}

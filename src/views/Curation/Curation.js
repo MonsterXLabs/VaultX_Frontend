@@ -1,4 +1,4 @@
-import {useContext, useEffect, useState} from "react"
+import {useContext, useEffect, useRef, useState} from "react"
 import RecentActivity from "../../components/Dashboard/Filters/RecentActivity"
 import Sidebar from "../../components/Dashboard/Sidebar"
 import {Link, useNavigate, useParams} from "react-router-dom"
@@ -40,7 +40,10 @@ function Curation() {
 
   const [heightExpand, setHeightExpand] = useState(1000)
 
+  const containerRef = useRef(null)
+
   const getImageDimensions = (imageUrl, callback) => {
+    const containerWidth = containerRef.current.offsetWidth
     // Create a new Image object
     const img = new Image();
   
@@ -49,9 +52,18 @@ function Curation() {
       // Image is loaded, retrieve the dimensions
       const width = img.width;
       const height = img.height;
-      
-      // Invoke the callback with the dimensions
-      callback(width, height);
+
+      const aspectRatio = width / height;
+      if (containerWidth) {
+        const newWidth = containerWidth;
+        const newHeight = newWidth / aspectRatio;
+        setHeightExpand(newHeight)
+
+        callback(newWidth, newHeight);
+      } else {
+        // Invoke the callback with the dimensions
+        callback(width, height);
+      }
     };
   
     // Handle potential errors
@@ -63,6 +75,7 @@ function Curation() {
     // Set the image source to the provided URL
     img.src = imageUrl;
   }
+
 
   const getCuraion = async () => {
     try {
@@ -342,6 +355,7 @@ function Curation() {
               <div className="row g-4">
                 {curation?.youtube?.map((value, index) => {
                   const id = getYouTubeVideoId(value.url)
+                  if (!id) return null
                   return (
                     <div className="col-xxl-6 col-lg-12 col-md-6">
                       <div className="single__about__box">
@@ -435,7 +449,9 @@ function Curation() {
           marginBottom: '60px',
           height: !expandImage ? '300px' : `${heightExpand + 10}px`,
           backgroundRepeat: 'no-repeat',
-        }}>
+        }}
+        ref={containerRef}
+        >
           <img
             src={
               curation?.descriptionImage.length > 0 &&
@@ -468,7 +484,7 @@ function Curation() {
             : 
             <div style={{
               position: 'absolute',
-              bottom: "10px",
+              bottom: "30px",
               zIndex: 10,
               left: "45%",
               cursor: "pointer",
@@ -483,7 +499,7 @@ function Curation() {
             position: "absolute",
             zIndex: 5,
             bottom: 0,
-          }} className="h-1/4 bg-gradient-to-b from-transparent via-[#121211aa] to-[#121211] absolute bottom-0 left-0 right-0 z-10"></div>
+          }} className="h-1/4 bg-gradient-to-b from-transparent via-[#121211aa] to-[#121211] absolute left-0 right-0 z-10"></div>
         </div>
         </div>
         <div className="categorie__btn">

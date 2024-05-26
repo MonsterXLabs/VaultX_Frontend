@@ -402,7 +402,13 @@ function Header() {
             {/* <div className="header__right__blk "> */}
             <div className="main__menu none__phone">
               <nav>
-                <ul className="flex">
+                <div className="flex gap-x-6 text-white header_item">
+                  <span className="cursor-pointer" onClick={() => navigate("/dashboard?appreciate")}>Appreciation</span>
+                  <span className="cursor-pointer" onClick={() => navigate("/dashboard?curation")}>Curation</span>
+                  <a href="https://artistvaultx.wpcomstaging.com/" className="cursor-pointer"><span>Magazine</span></a>
+                  <span className="cursor-pointer">How to Work</span>
+                </div>
+                {/* <ul className="flex">
                   <li>
                     <span
                       className="cursor-pointer"
@@ -411,11 +417,6 @@ function Header() {
                       Appreciation
                     </span>
                   </li>
-                  {/* <li>
-                      <span onClick={() => navigate("/dashboard?artist")}>
-                        Artist
-                      </a>
-                    </li> */}
                   <li>
                     <span
                     className="cursor-pointer"
@@ -436,8 +437,7 @@ function Header() {
                   <li>
                     <span className="cursor-pointer">How to work</span>
                   </li>
-                  <li>{/* <div id="google_translate_element"></div> */}</li>
-                </ul>
+                  <li>{/* <div id="google_translate_element"></div> */}
               </nav>
             </div>
             <div className="flex items-center gap-4">

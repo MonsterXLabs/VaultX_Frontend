@@ -84,7 +84,7 @@ function Sidebar({onClickMenuButton, activeTab, openDialog, setOpenDialog}) {
                     setActive("curation")
                   }}
                 >
-                  <a href="#">
+                  <a href="/dashboard?curation">
                     <span>
                       <img src="../assets/img/sidebar_ico_3.svg" alt="" />
                     </span>{" "}
@@ -166,20 +166,6 @@ function Sidebar({onClickMenuButton, activeTab, openDialog, setOpenDialog}) {
                       <img src="../assets/img/sidebar_ico_8.svg" alt="" />
                     </span>{" "}
                     My Order
-                  </a>
-                </li>
-                <li
-                  className={active === "language" ? "active" : ""}
-                  onClick={() => {
-                    onClickMenuButton("language")
-                    setActive("language")
-                  }}
-                >
-                  <a href="#">
-                    <span>
-                      <img src="../assets/img/sidebar_ico_9.svg" alt="" />
-                    </span>{" "}
-                    Language
                   </a>
                 </li>
                 <li
@@ -298,7 +284,7 @@ function Sidebar({onClickMenuButton, activeTab, openDialog, setOpenDialog}) {
                   setActive("curation")
                 }}
               >
-                <a href="#">
+                <a href="/dashboard?curation">
                   <span>
                     <img src="../assets/img/sidebar_ico_3.svg" alt="" />
                   </span>{" "}
@@ -383,20 +369,6 @@ function Sidebar({onClickMenuButton, activeTab, openDialog, setOpenDialog}) {
                 </a>
               </li>
               <li
-                className={active === "language" ? "active" : ""}
-                onClick={() => {
-                  onClickMenuButton("language")
-                  setActive("language")
-                }}
-              >
-                <a href="#">
-                  <span>
-                    <img src="../assets/img/sidebar_ico_9.svg" alt="" />
-                  </span>{" "}
-                  Language
-                </a>
-              </li>
-              <li
                 className={active === "settings" ? "active" : ""}
                 onClick={() => {
                   onClickMenuButton("settings")
@@ -439,7 +411,7 @@ function Sidebar({onClickMenuButton, activeTab, openDialog, setOpenDialog}) {
         </div>
 
         <div className="sidebar__copyright">
-          <p>© 2023 MonsterX</p>
+          <p>© 2024 MonsterX</p>
         </div>
         <div className="close__sidebar none__desk">
           <i className="fa fa-times" onClick={close} />

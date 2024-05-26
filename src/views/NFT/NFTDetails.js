@@ -997,7 +997,7 @@ function NFTDetails() {
           <div className="container">
             <div className="header__inner__blk">
               <div className="header__logo">
-                <span onClick={() => navigate("/dashboard")}>
+                <span onClick={() => navigate("/")}>
                   <img src="../../assets/img/brand.svg" alt="" />
                 </span>
               </div>

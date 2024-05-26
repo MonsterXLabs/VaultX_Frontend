@@ -29,21 +29,27 @@ function CurationCard({item}) {
         <div className="curation__content">
           <h5>{item.name}</h5>
           <div className="curation__card__bottom">
-            <div className="single__curation__categorie">
+            <div className="single__curation__categorie" style={{
+              width: "30%"
+            }}>
               <p>Artworks</p>
               <h6>{info?.nftCount}</h6>
             </div>
-            <div className="single__curation__categorie">
+            <div className="single__curation__categorie" style={{
+              width: "30%"
+            }}>
               <p>Artists</p>
               <h6>{info?.artistCount}</h6>
             </div>
-            <div className="single__curation__categorie">
+            <div className="single__curation__categorie" style={{
+              width: "40%"
+            }}>
               <p>Volume</p>
-              <h6>
-                <span>
-                  <img src="assets/img/MATIC.png" className="h-6 w-6 p-1 grayscale brightness-200 rounded-full border border-white" alt="" />
+              <h6 className="flex gap-x-2">
+                <span className="w-1/2">
+                  <img src="assets/img/MATIC.png" className="h-6 w-6 p-1 grayscale brightness-200 rounded-full border border-white mx-auto" alt="" />
                 </span>{" "}
-                {Number(info?.totalVolume).toFixed(2)} MATIC
+                {Math.round(Number(info?.totalVolume))} MATIC
               </h6>
             </div>
           </div>

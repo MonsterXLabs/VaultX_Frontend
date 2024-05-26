@@ -1179,6 +1179,17 @@ function Create(props) {
                         <h5>Youtube Video Link</h5>
                       </div>
                       <div className="edit_profile_inner_top_right">
+                        {
+                          youtube.length === 2 ? 
+                          <div className="flex gap-x-2 cursor-pointer" onClick={() => {
+                            setYoutube([youtube[0]])
+                          }}>
+                            <img src="assets/img/trash.svg" alt="" />
+                            <span className="text-white font-bold lg:text-[20px]">
+                              Delete
+                            </span>
+                          </div> : null
+                        }
                         <div className="add_new">
                           <div
                             onClick={() =>
