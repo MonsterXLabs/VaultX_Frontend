@@ -1418,8 +1418,9 @@ function NFTDetails() {
                         nft?.shippingInformation?.width ||
                         nft?.shippingInformation?.weight) && (
                           <div className="overview__right__blk">
-                            <div className="overview__similar__text">
+                            <div className="overview__similar__text h-full flex flex-col gap-y-2">
                               <h5>Size</h5>
+                              <div className="flex flex-col gap-y-[0.20rem]">
                               {nft?.shippingInformation?.lengths && (
                                 <p>
                                   <small>Length</small> <span>:</span>{" "}
@@ -1444,6 +1445,7 @@ function NFTDetails() {
                                   {nft?.shippingInformation?.weight}kg
                                 </p>
                               )}
+                              </div>
                             </div>
                           </div>
                         )}
