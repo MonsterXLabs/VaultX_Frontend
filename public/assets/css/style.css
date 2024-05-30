@@ -4810,3 +4810,17 @@ span {
   line-height: normal;
   transition: all .3s;
 }
+
+.profile-link {
+  color: #fff;
+  font-family: Manrope;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+  transition: all .3s;
+}
+
+.profile-link:hover {
+  color: #ddf247;
+}

@@ -237,6 +237,7 @@ function NFTDetails() {
       const {
         data: { nft },
       } = await nftService.getNftById(id)
+      console.log(nft)
       setActiveImage(nft?.cloudinaryUrl)
       setNft(nft)
       console.log(nft)
@@ -1399,13 +1400,17 @@ function NFTDetails() {
                     </div>
                     <div className="over__view__flex">
                       <div className="overview__left__blk">
-                        <div className="overview__similar__text">
-                          <h5>Overview</h5>
-                          <p>{nft?.saleId?.sellerShippingId?.name}</p>
+                        <div className="overview__similar__text flex justify-between">
+                          <h5>Artist</h5>
+                          <p>{nft?.artist}</p>
                         </div>
-                        <div className="overview__similar__text mt-3">
+                        <div className="overview__similar__text mt-3 flex justify-between">
                           <h5>Shipping Country</h5>
                           <p>{nft?.saleId?.sellerShippingId?.country}</p>
+                        </div>
+                        <div className="overview__similar__text mt-3 flex justify-between">
+                          <h5>Royalties</h5>
+                          <p>{nft?.royalty}%</p>
                         </div>
                       </div>
                       {(nft?.shippingInformation?.lengths ||

@@ -107,7 +107,7 @@ function MainSearch({py}) {
                 <ul>
                   <li>
                     <a
-                      href="#"
+                      className="profile-links"
                       onClick={() => navigate("/dashboard?myProfile")}
                     >
                       My Profile

@@ -27,6 +27,7 @@ function Profile(props) {
   const [likes, setLikes] = useState(0)
   const [liked, setLiked] = useState(false)
   const [now, setNow] = useState(false)
+  const [profileImageHeader, setProfileImageHeader] = useState('../../assets/img/breadcrumb_bg_1.png')
   const [user, setUser] = useState()
   const [filter, setFilter] = useState({
     title: "",
@@ -83,6 +84,9 @@ function Profile(props) {
         const {
           data: {user},
         } = await userServices.getUserById({userId})
+        if (user?.banner?.url) {
+          setProfileImageHeader(user?.banner?.url)
+        }
         setUser(user)
       } else {
         const {data} = await userServices.getSingleUser()
@@ -166,7 +170,7 @@ function Profile(props) {
           <div
             className="breadcrumb__inner__wrap"
             style={{
-              backgroundImage: `url(${user?.banner?.url ? user?.banner?.url : "../../assets/img/breadcrumb_bg_1.png"})`,
+              backgroundImage: `url(${profileImageHeader})`,
             }}
           >
             <div className="breadcrumb__inner__blk">
