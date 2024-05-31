@@ -479,3 +479,7 @@ export const purchaseUnmintedNft = async (
     throw error;
   }
 };
+
+export const getMaticPrice = async()=>{
+  return 0.69
+}

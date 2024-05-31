@@ -3,7 +3,7 @@ import {createWeb3Modal} from "@web3modal/wagmi/react"
 import {defaultWagmiConfig} from "@web3modal/wagmi/react/config"
 import { createConfig, configureChains, mainnet,http } from 'wagmi'
 import {WagmiProvider} from "wagmi"
-import {polygon, polygonMumbai} from "wagmi/chains"
+import {polygon, polygonMumbai,polygonAmoy} from "wagmi/chains"
 import {QueryClient, QueryClientProvider} from "@tanstack/react-query"
 
 import { metaMask } from 'wagmi/connectors'
@@ -29,14 +29,14 @@ const metadata = {
 }
 
 const chains =
-  process.env.REACT_APP_NODE_ENV !== "DEV" ? [polygon] : [polygonMumbai]
+  process.env.REACT_APP_NODE_ENV !== "DEV" ? [polygon] : [polygonAmoy]
 
   export const config = createConfig({
     chains: chains,
     connectors: [metaMask()],
     transports: {
       [polygon.id]: http(),
-      [polygonMumbai.id]: http(),
+      [polygonAmoy.id]: http(),
     },
   })
 

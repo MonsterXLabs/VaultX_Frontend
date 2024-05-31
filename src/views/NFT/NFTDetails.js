@@ -37,6 +37,7 @@ import {
   requestEscrowRelease,
   resell,
   trimString,
+  getMaticPrice
 } from "../../utils/helpers"
 import {
   numberValidator,
@@ -124,6 +125,7 @@ function NFTDetails() {
   const [views, setViews] = useState(0)
   const [activeImage, setActiveImage] = useState(null)
   const [modalActive, setModalActive] = useState(false)
+  const [maticPrice, setMaticPrice] = useState(0)
   /**
    * The state variable representing some value.
    * @type {'buy' | 'bid'}
@@ -137,6 +139,14 @@ function NFTDetails() {
     tempArr.splice(i, 1)
 
     setCreateNftStep1Attachments([...tempArr])
+  }
+  const fetchMaticPrice = async () => {
+    try {
+      const price = await getMaticPrice()
+      setMaticPrice(price)
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   const fetchCategories = async () => {
@@ -184,6 +194,7 @@ function NFTDetails() {
     getFee()
     fetchCategories()
     handleView()
+    fetchMaticPrice()
   }, [])
 
   const validateDataBuyBid = () => {
@@ -1286,8 +1297,8 @@ function NFTDetails() {
                     <div className="current__price__blk">
                       <div className="current__price__text">
                         <h4>
-                          {nft?.price} MATIC{" "}
-                          <span>${(nft?.price * dolorPrice).toFixed(2)}</span>
+                        $ {nft?.price} {" "}
+                          <span>{(parseFloat(nft?.price) / parseFloat(maticPrice)).toFixed(2)} MATIC</span>
                         </h4>
                       </div>
                       <div className="sale__btn">
