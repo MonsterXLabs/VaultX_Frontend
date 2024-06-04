@@ -125,7 +125,7 @@ function NFTDetails() {
   const [views, setViews] = useState(0)
   const [activeImage, setActiveImage] = useState(null)
   const [modalActive, setModalActive] = useState(false)
-  const [maticPrice, setMaticPrice] = useState(0)
+  // const [maticPrice, setMaticPrice] = useState(0)
   /**
    * The state variable representing some value.
    * @type {'buy' | 'bid'}
@@ -140,14 +140,14 @@ function NFTDetails() {
 
     setCreateNftStep1Attachments([...tempArr])
   }
-  const fetchMaticPrice = async () => {
-    try {
-      const price = await getMaticPrice()
-      setMaticPrice(price)
-    } catch (error) {
-      console.log(error)
-    }
-  }
+  // const fetchMaticPrice = async () => {
+  //   try {
+  //     const price = await getMaticPrice()
+  //     setMaticPrice(price)
+  //   } catch (error) {
+  //     console.log(error)
+  //   }
+  // }
 
   const fetchCategories = async () => {
     try {
@@ -194,7 +194,7 @@ function NFTDetails() {
     getFee()
     fetchCategories()
     handleView()
-    fetchMaticPrice()
+    // fetchMaticPrice()
   }, [])
 
   const validateDataBuyBid = () => {
@@ -1297,8 +1297,8 @@ function NFTDetails() {
                     <div className="current__price__blk">
                       <div className="current__price__text">
                         <h4>
-                        $ {nft?.price} {" "}
-                          <span>{(parseFloat(nft?.price) / parseFloat(maticPrice)).toFixed(2)} MATIC</span>
+                        {nft?.price} MATIC{" "}
+                          <span>${}</span>
                         </h4>
                       </div>
                       <div className="sale__btn">
