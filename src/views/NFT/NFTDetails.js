@@ -1098,7 +1098,13 @@ function NFTDetails() {
         <section className="nft__detail__hero__area">
           <div className="container">
             <div className="row g-4">
-              <div className="col-lg-6">
+              <div className="col-lg-6 relative">
+                {
+                  activeImage === nft?.cloudinaryUrl ?
+                  <>
+                  <img className="absolute z-20 w-24 h-16 bottom-2 right-6" src="../../assets/img/rwa-logo.svg" alt="" />
+                  </> : null
+                }
                 <div className="nft__detail__thumb__blk">
                   <img
                     src={activeImage}
