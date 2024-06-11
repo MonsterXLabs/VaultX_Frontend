@@ -51,6 +51,7 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import NftCarousel from "../../components/Modal/NftCarousel"
+import Slider from "react-slick"
 
 const style = {
   borderRadius: '10px',
@@ -1473,13 +1474,15 @@ function NFTDetails() {
             </div>
             <div className="nft__thumb__area">
               <div className="row g-3">
-                {nft?.attachments.map(item => (
-                  <div className="col-2" onClick={() => setActiveImage(item)}>
-                    <div className="single__nft__thumb">
-                      <img src={item} alt="" />
+                  {[nft?.cloudinaryUrl, ...nft?.attachments].map(item => (
+                    <div style={{
+                      padding: '20px'
+                    }} className="col-2" onClick={() => setActiveImage(item)}>
+                      <div className="single__nft__thumb">
+                        <img src={item} alt="" />
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
               </div>
             </div>
             <div className="description__similar__blk">

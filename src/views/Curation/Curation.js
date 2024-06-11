@@ -495,11 +495,15 @@ function Curation() {
                 <img src="../../assets/img/double_down_ico.svg" alt="" style={{ transform: "rotate(180deg)" }} /> 
             </div>
           }
-          <div style={{
-            position: "absolute",
-            zIndex: 5,
-            bottom: 0,
-          }} className="h-1/4 bg-gradient-to-b from-transparent via-[#121211aa] to-[#121211] absolute left-0 right-0 z-10"></div>
+          {
+            !expandImage ? 
+            <div style={{
+              position: "absolute",
+              zIndex: 5,
+              bottom: 0,
+            }} className="h-1/4 bg-gradient-to-b from-transparent via-[#121211aa] to-[#121211] absolute left-0 right-0 z-10"></div>
+            : null
+          }          
         </div>
         </div>
         <div className="categorie__btn">
