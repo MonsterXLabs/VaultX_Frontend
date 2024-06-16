@@ -1329,7 +1329,6 @@ function Create(props) {
                                     return;
                                   }
                                   setDiscriptionImage([
-                                    ...discriptionImage,
                                     e.target.files[0],
                                   ]);
                                 }}
