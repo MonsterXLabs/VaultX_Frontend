@@ -53,7 +53,7 @@ import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import NftCarousel from "../../components/Modal/NftCarousel"
 import Slider from "react-slick"
-import { address } from "../../utils/contract";
+import * as contractInfo from "../../utils/contract";
 const style = {
   borderRadius: '10px',
   position: 'absolute',
@@ -1048,7 +1048,7 @@ function NFTDetails() {
                     <p>Matic <span className='text-sm' style={{
                       color: 'rgba(255, 255, 255, 0.53)'
                     }}>Polygon Network</span></p>
-                    <p>addr...</p>
+                    <p>{contractInfo.address}</p>
                   </div>
                 </div>
                 <hr />
