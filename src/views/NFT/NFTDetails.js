@@ -1304,7 +1304,7 @@ function NFTDetails() {
                     <div className="current__price__blk">
                       <div className="current__price__text">
                         <h4>
-                        {nft?.price} MATIC{" "}
+                        {nft?.price} USD{" "}
                           <span>${}</span>
                         </h4>
                       </div>

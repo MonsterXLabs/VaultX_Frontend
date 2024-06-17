@@ -1549,7 +1549,7 @@ function Create(props) {
                             }
                           />
                           <button className="eth" type="button">
-                            MATIC
+                            USD
                           </button>
                         </div>
                       </div>
