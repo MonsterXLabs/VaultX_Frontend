@@ -1064,7 +1064,13 @@ function NFTDetails() {
                   <div className='flex items-center justify-center'>
                     <button className='text-white px-4 py-2 rounded-xl bg-[#535353]' disabled={quoteCount > 0}
                       onClick={resetQuote}>
-                        New Quotes in 0:{quoteCount}
+                        {
+                          (
+                            quoteCount ? <span>New Quotes in 0:{quoteCount}</span>
+                            : <span>New Quotes</span>
+                          )
+                        }
+                        
                     </button>
                   </div>
                 </div>
