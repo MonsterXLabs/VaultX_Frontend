@@ -974,6 +974,9 @@ function NFTDetails() {
       setQuoteDetail({
         usdAmount: nft?.price,
         maticAmount: Number(maticAmount) / 100,
+        gasFee: 0.02,
+        fee,
+        totalAmount: Number(maticAmount) / 100 + 0.02,
       });
     }
   }
@@ -984,6 +987,9 @@ function NFTDetails() {
       setQuoteDetail({
         usdAmount: nft?.price,
         maticAmount: Number(maticAmount) / 100,
+        gasFee: 0.02,
+        fee,
+        totalAmount: Number(maticAmount) / 100 + 0.02,
       });
       setQuoteCount(30);
     }
@@ -1059,7 +1065,7 @@ function NFTDetails() {
                   </div>
                   <div className='flex justify-between'>
                     <span>Estimated Gas fee</span>
-                    <span>0.002 Matic</span>
+                    <span>{quoteDetail.gasFee} Matic</span>
                   </div>
                   <div className='flex items-center justify-center'>
                     <button className='text-white px-4 py-2 rounded-xl bg-[#535353]' disabled={quoteCount > 0}
@@ -1079,14 +1085,14 @@ function NFTDetails() {
                 fontFamily: "Azeret Mono"
               }}>
                 <span className="text-sm">Marketplace fee</span>
-                <span>0.5%</span>
+                <span>{quoteDetail.fee}%</span>
               </div>
               <hr />
               <div className='flex justify-between my-3' style={{
                 fontFamily: "Azeret Mono"
               }}>
                 <span className="text-sm">The expected payment is</span>
-                <span>2842.5 MATIC</span>
+                <span>{quoteDetail.totalAmount} MATIC</span>
               </div>
               <button className='bg-[#DEE8E8] w-full my-3 py-2 text-center rounded-md text-black font-medium' onClick={() => setQuotes(false)}>Close</button>
             </div>
