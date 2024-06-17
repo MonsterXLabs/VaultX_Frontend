@@ -947,12 +947,17 @@ function NFTDetails() {
 
   const getData = async () => {
     try {
-      const data={amount:nft?.price}
+      const data = { amount: nft?.price }
       const price = await getPrice(data)
       setDolorPrice(price)
     } catch (error) {
       console.log(error)
     }
+  }
+
+  const [quotes, setQuotes] = useState(false)
+  const checkQuotes = async () => {
+    setQuotes(true)
   }
 
   useEffect(() => {
@@ -962,6 +967,84 @@ function NFTDetails() {
   return (
     <>
       <div className="main__area">
+        <Modal
+          open={quotes}
+          onClose={() => setQuotes(false)}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description"
+        >
+          <Box sx={{
+            borderRadius: '10px',
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: "35rem",
+            bgcolor: 'black',
+            boxShadow: 24,
+            border: 'none'
+          }}>
+            <div className='p-3' style={{
+              color: 'white'
+            }}>
+              <h2 className='text-xl font-medium text-white'>
+                Quantity of cryptocurrency required
+              </h2>
+              <p className='text-sm' style={{
+                color: 'rgba(255, 255, 255, 0.53)',
+                fontFamily: "Azeret Mono",
+              }}>To purchase this artwork, you will need approximately the following amount of cryptocurrency.</p>
+              <div className='mt-4 flex justify-between items-center my-3' style={{
+                fontFamily: "Azeret Mono"
+              }}>
+                <span className='text-sm'>Sale Price (USD)</span>
+                <span>$2,500</span>
+              </div>
+              <div className='p-4 rounded-md' style={{
+                border: '2px dashed #3A3A3A',
+                fontFamily: "Azeret Mono"
+              }}>
+                <div className='flex mb-3 gap-x-4'>
+                  <img src='../../assets/icons/polygon.svg' />
+                  <div className=''>
+                    <p>Matic <span className='text-sm' style={{
+                      color: 'rgba(255, 255, 255, 0.53)'
+                    }}>Polygon Network</span></p>
+                    <p>addr...</p>
+                  </div>
+                </div>
+                <hr />
+                <div className='flex flex-col gap-y-4 mt-3'>
+                  <div className='flex justify-between'>
+                    <span>Cryptocurrency Price</span>
+                    <span>2,800 Matic</span>
+                  </div>
+                  <div className='flex justify-between'>
+                    <span>Estimated Gas fee</span>
+                    <span>42.5 Matic</span>
+                  </div>
+                  <div className='flex items-center justify-center'>
+                    <button className='text-white px-4 py-2 rounded-xl bg-[#535353]'>New Quotes in 0:30</button>
+                  </div>
+                </div>
+              </div>
+              <div className='flex justify-between my-3' style={{
+                fontFamily: "Azeret Mono"
+              }}>
+                <span className="text-sm">Marketplace fee</span>
+                <span>0.5%</span>
+              </div>
+              <hr />
+              <div className='flex justify-between my-3' style={{
+                fontFamily: "Azeret Mono"
+              }}>
+                <span className="text-sm">The expected payment is</span>
+                <span>2842.5 MATIC</span>
+              </div>
+              <button className='bg-[#DEE8E8] w-full my-3 py-2 text-center rounded-md text-black font-medium' onClick={() => setQuotes(false)}>Close</button>
+            </div>
+          </Box>
+        </Modal>
         <div className="mobile__menu none__desk">
           <div className="header__right__blk">
             <div className="main__menu">
@@ -1089,9 +1172,9 @@ function NFTDetails() {
               borderRadius: "100%",
               zIndex: 100
             }}
-            onClick={() => setModalActive(false)}
+              onClick={() => setModalActive(false)}
             >
-            <img src="../../assets/img/delete_icon.svg" alt="" className="close__icon" />
+              <img src="../../assets/img/delete_icon.svg" alt="" className="close__icon" />
             </div>
             <NftCarousel images={[nft?.cloudinaryUrl, ...(nft?.attachments ? nft.attachments : [])]} />
           </Box>
@@ -1102,9 +1185,9 @@ function NFTDetails() {
               <div className="col-lg-6 relative">
                 {
                   activeImage === nft?.cloudinaryUrl ?
-                  <>
-                  <img className="absolute z-20 w-24 h-16 bottom-2 right-6" src="../../assets/img/rwa-logo.svg" alt="" />
-                  </> : null
+                    <>
+                      <img className="absolute z-20 w-24 h-16 bottom-2 right-6" src="../../assets/img/rwa-logo.svg" alt="" />
+                    </> : null
                 }
                 <div className="nft__detail__thumb__blk">
                   <img
@@ -1113,7 +1196,7 @@ function NFTDetails() {
                     style={{
                       cursor: "zoom-in"
                     }}
-                    onClick={()=>{
+                    onClick={() => {
                       setModalActive(true)
                     }}
                     alt=""
@@ -1298,30 +1381,31 @@ function NFTDetails() {
                     )}
                   </div>
                   <div className="current__price__area">
-                    <div className="current__price__title">
-                      <p>Current price</p>
+                    <div className="flex justify-between">
+                      <div className="current__price__title flex flex-col gap-y-1">
+                        <p>Current price</p>
+                        <div className="current__price__text">
+                          <h4>
+                            ${nft?.price} MATIC{" "}
+                          </h4>
+                        </div>
+                      </div>
+                      <div>
+                        <p className="cursor-pointer px-2 py-1 rounded-lg border border-white text-white"
+                          onClick={checkQuotes}
+                        >Check MATIC Quotes</p>
+                      </div>
                     </div>
                     <div className="current__price__blk">
-                      <div className="current__price__text">
-                        <h4>
-                        {nft?.price} USD{" "}
-                          <span>${}</span>
-                        </h4>
-                      </div>
-                      <div className="sale__btn">
+                      <div className="sale__btn w-full">
                         {type === "buy" ? (
-                          <div className="ntf__flex__column">
+                          <div className="flex flex-row justify-between pt-2">
                             <a
-                              className="common__btn common_border__btn"
-                              data-bs-toggle="modal"
-                              href="#exampleModalToggle6"
-                              role="button"
-                              onClick={() => setTxType("buy")}
-                            >
-                              Buy Now
-                            </a>
-                            <a
-                              className="common__btn common_border__btn"
+                              className="common__btn common_border__btn w-[48%]"
+                              style={{
+                                backgroundColor: "rgba(221, 242, 71, 0.20)",
+                                color: "rgba(221, 242, 71, 0.60)",
+                              }}
                               data-bs-toggle="modal"
                               href="#placeBidInitialDialog"
                               role="button"
@@ -1329,6 +1413,15 @@ function NFTDetails() {
                               onClick={() => setTxType("bid")}
                             >
                               Bid
+                            </a>
+                            <a
+                              className="common__btn common_border__btn w-[48%]"
+                              data-bs-toggle="modal"
+                              href="#exampleModalToggle6"
+                              role="button"
+                              onClick={() => setTxType("buy")}
+                            >
+                              Buy Now
                             </a>
                           </div>
                         ) : type === "release" ? (
@@ -1439,30 +1532,30 @@ function NFTDetails() {
                             <div className="overview__similar__text h-full flex flex-col gap-y-2">
                               <h5>Size</h5>
                               <div className="flex flex-col gap-y-[0.20rem]">
-                              {nft?.shippingInformation?.lengths && (
-                                <p>
-                                  <small>Length</small> <span>:</span>{" "}
-                                  {nft?.shippingInformation?.lengths}cm
-                                </p>
-                              )}
-                              {nft?.shippingInformation?.height && (
-                                <p>
-                                  <small>Height</small> <span>:</span>{" "}
-                                  {nft?.shippingInformation?.height}cm
-                                </p>
-                              )}
-                              {nft?.shippingInformation?.width && (
-                                <p>
-                                  <small>Width</small> <span>:</span>{" "}
-                                  {nft?.shippingInformation?.width}cm
-                                </p>
-                              )}
-                              {nft?.shippingInformation?.weight && (
-                                <p>
-                                  <small>Weight</small> <span>:</span>{" "}
-                                  {nft?.shippingInformation?.weight}kg
-                                </p>
-                              )}
+                                {nft?.shippingInformation?.lengths && (
+                                  <p>
+                                    <small>Length</small> <span>:</span>{" "}
+                                    {nft?.shippingInformation?.lengths}cm
+                                  </p>
+                                )}
+                                {nft?.shippingInformation?.height && (
+                                  <p>
+                                    <small>Height</small> <span>:</span>{" "}
+                                    {nft?.shippingInformation?.height}cm
+                                  </p>
+                                )}
+                                {nft?.shippingInformation?.width && (
+                                  <p>
+                                    <small>Width</small> <span>:</span>{" "}
+                                    {nft?.shippingInformation?.width}cm
+                                  </p>
+                                )}
+                                {nft?.shippingInformation?.weight && (
+                                  <p>
+                                    <small>Weight</small> <span>:</span>{" "}
+                                    {nft?.shippingInformation?.weight}kg
+                                  </p>
+                                )}
                               </div>
                             </div>
                           </div>
@@ -1474,22 +1567,22 @@ function NFTDetails() {
             </div>
             <div className="nft__thumb__area">
               <div className="row g-3">
-              {(nft?.cloudinaryUrl || nft?.attachments) && 
-                [nft.cloudinaryUrl, ...nft.attachments].map((item, index) => (
-                  item && (
-                    <div 
-                      key={index}
-                      style={{ padding: '20px' }} 
-                      className="col-2" 
-                      onClick={() => setActiveImage(item)}
-                    >
-                      <div className="single__nft__thumb">
-                        <img src={item} alt="" />
+                {(nft?.cloudinaryUrl || nft?.attachments) &&
+                  [nft.cloudinaryUrl, ...nft.attachments].map((item, index) => (
+                    item && (
+                      <div
+                        key={index}
+                        style={{ padding: '20px' }}
+                        className="col-2"
+                        onClick={() => setActiveImage(item)}
+                      >
+                        <div className="single__nft__thumb">
+                          <img src={item} alt="" />
+                        </div>
                       </div>
-                    </div>
-                  )
-                ))
-              }
+                    )
+                  ))
+                }
               </div>
             </div>
             <div className="description__similar__blk">
