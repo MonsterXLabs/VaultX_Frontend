@@ -1522,6 +1522,7 @@ function NFTDetails() {
                     <div className="current__price__blk">
                       <div className="sale__btn w-full">
                         {type === "buy" ? (
+                          <div className="flex flex-row justify-between pt-2">
                             <a
                               className="common__btn common_border__btn w-full"
                               data-bs-toggle="modal"
@@ -1532,6 +1533,7 @@ function NFTDetails() {
                             >
                               Place a bid
                             </a>
+                          </div>
                         ) : type === "release" ? (
                           <div className="sale__btn">
                             <a

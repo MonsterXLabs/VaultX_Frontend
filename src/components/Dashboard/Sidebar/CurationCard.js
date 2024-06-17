@@ -46,10 +46,7 @@ function CurationCard({item}) {
             }}>
               <p>Volume</p>
               <h6 className="flex gap-x-2">
-                <span className="w-1/2">
-                  <img src="assets/img/MATIC.png" className="h-6 w-6 p-1 grayscale brightness-200 rounded-full border border-white mx-auto" alt="" />
-                </span>{" "}
-                {Math.round(Number(info?.totalVolume))} MATIC
+              ${Math.round(Number(info?.totalVolume))}
               </h6>
             </div>
           </div>
