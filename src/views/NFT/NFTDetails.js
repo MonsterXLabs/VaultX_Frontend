@@ -4290,49 +4290,80 @@ function NFTDetails() {
                     {trimString(nft?.owner?.wallet)}
                   </p>
                 </div>
-                <div className="connected__top__blk popup__connected__top__blk !mb-35">
-                  <div className="connected__left__blk">
-                    <div className="connected_compas">
-                      <span>
+                <div className="flex justify-between mt-3" style={{
+                  fontFamily: 'Azeret Mono',
+                  color: 'white'
+                }}>
+                  <span className="text-sm">Sale Price(USD)</span>
+                  <span>${txType === "bid" ? price : nft?.price}</span>
+                </div>
+                <div className="connected__top__blk popup__connected__top__blk !mb-35" style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '1rem',
+                }}>
+                  <div className="w-full flex justify-between">
+                  <div className="connected__left__blk" style={{
+                    display: 'flex',
+                    gap: '1rem'
+                  }}>
+                    <div className="connected_compas flex gap-x-3">
                         <img
-                          src="../../assets/img/MATIC.png"
-                          className="h-6 w-6 p-1 grayscale brightness-200 rounded-full border border-white"
-                          alt=""
+                          src="../../assets/icons/polygon.svg"
+                        alt=""
                         />
-                      </span>
                       <div className="connected_left_text">
-                        <h5>{trimString(address)}</h5>
-                        <span>{network} Network</span>
+                        <div className="flex flex-col">
+                          <p className="text-lg text-white">Matic <span>{network} Network</span></p>
+                          <h5>{trimString(address)}</h5>
+                        </div>
                       </div>
                     </div>
                   </div>
                   <div className="connected__right__blk">
                     <a href="#">Connected</a>
                   </div>
+                  </div>
+                  <hr className="mt-2 w-full" style={{
+                    color: 'white'
+                  }} />
+                  <div className="flex flex-col w-full text-white">
+                    <div className='flex justify-between my-3' style={{
+                      fontFamily: "Azeret Mono"
+                    }}>
+                      <span className="text-sm">Cryptocurrency Price</span>
+                      <span>2,800 Matic</span>
+                    </div>
+                    <div className='flex justify-between my-3' style={{
+                      fontFamily: "Azeret Mono"
+                    }}>
+                      <span className="text-sm">Gass Fee</span>
+                      <span>42.5 Matic</span>
+                    </div>
+                  </div>
                 </div>
                 <div className="order__summery__area !pt-4">
                   <div className="popup__order__summery__content">
-                    <p>
-                      Price{" "}
+                    <div className="flex justify-between my-3" style={{
+                      fontFamily: 'Azeret Mono',
+                      color: 'white'
+                    }}>
+                      <span className="text-sm">Marketplace fee</span>
+                      <span>{nft?.royalty}%</span>
+                    </div>
+                    <hr className="text-white" />
+                    <div className="flex justify-between my-3" style={{
+                      fontFamily: 'Azeret Mono',
+                      color: 'white'
+                    }}>
+                      <span className="text-sm">You will pay</span>
                       <span>{txType === "bid" ? price : nft?.price} MATIC</span>
-                    </p>
-                    <p>
-                      Amount <span>1</span>
-                    </p>
-                    <p>
-                      Royalty <span>{nft?.royalty}%</span>
-                    </p>
-                  </div>
-                  <div className="popup__order__summery__content mb-15 mt-25">
-                    <p>
-                      You will Pay{" "}
-                      <span>{txType === "bid" ? price : nft?.price} MATIC</span>
-                    </p>
+                    </div>
                   </div>
                 </div>
                 <div className="popup__inner__button half__width__btn edit__profile__bottom__btn pt-20 pb-0">
                   <a href="#" className="cancel" data-bs-dismiss="modal">
-                    Cancel
+                    Close
                   </a>
                   <a data-bs-dismiss="modal" href="#" onClick={handleTxCall}>
                     Checkout
