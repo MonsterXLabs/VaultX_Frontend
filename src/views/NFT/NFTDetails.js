@@ -37,7 +37,8 @@ import {
   requestEscrowRelease,
   resell,
   trimString,
-  getMaticPrice
+  getMaticPrice,
+  getMaticAmount,
 } from "../../utils/helpers"
 import {
   numberValidator,
@@ -52,7 +53,7 @@ import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import NftCarousel from "../../components/Modal/NftCarousel"
 import Slider from "react-slick"
-
+import { address } from "../../utils/contract";
 const style = {
   borderRadius: '10px',
   position: 'absolute',
@@ -956,14 +957,51 @@ function NFTDetails() {
   }
 
   const [quotes, setQuotes] = useState(false)
+  const [quoteDetail, setQuoteDetail] = useState({
+    usdAmount: 0,
+    maticAmount: 0,
+  });
+  const [quoteCount, setQuoteCount] = useState(30);
+
   const checkQuotes = async () => {
-    setQuotes(true)
+    if(!nft?.price) {
+      return;
+    }
+
+    const maticAmount = await getMaticAmount(nft?.price);
+    if(maticAmount) {
+      setQuotes(true);
+      setQuoteDetail({
+        usdAmount: nft?.price,
+        maticAmount: Number(maticAmount) / 100,
+      });
+    }
+  }
+
+  const resetQuote = async () => {
+    const maticAmount = await getMaticAmount(nft?.price);
+    if(maticAmount) {
+      setQuoteDetail({
+        usdAmount: nft?.price,
+        maticAmount: Number(maticAmount) / 100,
+      });
+      setQuoteCount(30);
+    }
   }
 
   useEffect(() => {
     getData()
   }, [nft])
 
+  useEffect(() => {
+    if(!quotes)
+      return;
+    const timerId = setTimeout(() => {
+      if(quoteCount > 0 && quotes)
+        setQuoteCount(quoteCount - 1);
+    }, 1000);
+    return () => clearTimeout(timerId);
+  }, [quotes, quoteCount]);
   return (
     <>
       <div className="main__area">
@@ -998,7 +1036,7 @@ function NFTDetails() {
                 fontFamily: "Azeret Mono"
               }}>
                 <span className='text-sm'>Sale Price (USD)</span>
-                <span>$2,500</span>
+                <span>${quoteDetail.usdAmount}</span>
               </div>
               <div className='p-4 rounded-md' style={{
                 border: '2px dashed #3A3A3A',
@@ -1017,14 +1055,17 @@ function NFTDetails() {
                 <div className='flex flex-col gap-y-4 mt-3'>
                   <div className='flex justify-between'>
                     <span>Cryptocurrency Price</span>
-                    <span>2,800 Matic</span>
+                    <span>{quoteDetail.maticAmount} Matic</span>
                   </div>
                   <div className='flex justify-between'>
                     <span>Estimated Gas fee</span>
-                    <span>42.5 Matic</span>
+                    <span>0.002 Matic</span>
                   </div>
                   <div className='flex items-center justify-center'>
-                    <button className='text-white px-4 py-2 rounded-xl bg-[#535353]'>New Quotes in 0:30</button>
+                    <button className='text-white px-4 py-2 rounded-xl bg-[#535353]' disabled={quoteCount > 0}
+                      onClick={resetQuote}>
+                        New Quotes in 0:{quoteCount}
+                    </button>
                   </div>
                 </div>
               </div>
@@ -1386,7 +1427,7 @@ function NFTDetails() {
                         <p>Current price</p>
                         <div className="current__price__text">
                           <h4>
-                            ${nft?.price} MATIC{" "}
+                            ${nft?.price}
                           </h4>
                         </div>
                       </div>

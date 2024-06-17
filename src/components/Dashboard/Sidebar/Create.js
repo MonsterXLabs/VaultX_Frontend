@@ -1532,7 +1532,7 @@ function Create(props) {
                       </div>
                       <div className="col-md-12">
                         <div className="single__edit__profile__step">
-                          <label htmlFor="#">Price *</label>
+                          <label htmlFor="#">Price(USD) *</label>
                           <input
                             type="text"
                             placeholder={0}
@@ -1548,7 +1548,7 @@ function Create(props) {
                             }
                           />
                           <button className="eth" type="button">
-                            USD
+                            $
                           </button>
                         </div>
                       </div>

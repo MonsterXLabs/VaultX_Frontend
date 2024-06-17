@@ -233,6 +233,17 @@ export const getMarketPlaceFee = async () => {
   return await publicClient.readContract(obj);
 };
 
+export const getMaticAmount = async (usdAmount) => {
+  const obj = {
+    address: address,
+    abi: abi,
+    functionName: "getMaticAmount",
+    args: [usdAmount * 100],
+  };
+  const publicClient = createPublicClientLocal();
+  return await publicClient.readContract(obj);
+};
+
 export const releaseTime = async (tokenId) => {
   const obj = {
     address: address,
@@ -480,6 +491,13 @@ export const purchaseUnmintedNft = async (
   }
 };
 
-export const getMaticPrice = async()=>{
-  return 0.69
-}
+export const getMaticPrice = async () => {
+  const obj = {
+    address: address,
+    abi: abi,
+    functionName: "getLatestPrice",
+    args: [],
+  };
+  const publicClient = createPublicClientLocal();
+  return await publicClient.readContract(obj);
+};

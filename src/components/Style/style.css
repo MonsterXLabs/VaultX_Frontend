@@ -2933,7 +2933,7 @@ textarea {
   background: transparent;
   border: 0;
   position: absolute;
-  right: 15px;
+  left: 10px;
   bottom: 15px;
 }
 
