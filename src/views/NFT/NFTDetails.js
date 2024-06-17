@@ -1523,17 +1523,30 @@ function NFTDetails() {
                       <div className="sale__btn w-full">
                         {type === "buy" ? (
                           <div className="flex flex-row justify-between pt-2">
-                            <a
-                              className="common__btn common_border__btn w-full"
-                              data-bs-toggle="modal"
-                              href="#placeBidInitialDialog"
-                              role="button"
-                              // onClick={bidPlace}
-                              onClick={()=> setTxType("bid")}
-                            >
-                              Place a bid
-                            </a>
-                          </div>
+                          <a
+                            className="common__btn common_border__btn w-[48%]"
+                            style={{
+                              backgroundColor: "rgba(221, 242, 71, 0.20)",
+                              color: "rgba(221, 242, 71, 0.60)",
+                            }}
+                            data-bs-toggle="modal"
+                            href="#placeBidInitialDialog"
+                            role="button"
+                            // onClick={bidPlace}
+                            onClick={() => setTxType("bid")}
+                          >
+                            Place a bid
+                          </a>
+                          <a
+                            className="common__btn common_border__btn w-[48%]"
+                            data-bs-toggle="modal"
+                            href="#exampleModalToggle6"
+                            role="button"
+                            onClick={() => setTxType("buy")}
+                          >
+                            Buy Now
+                          </a>
+                        </div>
                         ) : type === "release" ? (
                           <div className="sale__btn">
                             <a

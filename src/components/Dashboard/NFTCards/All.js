@@ -50,7 +50,7 @@ function All({tab, category, searchInput, filter}) {
                 <h4>
                   Price{" "}
                   <span>
-                    <img src="assets/img/MATIC.png" className="h-6 w-6 p-1 grayscale brightness-200 rounded-full border border-white" alt="" /> {nft.price} MATIC
+                    <img src="assets/img/MATIC.png" className="h-6 w-6 p-1 grayscale brightness-200 rounded-full border border-white" alt="" /> ${nft.price}
                   </span>
                 </h4>
               </div>
