@@ -968,29 +968,99 @@ function NFTDetails() {
       return;
     }
 
-    const maticAmount = await getMaticAmount(nft?.price);
+    const maticAmount = await getMaticAmount(txType == "bid" ? price : nft?.price);
     if(maticAmount) {
       setQuotes(true);
+      const gasFee = maticAmount >0.02 ? 0.02 : maticAmount;
+      const totalAmount = (Number(maticAmount) / 100 + gasFee).toFixed(2);
+      const expectedAmount = (Number(maticAmount) * (100 - fee) / 10000 - gasFee).toFixed(2);
       setQuoteDetail({
         usdAmount: nft?.price,
         maticAmount: Number(maticAmount) / 100,
-        gasFee: 0.02,
+        gasFee,
         fee,
-        totalAmount: Number(maticAmount) / 100 + 0.02,
+        totalAmount,
+        expectedAmount,
       });
     }
   }
-
-  const resetQuote = async () => {
-    const maticAmount = await getMaticAmount(nft?.price);
+  const showCheckout = async () => {
+    debugger;
+    const maticAmount = await getMaticAmount(txType == "bid" ? price : nft?.price);
     if(maticAmount) {
+      const gasFee = maticAmount >0.02 ? 0.02 : maticAmount;
+      const totalAmount = (Number(maticAmount) / 100 + gasFee).toFixed(2);
+      const expectedAmount = (Number(maticAmount) * (100 - fee) / 10000 - gasFee).toFixed(2);
       setQuoteDetail({
         usdAmount: nft?.price,
         maticAmount: Number(maticAmount) / 100,
-        gasFee: 0.02,
+        gasFee,
         fee,
-        totalAmount: Number(maticAmount) / 100 + 0.02,
+        totalAmount,
+        expectedAmount,
       });
+    }
+
+    const elem = new bootstrap.Modal(
+      document.getElementById("exampleModalToggle8")
+    )
+    elem.show()
+  }
+  const showBidNext = async () => {
+    const maticAmount = await getMaticAmount(price);
+    if(maticAmount) {
+      const gasFee = maticAmount >0.02 ? 0.02 : maticAmount;
+      const totalAmount = (Number(maticAmount) / 100 + gasFee).toFixed(2);
+      const expectedAmount = (Number(maticAmount) * (100 - fee) / 10000 - gasFee).toFixed(2);
+      setQuoteDetail({
+        usdAmount: nft?.price,
+        maticAmount: Number(maticAmount) / 100,
+        gasFee,
+        fee,
+        totalAmount,
+        expectedAmount,
+      });
+    }
+    const elem = new bootstrap.Modal(
+      document.getElementById("exampleModalToggle6")
+    )
+    elem.show()
+  }
+  const showBuyNow = async () => {
+    const maticAmount = await getMaticAmount(nft?.price);
+    if(maticAmount) {
+      const gasFee = maticAmount >0.02 ? 0.02 : maticAmount;
+      const totalAmount = (Number(maticAmount) / 100 + gasFee).toFixed(2);
+      const expectedAmount = (Number(maticAmount) * (100 - fee) / 10000 - gasFee).toFixed(2);
+      setQuoteDetail({
+        usdAmount: nft?.price,
+        maticAmount: Number(maticAmount) / 100,
+        gasFee,
+        fee,
+        totalAmount,
+        expectedAmount,
+      });
+    }
+    const elem = new bootstrap.Modal(
+      document.getElementById("exampleModalToggle6")
+    )
+    elem.show()
+    setTxType("buy");
+  }
+  const resetQuote = async () => {
+    const maticAmount = await getMaticAmount(type == "bid" ? price : nft?.price);
+    if(maticAmount) {
+      const gasFee = 0.02;
+      const totalAmount = (Number(maticAmount) / 100 + gasFee).toFixed(2);
+      const expectedAmount = (Number(maticAmount) * (100 - fee) / 10000 - gasFee).toFixed(2);
+      setQuoteDetail({
+        usdAmount: nft?.price,
+        maticAmount: Number(maticAmount) / 100,
+        gasFee,
+        fee,
+        totalAmount,
+        expectedAmount,
+      })
       setQuoteCount(30);
     }
   }
@@ -1092,7 +1162,7 @@ function NFTDetails() {
                 fontFamily: "Azeret Mono"
               }}>
                 <span className="text-sm">The expected payment is</span>
-                <span>{quoteDetail.totalAmount} MATIC</span>
+                <span>{quoteDetail.expectedAmount} MATIC</span>
               </div>
               <button className='bg-[#DEE8E8] w-full my-3 py-2 text-center rounded-md text-black font-medium' onClick={() => setQuotes(false)}>Close</button>
             </div>
@@ -1463,7 +1533,7 @@ function NFTDetails() {
                               href="#placeBidInitialDialog"
                               role="button"
                               // onClick={bidPlace}
-                              onClick={() => setTxType("bid")}
+                              onClick={()=> setTxType("bid")}
                             >
                               Bid
                             </a>
@@ -1472,7 +1542,7 @@ function NFTDetails() {
                               data-bs-toggle="modal"
                               href="#exampleModalToggle6"
                               role="button"
-                              onClick={() => setTxType("buy")}
+                              onClick={showBuyNow}
                             >
                               Buy Now
                             </a>
@@ -3847,7 +3917,7 @@ function NFTDetails() {
                           <div className="popup__order__summery__content">
                             <p>
                               Price{" "}
-                              <span>{price ? price : nft?.price} MATIC</span>
+                              <span>{price ? price : nft?.price}$</span>
                             </p>
                             <p>
                               Amount <span>1</span>
@@ -3859,7 +3929,7 @@ function NFTDetails() {
                           <div className="popup__order__summery__content border-0 mt-25">
                             <p className="p-0">
                               You will Pay{" "}
-                              <span>{price ? price : nft?.price} MATIC</span>
+                              <span>{quoteDetail.totalAmount} MATIC</span>
                             </p>
                           </div>
                         </div>
@@ -3952,12 +4022,7 @@ function NFTDetails() {
                   <a
                     data-bs-dismiss="modal"
                     href="#"
-                    onClick={() => {
-                      const elem = new bootstrap.Modal(
-                        document.getElementById("exampleModalToggle8")
-                      )
-                      elem.show()
-                    }}
+                    onClick={showCheckout}
                   >
                     I Agree
                   </a>
@@ -4289,11 +4354,12 @@ function NFTDetails() {
                           value={price}
                           onChange={e => setPrice(e.target.value)}
                         />
-                        <img
+                        <span className="text-white">$</span>
+                        {/* <img
                           src="../../assets/img/MATIC.png"
                           className="h-6 w-6 p-1 grayscale brightness-200 rounded-full border border-white"
                           alt=""
-                        />
+                        /> */}
                       </div>
                     </div>
                   </div>
@@ -4307,12 +4373,7 @@ function NFTDetails() {
                     // data-bs-toggle="modal"
                     // href="#exampleModalToggle4"
                     role="button"
-                    onClick={() => {
-                      const elem = new bootstrap.Modal(
-                        document.getElementById("exampleModalToggle6")
-                      )
-                      elem.show()
-                    }}
+                    onClick={showBidNext}
                   >
                     Next
                   </a>
@@ -4385,13 +4446,13 @@ function NFTDetails() {
                       fontFamily: "Azeret Mono"
                     }}>
                       <span className="text-sm">Cryptocurrency Price</span>
-                      <span>2,800 Matic</span>
+                      <span>{quoteDetail.maticAmount} Matic</span>
                     </div>
                     <div className='flex justify-between my-3' style={{
                       fontFamily: "Azeret Mono"
                     }}>
                       <span className="text-sm">Gass Fee</span>
-                      <span>42.5 Matic</span>
+                      <span>{quoteDetail.gasFee} Matic</span>
                     </div>
                   </div>
                 </div>
@@ -4402,7 +4463,7 @@ function NFTDetails() {
                       color: 'white'
                     }}>
                       <span className="text-sm">Marketplace fee</span>
-                      <span>{nft?.royalty}%</span>
+                      <span>{fee}%</span>
                     </div>
                     <hr className="text-white" />
                     <div className="flex justify-between my-3" style={{
@@ -4410,7 +4471,7 @@ function NFTDetails() {
                       color: 'white'
                     }}>
                       <span className="text-sm">You will pay</span>
-                      <span>{txType === "bid" ? price : nft?.price} MATIC</span>
+                      <span>{quoteDetail.totalAmount} MATIC</span>
                     </div>
                   </div>
                 </div>
