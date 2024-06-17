@@ -1504,7 +1504,7 @@ function NFTDetails() {
                     )}
                   </div>
                   <div className="current__price__area">
-                    <div className="flex justify-between">
+                    <div className="flex justify-between items-center">
                       <div className="current__price__title flex flex-col gap-y-1">
                         <p>Current price</p>
                         <div className="current__price__text">
@@ -1522,31 +1522,16 @@ function NFTDetails() {
                     <div className="current__price__blk">
                       <div className="sale__btn w-full">
                         {type === "buy" ? (
-                          <div className="flex flex-row justify-between pt-2">
                             <a
-                              className="common__btn common_border__btn w-[48%]"
-                              style={{
-                                backgroundColor: "rgba(221, 242, 71, 0.20)",
-                                color: "rgba(221, 242, 71, 0.60)",
-                              }}
+                              className="common__btn common_border__btn w-full"
                               data-bs-toggle="modal"
                               href="#placeBidInitialDialog"
                               role="button"
                               // onClick={bidPlace}
                               onClick={()=> setTxType("bid")}
                             >
-                              Bid
+                              Place a bid
                             </a>
-                            <a
-                              className="common__btn common_border__btn w-[48%]"
-                              data-bs-toggle="modal"
-                              href="#exampleModalToggle6"
-                              role="button"
-                              onClick={showBuyNow}
-                            >
-                              Buy Now
-                            </a>
-                          </div>
                         ) : type === "release" ? (
                           <div className="sale__btn">
                             <a
@@ -1569,7 +1554,7 @@ function NFTDetails() {
                           </div>
                         ) : type === "resell" ? (
                           <a
-                            className="common__btn common_border__btn"
+                            className="common__btn common_border__btn w-full"
                             data-bs-toggle="modal"
                             href="#putOnSaleInitialDialog"
                             role="button"
@@ -1578,7 +1563,7 @@ function NFTDetails() {
                           </a>
                         ) : type === "remove" ? (
                           <a
-                            className="common__btn common_border__btn"
+                            className="common__btn common_border__btn w-full"
                             // data-bs-toggle="modal"
                             // href="#exampleModalToggle4"
                             role="button"
@@ -3900,7 +3885,7 @@ function NFTDetails() {
                 <div className="common__edit__proe__wrap mt-4">
                   <div className="edit__profilfile__inner__top__blk">
                     <div className="edit__profile__inner__title">
-                      <h5>Order Summery</h5>
+                      <h5>Order Summary</h5>
                     </div>
                     <div className="edit_profile_inner_top_right">
                       <div className="edit__profile__angle__ico">
@@ -3917,19 +3902,13 @@ function NFTDetails() {
                           <div className="popup__order__summery__content">
                             <p>
                               Price{" "}
-                              <span>{price ? price : nft?.price}$</span>
+                              <span className="text-[#DDF247]">${price ? price : nft?.price}</span>
                             </p>
+                            <hr className="w-full text-white mb-3 opacity-10" />
                             <p>
-                              Amount <span>1</span>
-                            </p>
-                            <p>
-                              Royalty <span>{nft?.royalty}%</span>
-                            </p>
-                          </div>
-                          <div className="popup__order__summery__content border-0 mt-25">
-                            <p className="p-0">
-                              You will Pay{" "}
-                              <span>{quoteDetail.totalAmount} MATIC</span>
+                            You will pay the purchase amount in cryptocurrency based on the real-time CoinMarketCap exchange rate at the current moment.
+                            <br />
+                            If the bidding is not successful, all cryptocurrency used in the purchase price, excluding gas fees, will be refunded.
                             </p>
                           </div>
                         </div>

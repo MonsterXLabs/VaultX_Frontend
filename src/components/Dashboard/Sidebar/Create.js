@@ -1560,6 +1560,7 @@ function Create(props) {
                           <p>
                             You will recieve{" "}
                             <span>
+                              $ 
                               {createNftStep1.price
                                 ? createNftStep1.price -
                                   (fee * createNftStep1.price) / 100
@@ -1854,7 +1855,7 @@ function Create(props) {
                           min="0"
                           placeholder="Earn Royalties Percentage(%)"
                           name="royalty"
-                          value={createNftStep2.royalty}
+                          value={`%${createNftStep2.royalty}`}
                           onChange={(e) =>
                             Number(e.target.value) >= 0
                               ? handleUpdateValuesStep2(e)
