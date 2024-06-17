@@ -1048,7 +1048,7 @@ function NFTDetails() {
                     <p>Matic <span className='text-sm' style={{
                       color: 'rgba(255, 255, 255, 0.53)'
                     }}>Polygon Network</span></p>
-                    <p>{contractInfo.address}</p>
+                    <p>{trimString(contractInfo.address)}</p>
                   </div>
                 </div>
                 <hr />
