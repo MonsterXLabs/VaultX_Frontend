@@ -575,7 +575,7 @@ function Curation() {
                               className="h-6 w-6 p-1 grayscale brightness-200 rounded-full border border-white"
                               alt=""
                             />{" "}
-                            {item?.price} MATIC
+                            ${item?.price}
                           </span>
                         </h4>
                       </div>
