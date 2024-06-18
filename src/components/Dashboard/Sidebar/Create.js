@@ -564,7 +564,6 @@ function Create(props) {
     console.log("here 111------->>>")
 
     let nftUri = "";
-
     try {
       const {
         data: { uri },
@@ -1740,11 +1739,16 @@ function Create(props) {
                             type="checkbox"
                             id="flexSwitchCheckChecked"
                             checked={createNftStep2Conditions.royalties}
-                            onChange={(e) =>
+                            onChange={(e) => {
                               setCreateNftStep2Conditions({
                                 ...createNftStep2Conditions,
                                 royalties: !createNftStep2Conditions.royalties,
-                              })
+                              });
+                              setCreateNftStep2({
+                                ...createNftStep2,
+                                royalty: 0,
+                              });
+                            }
                             }
                           />
                         </div>
@@ -1855,7 +1859,7 @@ function Create(props) {
                           min="0"
                           placeholder="Earn Royalties Percentage(%)"
                           name="royalty"
-                          value={`%${createNftStep2.royalty}`}
+                          value={createNftStep2.royalty}
                           onChange={(e) =>
                             Number(e.target.value) >= 0
                               ? handleUpdateValuesStep2(e)
