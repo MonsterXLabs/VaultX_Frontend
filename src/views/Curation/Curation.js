@@ -34,7 +34,11 @@ function Curation() {
   const [descriptionSlice, setDescriptionSlice] = useState(true)
   const favoriteService = new FavoriteService()
   const onClickMenuButton = value => {
-    navigate(`/dashboard`)
+    if (value === 'create') {
+      navigate('/dashboard?tab=create')
+    } else {
+      navigate('/dashboard')
+    }
   }
   const {curationId} = useParams()
 
@@ -575,7 +579,7 @@ function Curation() {
                               className="h-6 w-6 p-1 grayscale brightness-200 rounded-full border border-white"
                               alt=""
                             />{" "}
-                            {item?.price} MATIC
+                            ${item?.price}
                           </span>
                         </h4>
                       </div>

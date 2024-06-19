@@ -1729,7 +1729,7 @@ function Create(props) {
                   <div className="col-lg-4 col-md-6">
                     <div className="nft__single__switch__box">
                       <div className="nft__switch__text">
-                        <h6>Royalties</h6>
+                        <h6>Royalties (%)</h6>
                         <p>Earn a % on secondary sales</p>
                       </div>
                       <div className="nft__switch">
