@@ -376,10 +376,11 @@ function HomePage() {
           </div>
           <div className="row g-4">
             {section1?.box?.map((value, index) => { 
+              console.log(value)
               return (
                 <a
                   key={index}
-                  href="https://artistvaultx.wpcomstaging.com/monster-artist/"
+                  href={value.subtitle2 ? value.subtitle2 : ''}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="col-lg-4 col-md-6"
