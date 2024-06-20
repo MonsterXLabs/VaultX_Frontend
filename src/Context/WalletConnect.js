@@ -1,12 +1,13 @@
 import {createContext, useEffect, useState} from "react"
 import {createWeb3Modal} from "@web3modal/wagmi/react"
 import {defaultWagmiConfig} from "@web3modal/wagmi/react/config"
+import { authConnector } from '@web3modal/wagmi'
 import { createConfig, configureChains, mainnet,http } from 'wagmi'
 import {WagmiProvider} from "wagmi"
 import {polygon, polygonMumbai,polygonAmoy} from "wagmi/chains"
 import {QueryClient, QueryClientProvider} from "@tanstack/react-query"
 
-import { metaMask } from 'wagmi/connectors'
+import { metaMask, coinbaseWallet } from 'wagmi/connectors'
 
 import {
   authenticationServices,
@@ -33,7 +34,18 @@ const chains =
 
   export const config = createConfig({
     chains: chains,
-    connectors: [metaMask()],
+    connectors: [
+      metaMask(),
+      // coinbaseWallet(),
+      authConnector({
+        chains,
+        options: { projectId },
+        email: false, // default to true
+        socials: ['google', 'apple'],
+        showWallets: true, // default to true
+        walletFeatures: true // default to true
+      })
+    ],
     transports: {
       [polygon.id]: http(),
       [polygonAmoy.id]: http(),
@@ -44,6 +56,12 @@ const chains =
 //   chains, // required
 //   projectId, // required
 //   metadata, // required
+//   auth: {
+//     email: false, // default to true
+//     socials: ['google', 'apple'],
+//     showWallets: true, // default to true
+//     walletFeatures: true // default to true
+//   }
 // })
 
 // 3. Create modal

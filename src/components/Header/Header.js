@@ -2,6 +2,8 @@ import { useContext, useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { useWeb3Modal } from "@web3modal/wagmi/react"
 import { useAccount, useDisconnect } from "wagmi"
+import { disconnect, getAccount } from '@wagmi/core'
+import { config } from "../../Context/WalletConnect"
 import { getEthBalance, handleCopyClick, trimString } from "../../utils/helpers"
 import { WalletContext } from "../../Context/WalletConnect"
 import { collectionServices, userServices } from "../../services/supplier"
@@ -14,7 +16,7 @@ function Header() {
   const [openDialog, setOpenDialog] = useState(false)
   const { open: modalOpen, close } = useWeb3Modal()
   const { address, isConnected } = useAccount()
-  const { disconnect } = useDisconnect()
+  // const { disconnect } = useDisconnect()
   const { login, logout, isLoggedIn } = useContext(WalletContext)
   const [nfts, setNfts] = useState([])
   const [curations, setCurations] = useState([])
@@ -88,7 +90,11 @@ function Header() {
 
   const logoutOnConnect = async () => {
     if (isLoggedIn) {
-      disconnect()
+      // disconnect()
+      const { connector } = getAccount(config)
+      const result = await disconnect(config, {
+        connector, 
+      })
       await logout(window.location.pathname)
       navigate("/")
     }

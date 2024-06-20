@@ -14,7 +14,7 @@
     "@testing-library/user-event": "^13.5.0",
     "@thirdweb-dev/react": "^4.9.0",
     "@thirdweb-dev/sdk": "^4.0.95",
-    "@web3modal/wagmi": "^4.1.0",
+    "@web3modal/wagmi": "^4.2.3",
     "axios": "^1.6.7",
     "bootstrap": "^5.3.3",
     "country-state-city": "^3.2.1",
@@ -36,8 +36,8 @@
     "redux-persist": "^6.0.0",
     "slick-carousel": "^1.8.1",
     "socket.io-client": "^4.7.5",
-    "viem": "^2.8.4",
-    "wagmi": "^2.5.7",
+    "viem": "^2.15.1",
+    "wagmi": "^2.10.3",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
