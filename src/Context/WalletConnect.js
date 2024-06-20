@@ -20,7 +20,9 @@ import {createCookie, getCookie} from "../utils/cookie"
 
 const queryClient = new QueryClient()
 
-const projectId = "cc7204248baa9711fe943f0e9a4eb47c"
+// const projectId = "cc7204248baa9711fe943f0e9a4eb47c"
+const projectId = "174b15a87b32b8cc2e8ee6ce8d0afb03"
+
 
 const metadata = {
   name: "Web3Modal",
