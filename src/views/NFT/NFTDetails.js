@@ -7,7 +7,6 @@ import { City, Country, State } from "country-state-city"
 import _ from "lodash"
 import { useNavigate, useParams } from "react-router-dom"
 import Header from "../../components/Header/Header"
-import pfp from '../../../public/assets/img/metamask-fox.svg'
 import {
   CategoryService,
   CreateNftServices,
