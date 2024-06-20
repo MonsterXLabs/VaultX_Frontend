@@ -6,6 +6,8 @@ import * as bootstrap from "bootstrap"
 import { City, Country, State } from "country-state-city"
 import _ from "lodash"
 import { useNavigate, useParams } from "react-router-dom"
+import Header from "../../components/Header/Header"
+import pfp from '../../../public/assets/img/metamask-fox.svg'
 import {
   CategoryService,
   CreateNftServices,
@@ -2512,13 +2514,18 @@ function NFTDetails() {
                               />
                             </div>
                             <div className="attachment__content flex justify-center gap-4">
+                              
                               <a
                                 href="#"
-                                onClick={() => handleChangeStep1Attachment(i)}
+                                onClick={() => {
+                                  step1AttachmentRef.current.click()
+                                }}
                               >
                                 Change{" "}
                               </a>
-                              <span className="mt-3">
+                              <span className="mt-3"
+                                onClick={() => handleChangeStep1Attachment(i)}
+                              >
                                 <img src="../../assets/img/Trash.svg" alt="" />
                               </span>
                             </div>

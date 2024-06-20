@@ -212,23 +212,11 @@ function Curation() {
           <div className="open__sidebar none__desk">
             <i className="fa-solid fa-bars" />
           </div>
-          <div className="profile__search phone__none">
-            <input
-              type="text"
-              placeholder="Search artwork, collection..."
-              value={search}
-              onChange={e => setSearchInput(searchInput)}
-            />
-            <button type="button">
-              <i className="fa-solid fa-magnifying-glass" />
-            </button>
-          </div>
-          <div className="profile__bell__area">
-            <span>
-              <img src="../../assets/img/profile_bell_1.svg" alt="" />
-            </span>
-          </div>
-          <div className="profile__dropdown__blk">
+          <div className="profile__dropdown__blk" style={{
+            display: 'flex',
+            justifyContent: 'flex-end',
+            width: '100%',
+          }}>
             <div className="profile__dropdown__inner">
               <div className="profile__drop__thumb">
                 <img
