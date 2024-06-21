@@ -427,11 +427,11 @@ function Create(props) {
       element1.hide();
     } catch (error) {
       element1.hide();
-      
-           
+
+
       if (
         error?.response?.status ==
-       400
+        400
       ) {
         console.log("herer in modal")
         const element5 = new bootstrap.Modal(
@@ -581,7 +581,7 @@ function Create(props) {
         setTimeout(() => window.location.reload(), 3000);
       }
     } catch (error) {
-      console.log("error is--->>",{ error });
+      console.log("error is--->>", { error });
       if (
         error?.response?.data?.message?.includes(
           "Advance details not found or already minted"
@@ -808,41 +808,41 @@ function Create(props) {
   };
   const { chains, switchChain } = useSwitchChain();
 
-  const handleNetworkChange = () => {};
+  const handleNetworkChange = () => { };
 
   return (
     <div className="profile__wrapper">
       <MainSearch />
       {props.render}
       <Modal
-          open={popUp.active}
-          onClose={() => setPopUp({ active: false, type: null })}
-          aria-labelledby="modal-modal-title"
-          aria-describedby="modal-modal-description"
-        >
-          <Box sx={style}>
-            <div style={{
-              position: "absolute",
-              top: "20px",
-              right: "20px",
-              backgroundColor: "white",
-              padding: "10px",
-              cursor: "pointer",
-              borderRadius: "100%",
-              zIndex: 100
-            }}
-            onClick={() => setPopUp({...popUp, active: false})}
-            >
+        open={popUp.active}
+        onClose={() => setPopUp({ active: false, type: null })}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <div style={{
+            position: "absolute",
+            top: "20px",
+            right: "20px",
+            backgroundColor: "white",
+            padding: "10px",
+            cursor: "pointer",
+            borderRadius: "100%",
+            zIndex: 100
+          }}
+            onClick={() => setPopUp({ ...popUp, active: false })}
+          >
             <img src="../../assets/img/delete_icon.svg" alt="" className="close__icon" />
-            </div>
-            {
-              popUp.type === "curation" ? <CurationPopup /> : null
-            }
-            {
-              popUp.type === "rwa" ? <RwaPopup /> : null
-            }
-          </Box>
-        </Modal>
+          </div>
+          {
+            popUp.type === "curation" ? <CurationPopup /> : null
+          }
+          {
+            popUp.type === "rwa" ? <RwaPopup /> : null
+          }
+        </Box>
+      </Modal>
       <div className={step !== 0 ? "d-none" : "create__area"}>
         <div className="row g-0 align-items-center">
           <div className="col-md-6">
@@ -1179,15 +1179,15 @@ function Create(props) {
                       </div>
                       <div className="edit_profile_inner_top_right">
                         {
-                          youtube.length === 2 ? 
-                          <div className="flex gap-x-2 cursor-pointer" onClick={() => {
-                            setYoutube([youtube[0]])
-                          }}>
-                            <img src="assets/img/trash.svg" alt="" />
-                            <span className="text-white font-bold lg:text-[20px]">
-                              Delete
-                            </span>
-                          </div> : null
+                          youtube.length === 2 ?
+                            <div className="flex gap-x-2 cursor-pointer" onClick={() => {
+                              setYoutube([youtube[0]])
+                            }}>
+                              <img src="assets/img/trash.svg" alt="" />
+                              <span className="text-white font-bold lg:text-[20px]">
+                                Delete
+                              </span>
+                            </div> : null
                         }
                         <div className="add_new">
                           <div
@@ -1541,9 +1541,9 @@ function Create(props) {
                               Number(e.target.value) >= 0
                                 ? handleUpdateValues(e)
                                 : setCreateNftStep1({
-                                    ...createNftStep1,
-                                    price: "",
-                                  })
+                                  ...createNftStep1,
+                                  price: "",
+                                })
                             }
                           />
                           <button className="eth" type="button">
@@ -1559,10 +1559,10 @@ function Create(props) {
                           <p>
                             You will recieve{" "}
                             <span>
-                              $ 
+                              $
                               {createNftStep1.price
                                 ? createNftStep1.price -
-                                  (fee * createNftStep1.price) / 100
+                                (fee * createNftStep1.price) / 100
                                 : 0}
                             </span>
                           </p>
@@ -1854,21 +1854,66 @@ function Create(props) {
                     <div className="col-md-12">
                       <div className="single__edit__profile__step">
                         <label htmlFor="#">Royalties (%)</label>
-                        <input
-                          type="text"
-                          min="0"
-                          placeholder="Earn Royalties Percentage(%)"
-                          name="royalty"
-                          value={createNftStep2.royalty}
-                          onChange={(e) =>
-                            Number(e.target.value) >= 0
-                              ? handleUpdateValuesStep2(e)
-                              : setCreateNftStep1({
+                        <div style={{
+                          display: 'flex',
+                          gap: '20px',
+                          alignItems: 'center'
+
+                        }}>
+                          <input
+                            type="text"
+                            placeholder="Address"
+                            name="address"
+                            style={{
+                              width: '240px'
+                            }}
+                          />
+                          <input
+                            type="text"
+                            min="0"
+                            placeholder="%"
+                            name="royalty"
+                            style={{
+                              width: '100px'
+                            }}
+                            value={createNftStep2.royalty}
+                            onChange={(e) =>
+                              Number(e.target.value) >= 0
+                                ? handleUpdateValuesStep2(e)
+                                : setCreateNftStep1({
                                   ...createNftStep1,
                                   royalty: "",
                                 })
-                          }
-                        />
+                            }
+                          />
+                          <img
+                            src="assets/img/Trash.svg"
+                            alt=""
+                            style={{
+                              cursor: 'pointer'
+                            }}
+                          />
+                          <a
+                            href="#"
+                            style={{
+                              color: '#DDF247',
+                              display: 'flex',
+                              gap: '5px',
+                              alignItems: 'center',
+                              border: '1px solid #DDF247',
+                              borderRadius: '5px',
+                              padding: '10px 15px'
+                            }}
+                          >
+                            <span>
+                              <img
+                                src="assets/img/Plus_circle.svg"
+                                alt=""
+                              />
+                            </span>{" "}
+                            Add 
+                          </a>
+                        </div>
                       </div>
                     </div>
                   )}

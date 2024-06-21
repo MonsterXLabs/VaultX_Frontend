@@ -554,10 +554,7 @@ function Curation() {
                       <div className="sport__content">
                         <h5>{item?.name}</h5>
                         <p>
-                          Created by: <span>{item?.mintedBy?.username}</span>
-                        </p>
-                        <p>
-                          Canvas Collection <span />
+                          Created by: <span>{item?.artist}</span>
                         </p>
                         <h4>
                           Price{" "}

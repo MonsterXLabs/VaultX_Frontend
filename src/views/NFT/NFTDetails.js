@@ -2513,15 +2513,15 @@ function NFTDetails() {
                               />
                             </div>
                             <div className="attachment__content flex justify-center gap-4">
-                              
-                              <a
-                                href="#"
+                              <span className="text-[#DDF247]"
                                 onClick={() => {
-                                  step1AttachmentRef.current.click()
+                                  if (step1AttachmentRef.current) {
+                                    step1AttachmentRef.current.click()
+                                  }
                                 }}
                               >
                                 Change{" "}
-                              </a>
+                              </span>
                               <span className="mt-3"
                                 onClick={() => handleChangeStep1Attachment(i)}
                               >
