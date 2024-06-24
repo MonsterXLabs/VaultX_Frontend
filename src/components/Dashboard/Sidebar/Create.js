@@ -680,6 +680,7 @@ function Create(props) {
         }));
         splitPayments = newArr;
       }
+      debugger;
       const result = await listNft(
         uri,
         createNftStep1.price,

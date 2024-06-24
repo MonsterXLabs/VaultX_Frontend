@@ -4445,13 +4445,13 @@ function NFTDetails() {
                       fontFamily: "Azeret Mono"
                     }}>
                       <span className="text-sm">Cryptocurrency Price</span>
-                      <span>{quoteDetail.maticAmount} Matic</span>
+                      <span>{quoteDetail?.maticAmount} Matic</span>
                     </div>
                     <div className='flex justify-between my-3' style={{
                       fontFamily: "Azeret Mono"
                     }}>
                       <span className="text-sm">Gass Fee</span>
-                      <span>{quoteDetail.gasFee} Matic</span>
+                      <span>{quoteDetail?.gasFee} Matic</span>
                     </div>
                   </div>
                 </div>
@@ -4470,7 +4470,7 @@ function NFTDetails() {
                       color: 'white'
                     }}>
                       <span className="text-sm">You will pay</span>
-                      <span>{quoteDetail.totalAmount} MATIC</span>
+                      <span>{quoteDetail?.totalAmount} MATIC</span>
                     </div>
                   </div>
                 </div>
