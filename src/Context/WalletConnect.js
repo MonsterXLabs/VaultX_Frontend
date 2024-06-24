@@ -43,7 +43,7 @@ const chains =
         chains,
         options: { projectId },
         email: false, // default to true
-        socials: ['google', 'apple'],
+        socials: ['google', 'apple', 'facebook', 'x'],
         showWallets: true, // default to true
         walletFeatures: true // default to true
       })
@@ -72,6 +72,9 @@ createWeb3Modal({
   // featuredWalletIds:['c57ca95b47569778a828d19178114f4db188b89b763c899ba0be274e97267d96'],
   projectId,
   enableAnalytics: true, // Optional - defaults to your Cloud configuration
+  allWallets: 'SHOW',
+  metadata,
+  name: 'sign'
 })
 
 export const WalletContext = createContext(null)

@@ -986,7 +986,6 @@ function NFTDetails() {
     }
   }
   const showCheckout = async () => {
-    debugger;
     const maticAmount = await getMaticAmount(txType == "bid" ? price : nft?.price);
     if(maticAmount) {
       const gasFee = maticAmount >0.02 ? 0.02 : maticAmount;
