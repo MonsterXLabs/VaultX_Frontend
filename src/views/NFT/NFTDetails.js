@@ -834,11 +834,10 @@ function NFTDetails() {
       }
       await createNftServices.editNft(formData)
       await work()
+      editElement.style.display = "none"
       editElement.hide()
       element.show()
-      // setTimeout(() => {
-      //   element.hide()
-      // },[1000])
+      await window.location.reload()
     } catch (error) {
       editElement.hide()
       element.hide()
