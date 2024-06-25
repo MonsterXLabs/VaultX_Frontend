@@ -31,13 +31,12 @@ const metadata = {
   icons: ["https://avatars.githubusercontent.com/u/37784886"],
 }
 
-const chains =
-  process.env.REACT_APP_NODE_ENV !== "DEV" ? [polygon] : [polygonAmoy]
+const chains = [polygon, polygonAmoy]
 
   export const config = createConfig({
     chains: chains,
     connectors: [
-      metaMask(),
+      // metaMask(),
       // coinbaseWallet(),
       authConnector({
         chains,
@@ -54,16 +53,16 @@ const chains =
     },
   })
 
-// const config = defaultWagmiConfig({
+// export const config = defaultWagmiConfig({
 //   chains, // required
 //   projectId, // required
 //   metadata, // required
-//   auth: {
-//     email: false, // default to true
-//     socials: ['google', 'apple'],
-//     showWallets: true, // default to true
-//     walletFeatures: true // default to true
-//   }
+//   // auth: {
+//   //   email: false, // default to true
+//   //   socials: ['google', 'apple', 'facebook', 'x'],
+//   //   // showWallets: true, // default to true
+//   //   // walletFeatures: true // default to true
+//   // }
 // })
 
 // 3. Create modal
