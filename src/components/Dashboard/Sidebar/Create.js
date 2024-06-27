@@ -34,6 +34,8 @@ import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import CurationPopup from "../../Modal/CurationPopup";
 import RwaPopup from "../../Modal/RwaPopup";
+import { getContactsInfo, getProperties, getSellerInfo } from "../../../services/supplier";
+import Info from "../../Modal/Info";
 
 const style = {
   borderRadius: '10px',
@@ -215,7 +217,7 @@ function Create(props) {
       }));
       strDoesExist("Split Payment Details", newArr, arr, "is empty");
     }
-    createNftStep2Properties.forEach((item, idx) => {
+    selectedProperty.attributes && selectedProperty.attributes.forEach((item, idx) => {
       strDoesExist(`Attributes type ${idx}`, item.type, arr);
       strDoesExist(`Attributes value ${idx}`, item.value, arr);
     });
@@ -226,12 +228,12 @@ function Create(props) {
 
   const validateCreateSellerDetails = () => {
     const arr = [];
-    strDoesExist("Name", sellerInfo.name, arr);
-    validateEmail("Email", sellerInfo.email, arr);
-    strDoesExist("Country", JSON.parse(sellerInfo.country).name, arr);
-    strDoesExist("Address Line 1", sellerInfo.address1, arr);
-    strDoesExist("city", sellerInfo.city, arr);
-    strDoesExist("state", JSON.parse(sellerInfo.state).name, arr);
+    strDoesExist("Name", selectedSeller.name, arr);
+    validateEmail("Email", selectedSeller.email, arr);
+    strDoesExist("Country", selectedSeller.country, arr);
+    strDoesExist("Address Line 1", selectedSeller.address ? selectedSeller.address.line1 : "", arr);
+    strDoesExist("city", selectedSeller.address ? selectedSeller.address.city : "", arr);
+    strDoesExist("state", selectedSeller.address ? selectedSeller.address.state : "", arr);
     // numberValidator("Postal Code", sellerInfo.postalCode, arr, "postal")
     // numberValidator("Phone Number", sellerInfo.phone, arr, "phone")
     setErrorCuration([...arr]);
@@ -240,15 +242,6 @@ function Create(props) {
   };
 
   const [sellerInfo, setSellerInfo] = useState({
-    name: "",
-    email: "",
-    country: "",
-    address1: "",
-    address2: "",
-    state: "",
-    city: "",
-    postalCode: "",
-    phone: "",
     lengths: "",
     width: "",
     height: "",
@@ -421,6 +414,7 @@ function Create(props) {
     }
 
     try {
+      await getStoredInfo()
       const res = await nftService.createBasicDetails(formData);
       setNftId(res.data.data._id);
       setStep(2);
@@ -447,7 +441,6 @@ function Create(props) {
   const fetchUserCollections = async () => {
     try {
       const res = await collectionServices.getUserCollections();
-      console.log("curations", res);
       setUserCollection(
         res.data.collection.length > 0 ? res.data.collection : []
       );
@@ -467,6 +460,30 @@ function Create(props) {
       console.log(error);
     }
   };
+
+  const [sellers, setSellers] = useState([]);
+  const [contacts, setContacts] = useState([]);
+  const [properties, setProperties] = useState([]);
+
+  const [selectedSeller, setSelectedSeller] = useState(null);
+  const [selectedContact, setSelectedContact] = useState(null);
+  const [selectedProperty, setSelectedProperty] = useState(null);
+
+  const [popUp2, setPopUp2] = useState({
+    active: false,
+    type: null,
+    data: null
+  })
+
+  const getStoredInfo = async () => {
+    const storedSellers = await getSellerInfo();
+    const storedContacts = await getContactsInfo();
+    const storedProperties = await getProperties()
+
+    setSellers(storedSellers);
+    setContacts(storedContacts);
+    setProperties(storedProperties);
+  }
 
   const createAdvancedDetails = async () => {
     setErrorCuration([]);
@@ -496,7 +513,7 @@ function Create(props) {
         formData.append("certificates", discriptionImage1[i]);
       }
     }
-    formData.append("attributes", JSON.stringify(createNftStep2Properties));
+    formData.append("attributes", JSON.stringify(selectedProperty.attributes ? selectedProperty.attributes : []));
 
     const element2 = new bootstrap.Modal(
       document.getElementById("exampleModalToggle4")
@@ -504,6 +521,8 @@ function Create(props) {
     element2.show();
 
     try {
+      await getStoredInfo()
+
       const res = await nftService.createAdvancedDetails(formData);
 
       setStep(3);
@@ -517,7 +536,6 @@ function Create(props) {
   };
 
   const createSellerInfo = async () => {
-    console.log("hello---->>>")
     setErrorCuration([]);
     const valid = validateCreateSellerDetails();
     const errElem = new bootstrap.Modal(
@@ -540,17 +558,17 @@ function Create(props) {
       splitPayments = newArr;
     }
     const data = {
-      name: sellerInfo.name,
-      email: sellerInfo.email,
-      country: JSON.parse(sellerInfo.country).name,
+      name: selectedSeller.name,
+      email: selectedSeller.email,
+      country: selectedSeller.country,
       address: {
-        line1: sellerInfo.address1,
-        line2: sellerInfo.address2,
-        city: sellerInfo.city,
-        state: JSON.parse(sellerInfo.state).name,
-        postalCode: sellerInfo.postalCode,
+        line1: selectedSeller.address.line1,
+        line2: selectedSeller.address.line2,
+        city: selectedSeller.address.city,
+        state: selectedSeller.address.state,
+        postalCode: selectedSeller.address.postalCode,
       },
-      phoneNumber: sellerInfo.phone,
+      phoneNumber: selectedSeller.phoneNumber,
       shippingInformation: {
         lengths: sellerInfo.lengths,
         width: sellerInfo.width,
@@ -561,8 +579,6 @@ function Create(props) {
       nftId,
     };
 
-    console.log("here 111------->>>")
-
     let nftUri = "";
     try {
       const {
@@ -570,7 +586,6 @@ function Create(props) {
       } = await nftService.createSellerDetails(data);
       setUri(uri);
       nftUri = uri;
-      console.log("here 2222222")
       if (!createNftStep2Conditions?.freeMint) {
         await handleMint(uri);
       } else {
@@ -581,7 +596,7 @@ function Create(props) {
         setTimeout(() => window.location.reload(), 3000);
       }
     } catch (error) {
-      console.log("error is--->>", { error });
+      console.log(error);
       if (
         error?.response?.data?.message?.includes(
           "Advance details not found or already minted"
@@ -610,11 +625,9 @@ function Create(props) {
   };
 
   const handleYoutubeInput = (tag, value, index) => {
-    console.log({ tag, value, index });
     const newYoutube = youtube;
     if (tag === "title") newYoutube[index].title = value;
     else newYoutube[index].url = value;
-    console.log(newYoutube, "newYoutube");
     setYoutube(newYoutube);
   };
 
@@ -703,7 +716,7 @@ function Create(props) {
         window.location.reload();
       }, 3000);
     } catch (error) {
-      console.log("error for delete nft", error);
+      console.log(error);
       alert(error);
       await nftService.removeFromDb({ nftId });
       element1.hide();
@@ -803,7 +816,6 @@ function Create(props) {
 
   const handleCuration = async () => {
     const val = params.get("type");
-    console.log("value is----->", val);
     if (val === "createCuration") await updateCuration();
     else await createCollection();
   };
@@ -843,6 +855,24 @@ function Create(props) {
             popUp.type === "rwa" ? <RwaPopup /> : null
           }
         </Box>
+      </Modal>
+      <Modal
+        open={popUp2.active}
+        onClose={() => setPopUp2({ active: false, type: null })}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+        sx={{
+          width: "75%",
+          backgroundColor: "#232323",
+          margin: "auto",
+          padding: "2rem",
+          overflowY: "scroll",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Info type={popUp2.type} data={popUp2.data} />
       </Modal>
       <div className={step !== 0 ? "d-none" : "create__area"}>
         <div className="row g-0 align-items-center">
@@ -1912,7 +1942,7 @@ function Create(props) {
                                 alt=""
                               />
                             </span>{" "}
-                            Add 
+                            Add
                           </a>
                         </div>
                       </div>
@@ -2107,7 +2137,50 @@ function Create(props) {
                         <h4>Properties</h4>
                         <p>Textual Traits that show up as rectangle.</p>
                       </div>
-                      <div className="ntf__flex__input__wrap">
+                      <div className="flex flex-col gap-y-2 text-white my-10 cursor-pointer">
+                        <h2 className="text-white font-medium text-lg">Select Properties Template</h2>
+                        <div className="flex flex-wrap gap-5">
+                          {
+                            properties.length > 0 ?
+                              properties.map((property, index) => {
+                                return (
+                                  <div className="w-[18rem] h-[15rem] bg-[#232323] flex justify-center items-center rounded-md relative"
+                                    style={{
+                                      border: selectedProperty === property ? '2px solid #DDF247' : 'none'
+                                    }}
+                                    onClick={() => {
+                                      setSelectedProperty(property)
+                                    }}>
+                                    <p>Basic Template</p>
+                                    <div className="absolute bottom-5 right-5" onClick={() => {
+                                      setPopUp2({
+                                        active: true,
+                                        type: 'property',
+                                        data: {
+                                          ...property
+                                        }
+                                      })
+                                    }}>
+                                      <span className="text-[#DDF247] px-2 py-1 rounded-md border-2 border-gray-400">Edit</span>
+                                    </div>
+                                  </div>
+                                )
+                              }) : null
+                          }
+                          <div className="w-[18rem] h-[15rem] bg-[#232323] flex flex-col relative justify-center items-center rounded-md" onClick={() => {
+                            setPopUp2({
+                              active: true,
+                              type: "property",
+                              data: null
+                            })
+                          }}>
+                            <img src="../../assets/icons/add.png" alt="" className="w-16 h-16" />
+                            <p className="absolute bottom-[6.5rem] text-3xl text-black">+</p>
+                            <p className="text-center absolute bottom-10 text-lg">Add new template</p>
+                          </div>
+                        </div>
+                      </div>
+                      {/* <div className="ntf__flex__input__wrap">
                         <div className="single__edit__profile__step width_245">
                           <label htmlFor="#">Type</label>
                           <input
@@ -2177,7 +2250,7 @@ function Create(props) {
                             </div>
                           ))}
                         </div>
-                      </div>
+                      </div> */}
                     </div>
                   </div>
                 </div>
@@ -2203,7 +2276,112 @@ function Create(props) {
           {/* Step 3 */}
           <div className={step === 3 ? "connected__form" : "d-none"}>
             <form action="#">
-              <div className="common__edit__proe__wrap mt-4">
+              <div className="flex flex-col gap-y-2 text-white my-10 cursor-pointer">
+                <h2 className="text-white font-medium text-lg">Shipping Information</h2>
+                <div className="flex flex-wrap gap-5">
+                  {
+                    sellers.length > 0 ?
+                      sellers.map((seller, index) => {
+                        return (
+                          <div className="w-[15rem] h-[15rem] bg-[#232323] flex flex-col justify-between p-4 rounded-md"
+                            style={{
+                              border: selectedSeller === seller ? '2px solid #DDF247' : 'none'
+                            }}
+                            onClick={() => {
+                              setSelectedSeller(seller)
+                            }}
+                          >
+                            <div className="flex justify-between">
+                              <div className="flex flex-col gap-y-2">
+                                <span>{seller.name}</span>
+                                <span>{seller.phoneNumber}</span>
+                              </div>
+                              <div>{seller.shippingAddr}</div>
+                            </div>
+                            <div>
+                              <p>{seller.address.line1}, {seller.address.line2.trim(0, 20)}...</p>
+                              <p>{seller.address.state}, {seller.address.city}, {seller.country}</p>
+                            </div>
+                            <div className="flex justify-end" onClick={() => {
+                              setPopUp2({
+                                active: true,
+                                type: "seller",
+                                data: {
+                                  ...seller
+                                }
+                              })
+                            }}>
+                              <span className="text-[#DDF247] px-2 py-1 rounded-md border-2 border-gray-400">Edit</span>
+                            </div>
+                          </div>
+                        )
+                      }) : null
+                  }
+                  <div className="w-[15rem] h-[15rem] bg-[#232323] flex flex-col relative justify-center items-center rounded-md" onClick={() => {
+                    setPopUp2({
+                      active: true,
+                      type: "seller",
+                      data: null
+                    })
+                  }}>
+                    <img src="../../assets/icons/add.png" alt="" className="w-16 h-16" />
+                    <p className="absolute bottom-[6.5rem] text-3xl text-black">+</p>
+                    <p className="text-center absolute bottom-10 text-lg">Add new address</p>
+                  </div>
+                </div>
+              </div>
+              <div className="flex flex-col gap-y-2 text-white my-10 cursor-pointer">
+                <h2 className="text-white font-medium text-lg">Contact Information</h2>
+                <div className="flex flex-wrap gap-5">
+                  {
+                    contacts.length > 0 ?
+                      contacts.map((contact, index) => {
+                        return (
+                          <div className="w-[15rem] h-[15rem] bg-[#232323] flex flex-col justify-between p-4 rounded-md"
+                            style={{
+                              border: selectedContact === contact ? '2px solid #DDF247' : 'none'
+                            }}
+                            onClick={() => {
+                              setSelectedContact(contact)
+                            }}
+                          >
+                            <div className="flex justify-between">
+                              <div className="flex flex-col gap-y-2">
+                                <span>{contact.name ? contact.name : `#${index + 1}`}</span>
+                              </div>
+                            </div>
+                            <div>
+                              <p>{contact.contactInfo.trim(0, 20)}...</p>
+                            </div>
+                            <div className="flex justify-end" onClick={() => {
+                              setPopUp2({
+                                active: true,
+                                type: 'contact',
+                                data: {
+                                  ...contact
+                                }
+                              })
+                            }}>
+                              <span className="text-[#DDF247] px-2 py-1 rounded-md border-2 border-gray-400">Edit</span>
+                            </div>
+                          </div>
+                        )
+                      }) : null
+                  }
+                  <div className="w-[15rem] h-[15rem] bg-[#232323] flex flex-col relative justify-center items-center rounded-md" onClick={() => {
+                    setPopUp2({
+                      active: true,
+                      type: "contact",
+                      data: null
+                    })
+                  }}>
+                    <img src="../../assets/icons/add.png" alt="" className="w-16 h-16" />
+                    <p className="absolute bottom-[6.5rem] text-3xl text-black">+</p>
+                    <p className="text-center absolute bottom-10 text-lg">Add new information</p>
+                  </div>
+                </div>
+              </div>
+              {/* <div className="common__edit__proe__wrap mt-4">
                 <div className="edit__profilfile__inner__top__blk">
                   <div className="edit__profile__inner__title">
                     <h5>Seller Information</h5>
@@ -2266,8 +2444,8 @@ function Create(props) {
                     </div>
                   </div>
                 </div>
-              </div>
-              <div className="common__edit__proe__wrap mt-4">
+              </div> */}
+              {/* <div className="common__edit__proe__wrap mt-4">
                 <div className="edit__profilfile__inner__top__blk">
                   <div className="edit__profile__inner__title">
                     <h5>Shipping Address</h5>
@@ -2362,15 +2540,6 @@ function Create(props) {
                     <div className="col-lg-12">
                       <div className="single__edit__profile__step">
                         <label htmlFor="#">Phone Number*</label>
-                        {/* <input
-                          type="tel"
-                          id="mobile_code"
-                          className="from-control"
-                          placeholder={"0000000000"}
-                          name="phone"
-                          value={sellerInfo.phone}
-                          onChange={handleUpdateSeller}
-                        /> */}
                         <PhoneInput
                           id="mobile_code"
                           enableLongNumbers={true}
@@ -2385,7 +2554,7 @@ function Create(props) {
                     </div>
                   </div>
                 </div>
-              </div>
+              </div> */}
               <div className="common__edit__proe__wrap mt-4">
                 <div className="edit__profilfile__inner__top__blk">
                   <div className="edit__profile__inner__title">
@@ -2452,7 +2621,7 @@ function Create(props) {
                   </div>
                 </div>
               </div>
-              <div className="common__edit__proe__wrap mt-4">
+              {/* <div className="common__edit__proe__wrap mt-4">
                 <div className="edit__profilfile__inner__top__blk">
                   <div className="edit__profile__inner__title">
                     <h5>Contact Information For seller</h5>
@@ -2482,7 +2651,7 @@ function Create(props) {
                     </div>
                   </div>
                 </div>
-              </div>
+              </div> */}
               <div className="common__edit__proe__wrap mt-4">
                 <div className="edit__profilfile__inner__top__blk">
                   <div className="edit__profile__inner__title">
