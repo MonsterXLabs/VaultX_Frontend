@@ -13,7 +13,7 @@ import {
   getMarketPlaceFee,
 } from "../../../utils/helpers";
 import { useAccount, useSwitchChain } from "wagmi";
-import _ from "lodash";
+import _, { set } from "lodash";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { City, Country, State } from "country-state-city";
 import { WalletContext } from "../../../Context/WalletConnect";
@@ -217,10 +217,14 @@ function Create(props) {
       }));
       strDoesExist("Split Payment Details", newArr, arr, "is empty");
     }
-    selectedProperty.attributes && selectedProperty.attributes.forEach((item, idx) => {
-      strDoesExist(`Attributes type ${idx}`, item.type, arr);
-      strDoesExist(`Attributes value ${idx}`, item.value, arr);
-    });
+    if (selectedProperty && selectedProperty.attributes) {
+      selectedProperty.attributes.forEach((item, idx) => {
+        strDoesExist(`Attributes type ${idx}`, item.type, arr);
+        strDoesExist(`Attributes value ${idx}`, item.value, arr);
+      });
+    } else {
+      arr.push("Properties are needed");
+    }
     setErrorCuration([...arr]);
     if (arr.length > 0) return false;
     return true;
@@ -228,6 +232,16 @@ function Create(props) {
 
   const validateCreateSellerDetails = () => {
     const arr = [];
+    if (!selectedSeller) {
+      arr.push("Seller is needed");
+      setErrorCuration([...arr]);
+      return false;
+    } 
+    if (!selectedContact) {
+      arr.push("Contact is needed");
+      setErrorCuration([...arr]);
+      return false;
+    }
     strDoesExist("Name", selectedSeller.name, arr);
     validateEmail("Email", selectedSeller.email, arr);
     strDoesExist("Country", selectedSeller.country, arr);
@@ -342,12 +356,6 @@ function Create(props) {
   const discriptionImageRef = useRef();
 
   const createCollection = async () => {
-    setErrorCuration([]);
-    const valid = validateData();
-    const errElem = new bootstrap.Modal(
-      document.getElementById("errorCreatingCurationModal")
-    );
-    if (!valid) return errElem.show();
     const element4 = new bootstrap.Modal(
       document.getElementById("exampleModalToggle4")
     );
@@ -385,23 +393,17 @@ function Create(props) {
     }
   };
 
-  const createBasicDetails = async () => {
-    console.log("here is creae basic deteails ----->");
-    setErrorCuration([]);
-    const valid = validateCreateBasicDetails();
-    console.log("valid is", valid);
+  const createBasicDetails = async (save) => {
     const errElem = new bootstrap.Modal(
       document.getElementById("errorCreatingCurationModal")
     );
-    if (!valid) {
-      return errElem.show();
-    }
-    const element1 = new bootstrap.Modal(
-      document.getElementById("exampleModalToggle4")
-    );
-    element1.show();
+    if (!save) {
+      setErrorCuration([]);
+      const valid = validateCreateBasicDetails();
+      if (!valid) return errElem.show();
+      setStep(2)
+    } else {
     const formData = new FormData();
-    // formData.append("nftImage", createNftStep1File)
     formData.append("name", createNftStep1.productName);
     formData.append("description", createNftStep1.productDescription);
     formData.append("artist", createNftStep1.artistName);
@@ -416,13 +418,8 @@ function Create(props) {
     try {
       await getStoredInfo()
       const res = await nftService.createBasicDetails(formData);
-      setNftId(res.data.data._id);
-      setStep(2);
-      element1.hide();
+      return res.data.data._id;
     } catch (error) {
-      element1.hide();
-
-
       if (
         error?.response?.status ==
         400
@@ -436,6 +433,7 @@ function Create(props) {
         errElem.show();
       }
     }
+  }
   };
 
   const fetchUserCollections = async () => {
@@ -485,15 +483,19 @@ function Create(props) {
     setProperties(storedProperties);
   }
 
-  const createAdvancedDetails = async () => {
-    setErrorCuration([]);
-    const valid = validateCreateAdvanceDetails();
+  const createAdvancedDetails = async (save, id) => {
     const errElem = new bootstrap.Modal(
       document.getElementById("errorCreatingCurationModal")
     );
-    if (!valid) return errElem.show();
+
+    if (!save) {
+      setErrorCuration([]);
+      const valid = validateCreateAdvanceDetails();
+      if (!valid) return errElem.show();
+      setStep(3);
+    } else {
     const formData = new FormData();
-    formData.append("nftId", nftId);
+    formData.append("nftId", id);
 
     if (createNftStep2Conditions.freeMint) {
       formData.append("freeMinting", createNftStep2Conditions.freeMint);
@@ -515,11 +517,6 @@ function Create(props) {
     }
     formData.append("attributes", JSON.stringify(selectedProperty.attributes ? selectedProperty.attributes : []));
 
-    const element2 = new bootstrap.Modal(
-      document.getElementById("exampleModalToggle4")
-    );
-    element2.show();
-
     try {
       await getStoredInfo()
 
@@ -527,12 +524,11 @@ function Create(props) {
 
       setStep(3);
       setTimeout(() => {
-        element2.hide();
       }, 1000);
     } catch (error) {
       console.log(error);
-      element2.hide();
     }
+  }
   };
 
   const createSellerInfo = async () => {
@@ -581,6 +577,10 @@ function Create(props) {
 
     let nftUri = "";
     try {
+      const nftId = await createBasicDetails(true);
+      await createAdvancedDetails(true, nftId);
+      data.nftId = nftId;
+
       const {
         data: { uri },
       } = await nftService.createSellerDetails(data);
@@ -756,6 +756,7 @@ function Create(props) {
     fetchMedia();
     fetchUserCollections();
     fetchCategories();
+    getStoredInfo()
   }, []);
 
   useEffect(() => {
@@ -770,18 +771,13 @@ function Create(props) {
   }, [params]);
 
   const updateCuration = async () => {
-    setErrorCuration([]);
-    const valid = validateUpdateData();
-    const errElem = new bootstrap.Modal(
-      document.getElementById("errorCreatingCurationModal")
-    );
-    if (!valid) return errElem.show();
     const element4 = new bootstrap.Modal(
       document.getElementById("exampleModalToggle4")
     );
     const element1 = new bootstrap.Modal(
       document.getElementById("exampleModalToggl1")
     );
+    
     try {
       element4.show();
       const data = new FormData();
@@ -806,19 +802,48 @@ function Create(props) {
       setTimeout(() => {
         element1.hide();
       }, 1000);
-      props?.render?.props?.onClickMenuButton("myProfile");
-      props.setProfileTab("Curation");
     } catch (error) {
       element1.hide();
       console.log({ error });
     }
   };
 
-  const handleCuration = async () => {
-    const val = params.get("type");
-    if (val === "createCuration") await updateCuration();
-    else await createCollection();
+  const handleCuration = async (save) => {
+    console.log(save)
+    if (!save) {
+      setErrorCuration(null);
+      const errElem = new bootstrap.Modal(
+        document.getElementById("errorCreatingCurationModal")
+      );
+      const val = params.get("type");
+      if (val === "createCuration") {
+        const valid = validateUpdateData()
+
+        if (!valid) return errElem.show();
+        // else {
+        //   props?.render?.props?.onClickMenuButton("myProfile");
+        //   props.setProfileTab("Curation");
+        // }
+      } else {
+        const valid = validateData()
+
+        if (!valid) return errElem.show();
+        // else {
+        //   props?.render?.props?.onClickMenuButton("myProfile");
+        //   props.setProfileTab("Curation");
+        // }
+      }
+    } else {
+      const val = params.get("type");
+
+      if (val === "createCuration") {
+        await updateCuration();
+      } else {
+        await createCollection();
+      }
+    }
   };
+
   const { chains, switchChain } = useSwitchChain();
 
   const handleNetworkChange = () => { };
@@ -1403,9 +1428,6 @@ function Create(props) {
                       Discard
                     </a>
                     <a
-                      // data-bs-toggle="modal"
-                      // href="#exampleModalToggle4"
-                      role="button"
                       onClick={handleCuration}
                     >
                       Next{" "}
@@ -1710,14 +1732,12 @@ function Create(props) {
                   </div>
                   <div className="edit__profile__bottom__btn half__width__btn">
                     <a
-                      data-bs-toggle="modal"
-                      href="#discardPopup"
-                      role="button"
+                      onClick={() => setStep(0)}
                       className="cancel"
                     >
-                      Discard
+                      Previous
                     </a>
-                    <a href="#" onClick={createBasicDetails}>
+                    <a href="#" onClick={async () => await createBasicDetails(false)}>
                       Next{" "}
                       <span>
                         <img src="assets/img/arrow_ico.svg" alt="" />
@@ -2257,14 +2277,12 @@ function Create(props) {
               </div>
               <div className="edit__profile__bottom__btn half__width__btn">
                 <a
-                  data-bs-toggle="modal"
-                  href="#discardPopup"
-                  role="button"
+                  onClick={() => setStep(1)}
                   className="cancel"
                 >
-                  Discard
+                  Previous
                 </a>
-                <a href="#" onClick={createAdvancedDetails}>
+                <a href="#" onClick={async() => await createAdvancedDetails(false, null)}>
                   Next{" "}
                   <span>
                     <img src="assets/img/arrow_ico.svg" alt="" />
@@ -2700,12 +2718,10 @@ function Create(props) {
               </div>
               <div className="edit__profile__bottom__btn half__width__btn">
                 <a
-                  data-bs-toggle="modal"
-                  href="#discardPopup"
-                  role="button"
+                  onClick={() => setStep(2)}
                   className="cancel"
                 >
-                  Discard
+                  Previous
                 </a>
                 <a
                   // data-bs-toggle="modal"
@@ -2998,11 +3014,11 @@ function Create(props) {
                   </h5>
                 </div>
                 <div className="popup__information__content">
-                  {errorCuration.map((err, i) => (
+                  {errorCuration ? errorCuration.map((err, i) => (
                     <p key={i}>
                       <span>{i + 1}.</span> {err}
                     </p>
-                  ))}
+                  )) : null}
                 </div>
               </div>
             </div>
