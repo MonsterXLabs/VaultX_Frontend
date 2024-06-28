@@ -17,7 +17,7 @@ export default function Info(prop) {
         state: "",
         city: "",
         postalCode: "",
-        phone: "",
+        phoneNumber: "",
     });
     const [contact, setContact] = useState({
         id: null,
@@ -121,6 +121,13 @@ export default function Info(prop) {
                 [name]: parsedVal,
             })
             return null
+        } else if (name === 'city') {
+            const parsedVal = JSON.parse(value);
+            setSellerInfo({
+                ...sellerInfo,
+                [name]: parsedVal,
+            })
+            return null
         }
         setSellerInfo({
             ...sellerInfo,
@@ -149,7 +156,7 @@ export default function Info(prop) {
     const handlePhoneInput = (value) => {
         setSellerInfo({
             ...sellerInfo,
-            phone: value,
+            phoneNumber: value,
         });
     };
 
@@ -251,9 +258,13 @@ export default function Info(prop) {
                                 <input
                                     type="text"
                                     placeholder="Enter Shipping Address Name* (Home, gallery, studio, etc)"
-                                    name="type"
                                     value={sellerInfo.shippingAddr}
-                                    onChange={handleUpdateSeller}
+                                    onChange={(e) => {
+                                        setSellerInfo({
+                                            ...sellerInfo,
+                                            shippingAddr: e.target.value
+                                        })
+                                    }}
                                 />
                             </div>
                             <div className="edit__profilfile__inner__top__blk">
@@ -297,7 +308,11 @@ export default function Info(prop) {
                                     <div className="col-lg-4 col-md-6">
                                         <div className="single__edit__profile__step_custom_2">
                                             <label htmlFor="#">Country*
-                                                <span className="text-sm text-white ml-10">({prop.data ? prop.data.country : ""})</span>
+                                                {
+                                                    prop.data ? 
+                                                    <span className="text-sm text-white ml-10">({prop.data ? prop.data.country : ""})</span>
+                                                    : null
+                                                }
                                             </label>
                                             <select
                                                 class="form-select"
@@ -363,7 +378,11 @@ export default function Info(prop) {
                                     <div className="col-lg-4 col-md-4">
                                         <div className="single__edit__profile__step_custom_2">
                                             <label htmlFor="#">State*
-                                                <span className="text-sm text-white ml-10">({prop.data ? prop.data.address.state : ""})</span>
+                                                {
+                                                    prop.data ? 
+                                                    <span className="text-sm text-white ml-10">({prop.data ? prop.data.address.state : ""})</span>
+                                                    : null
+                                                }
                                             </label>
                                             <select
                                                 class="form-select"
@@ -387,7 +406,11 @@ export default function Info(prop) {
                                     <div className="col-lg-4 col-md-4">
                                         <div className="single__edit__profile__step_custom_2">
                                             <label htmlFor="#">City*
-                                                <span className="text-sm text-white ml-10">({prop.data ? prop.data.address.city : ""})</span>
+                                                {
+                                                    prop.data ? 
+                                                    <span className="text-sm text-white ml-10">({prop.data ? prop.data.address.city : ""})</span>
+                                                    : null
+                                                }
                                             </label>
                                             <select
                                                 class="form-select"
@@ -398,7 +421,7 @@ export default function Info(prop) {
                                             >
                                                 <option value="">Select</option>
                                                 {cities.map((item) => (
-                                                    <option key={item.isoCode} value={item.name}>
+                                                    <option key={item.isoCode} value={JSON.stringify(item)}>
                                                         {item.name}
                                                     </option>
                                                 ))}
