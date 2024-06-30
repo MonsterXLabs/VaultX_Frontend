@@ -735,6 +735,7 @@ function Create(props) {
       const nftId = await createBasicDetails(true);
       await createAdvancedDetails(true, nftId);
       data.nftId = nftId;
+      setNftId(nftId)
 
       const {
         data: { uri },
