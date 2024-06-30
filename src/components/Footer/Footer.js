@@ -67,6 +67,7 @@ function Footer () {
                     <a href={item.link}
                     onMouseEnter={() => setHovered(item.type)}
                     onMouseLeave={() => setHovered(null)}
+                    target="_blank"
                     style={{
                       border: "none"
                     }}>
@@ -95,7 +96,7 @@ function Footer () {
           </div>
         </div>
         <div className="absolute right-7 bottom-9 mail_link">
-          <a className="text-[#878787]" href="mailto:info@monsterx.io">info@monsterx.io</a>
+          <a className="text-[#878787]" target="_blank" href="mailto:info@monsterx.io">info@monsterx.io</a>
         </div>
       </div>
     </div>

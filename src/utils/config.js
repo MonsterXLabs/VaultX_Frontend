@@ -3,7 +3,7 @@ export const chain = process.env.REACT_APP_NODE_ENV === "DEV" ? "80002" : "137";
 export const contractAddress =
   process.env.REACT_APP_NODE_ENV === "DEV"
     ? "0xAAdcdEC98CE6C560C6e4b1C2B1b31258D5C1AF9A"
-    : "0xE9bBE398b3Bf34791Dac5F53952a8acf6286DE26";
+    : process.env.REACT_APP_CONTRACT_ADDRESS;
 
 export const explorer =
   process.env.REACT_APP_NODE_ENV === "DEV"

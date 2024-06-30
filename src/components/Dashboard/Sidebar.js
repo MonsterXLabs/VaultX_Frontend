@@ -1,5 +1,5 @@
 import {useState} from "react"
-import {useNavigate} from "react-router-dom"
+import {Link, useNavigate} from "react-router-dom"
 
 function Sidebar({onClickMenuButton, activeTab, openDialog, setOpenDialog}) {
   const [active, setActive] = useState(activeTab)
@@ -56,7 +56,7 @@ function Sidebar({onClickMenuButton, activeTab, openDialog, setOpenDialog}) {
                     setActive("appreciate")
                   }}
                 >
-                  <a href="#">
+                  <a href="/dashboard?appreciate">
                     <span>
                       <img src="../assets/img/sidebar_ico_1.svg" alt="" />
                     </span>{" "}
@@ -84,12 +84,12 @@ function Sidebar({onClickMenuButton, activeTab, openDialog, setOpenDialog}) {
                     setActive("curation")
                   }}
                 >
-                  <a href="/dashboard?curation">
+                  <Link href="/dashboard?curation">
                     <span>
                       <img src="../assets/img/sidebar_ico_3.svg" alt="" />
                     </span>{" "}
                     Curation
-                  </a>
+                  </Link>
                 </li>
                 <li
                   className={active === "news" ? "active" : ""}

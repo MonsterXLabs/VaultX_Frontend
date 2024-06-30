@@ -1,7 +1,10 @@
 import { useContext, useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { useWeb3Modal } from "@web3modal/wagmi/react"
+import { ConnectionController } from "@web3modal/core";
 import { useAccount, useDisconnect } from "wagmi"
+import { getAccount } from '@wagmi/core'
+import { config } from "../../Context/WalletConnect"
 import { getEthBalance, handleCopyClick, trimString } from "../../utils/helpers"
 import { WalletContext } from "../../Context/WalletConnect"
 import { collectionServices, userServices } from "../../services/supplier"
@@ -13,7 +16,7 @@ import useDebounce from "../../customHook/useDebounce"
 function Header() {
   const [openDialog, setOpenDialog] = useState(false)
   const { open: modalOpen, close } = useWeb3Modal()
-  const { address, isConnected } = useAccount()
+  const { address, isConnected, isDisconnected } = useAccount()
   const { disconnect } = useDisconnect()
   const { login, logout, isLoggedIn } = useContext(WalletContext)
   const [nfts, setNfts] = useState([])
@@ -55,6 +58,7 @@ function Header() {
     }
   }
 
+  console.log('------------------------------------connect status---------', isConnected, isDisconnected, isLoggedIn);
   useEffect(() => {
     if (!isConnected) logoutOnConnect()
     getBalance()
@@ -88,7 +92,12 @@ function Header() {
 
   const logoutOnConnect = async () => {
     if (isLoggedIn) {
-      disconnect()
+      await ConnectionController.disconnect()
+      // disconnect()
+      // const { connector } = getAccount(config)
+      // const result = await disconnect(config, {
+      //   connector, 
+      // })
       await logout(window.location.pathname)
       navigate("/")
     }
@@ -268,8 +277,6 @@ function Header() {
             : "mobile__menu none__desk"
         }
       >
-       
-
         <div className="header__search">
           <div className="h__search__blk">
             <input
@@ -390,6 +397,8 @@ function Header() {
         }
       />
       <header className="header__area">
+       {/* <w3m-button />
+       <w3m-connect-button /> */}
         <div className="container lg:block !flex !flex-row-reverse items-center gap-3">
           <div className="header__inner__blk w-full">
             <div className="header__logo" onClick={() => navigate("/")} style={{

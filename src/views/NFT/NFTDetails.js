@@ -6,6 +6,7 @@ import * as bootstrap from "bootstrap"
 import { City, Country, State } from "country-state-city"
 import _ from "lodash"
 import { useNavigate, useParams } from "react-router-dom"
+import Header from "../../components/Header/Header"
 import {
   CategoryService,
   CreateNftServices,
@@ -768,6 +769,7 @@ function NFTDetails() {
         nft?.uri,
         price,
         nft?.royalties ? nft.royalty : 0,
+        address,
         splitPayments,
         address
       )
@@ -833,11 +835,10 @@ function NFTDetails() {
       }
       await createNftServices.editNft(formData)
       await work()
+      editElement.style.display = "none"
       editElement.hide()
       element.show()
-      // setTimeout(() => {
-      //   element.hide()
-      // },[1000])
+      await window.location.reload()
     } catch (error) {
       editElement.hide()
       element.hide()
@@ -971,12 +972,12 @@ function NFTDetails() {
     const maticAmount = await getMaticAmount(txType == "bid" ? price : nft?.price);
     if(maticAmount) {
       setQuotes(true);
-      const gasFee = maticAmount >0.02 ? 0.02 : maticAmount;
-      const totalAmount = (Number(maticAmount) / 100 + gasFee).toFixed(2);
-      const expectedAmount = (Number(maticAmount) * (100 - fee) / 10000 - gasFee).toFixed(2);
+      const gasFee = maticAmount >0.002 ? 0.002 : maticAmount;
+      const totalAmount = Number(maticAmount + gasFee).toFixed(2);
+      const expectedAmount = Number(maticAmount * (100 - fee) / 100 - gasFee).toFixed(2);
       setQuoteDetail({
         usdAmount: nft?.price,
-        maticAmount: Number(maticAmount) / 100,
+        maticAmount: Number(maticAmount).toFixed(2),
         gasFee,
         fee,
         totalAmount,
@@ -985,15 +986,14 @@ function NFTDetails() {
     }
   }
   const showCheckout = async () => {
-    debugger;
     const maticAmount = await getMaticAmount(txType == "bid" ? price : nft?.price);
     if(maticAmount) {
-      const gasFee = maticAmount >0.02 ? 0.02 : maticAmount;
-      const totalAmount = (Number(maticAmount) / 100 + gasFee).toFixed(2);
-      const expectedAmount = (Number(maticAmount) * (100 - fee) / 10000 - gasFee).toFixed(2);
+      const gasFee = maticAmount >0.002 ? 0.002 : maticAmount;
+      const totalAmount = Number(maticAmount + gasFee).toFixed(2);
+      const expectedAmount = Number(maticAmount * (100 - fee) / 100 - gasFee).toFixed(2);
       setQuoteDetail({
         usdAmount: nft?.price,
-        maticAmount: Number(maticAmount) / 100,
+        maticAmount: Number(maticAmount).toFixed(2),
         gasFee,
         fee,
         totalAmount,
@@ -1009,12 +1009,12 @@ function NFTDetails() {
   const showBidNext = async () => {
     const maticAmount = await getMaticAmount(price);
     if(maticAmount) {
-      const gasFee = maticAmount >0.02 ? 0.02 : maticAmount;
-      const totalAmount = (Number(maticAmount) / 100 + gasFee).toFixed(2);
-      const expectedAmount = (Number(maticAmount) * (100 - fee) / 10000 - gasFee).toFixed(2);
+      const gasFee = maticAmount >0.002 ? 0.002 : maticAmount;
+      const totalAmount = Number(maticAmount + gasFee).toFixed(2);
+      const expectedAmount = Number(maticAmount * (100 - fee) / 100 - gasFee).toFixed(2);
       setQuoteDetail({
         usdAmount: nft?.price,
-        maticAmount: Number(maticAmount) / 100,
+        maticAmount: Number(maticAmount).toFixed(2),
         gasFee,
         fee,
         totalAmount,
@@ -1029,12 +1029,12 @@ function NFTDetails() {
   const showBuyNow = async () => {
     const maticAmount = await getMaticAmount(nft?.price);
     if(maticAmount) {
-      const gasFee = maticAmount >0.02 ? 0.02 : maticAmount;
+      const gasFee = maticAmount >0.002 ? 0.002 : maticAmount;
       const totalAmount = (Number(maticAmount) / 100 + gasFee).toFixed(2);
       const expectedAmount = (Number(maticAmount) * (100 - fee) / 10000 - gasFee).toFixed(2);
       setQuoteDetail({
         usdAmount: nft?.price,
-        maticAmount: Number(maticAmount) / 100,
+        maticAmount: Number(maticAmount).toFixed(2),
         gasFee,
         fee,
         totalAmount,
@@ -1050,12 +1050,12 @@ function NFTDetails() {
   const resetQuote = async () => {
     const maticAmount = await getMaticAmount(type == "bid" ? price : nft?.price);
     if(maticAmount) {
-      const gasFee = 0.02;
+      const gasFee = 0.002;
       const totalAmount = (Number(maticAmount) / 100 + gasFee).toFixed(2);
       const expectedAmount = (Number(maticAmount) * (100 - fee) / 10000 - gasFee).toFixed(2);
       setQuoteDetail({
         usdAmount: nft?.price,
-        maticAmount: Number(maticAmount) / 100,
+        maticAmount: Number(maticAmount).toFixed(2),
         gasFee,
         fee,
         totalAmount,
@@ -2512,13 +2512,18 @@ function NFTDetails() {
                               />
                             </div>
                             <div className="attachment__content flex justify-center gap-4">
-                              <a
-                                href="#"
-                                onClick={() => handleChangeStep1Attachment(i)}
+                              <span className="text-[#DDF247]"
+                                onClick={() => {
+                                  if (step1AttachmentRef.current) {
+                                    step1AttachmentRef.current.click()
+                                  }
+                                }}
                               >
                                 Change{" "}
-                              </a>
-                              <span className="mt-3">
+                              </span>
+                              <span className="mt-3"
+                                onClick={() => handleChangeStep1Attachment(i)}
+                              >
                                 <img src="../../assets/img/Trash.svg" alt="" />
                               </span>
                             </div>
@@ -4440,13 +4445,13 @@ function NFTDetails() {
                       fontFamily: "Azeret Mono"
                     }}>
                       <span className="text-sm">Cryptocurrency Price</span>
-                      <span>{quoteDetail.maticAmount} Matic</span>
+                      <span>{quoteDetail?.maticAmount} Matic</span>
                     </div>
                     <div className='flex justify-between my-3' style={{
                       fontFamily: "Azeret Mono"
                     }}>
                       <span className="text-sm">Gass Fee</span>
-                      <span>{quoteDetail.gasFee} Matic</span>
+                      <span>{quoteDetail?.gasFee} Matic</span>
                     </div>
                   </div>
                 </div>
@@ -4465,7 +4470,7 @@ function NFTDetails() {
                       color: 'white'
                     }}>
                       <span className="text-sm">You will pay</span>
-                      <span>{quoteDetail.totalAmount} MATIC</span>
+                      <span>{quoteDetail?.totalAmount} MATIC</span>
                     </div>
                   </div>
                 </div>

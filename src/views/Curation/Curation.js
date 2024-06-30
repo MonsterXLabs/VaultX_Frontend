@@ -34,7 +34,11 @@ function Curation() {
   const [descriptionSlice, setDescriptionSlice] = useState(true)
   const favoriteService = new FavoriteService()
   const onClickMenuButton = value => {
-    navigate(`/dashboard`)
+    if (value === 'create') {
+      navigate('/dashboard?tab=create')
+    } else {
+      navigate('/dashboard')
+    }
   }
   const {curationId} = useParams()
 
@@ -208,23 +212,11 @@ function Curation() {
           <div className="open__sidebar none__desk">
             <i className="fa-solid fa-bars" />
           </div>
-          <div className="profile__search phone__none">
-            <input
-              type="text"
-              placeholder="Search artwork, collection..."
-              value={search}
-              onChange={e => setSearchInput(searchInput)}
-            />
-            <button type="button">
-              <i className="fa-solid fa-magnifying-glass" />
-            </button>
-          </div>
-          <div className="profile__bell__area">
-            <span>
-              <img src="../../assets/img/profile_bell_1.svg" alt="" />
-            </span>
-          </div>
-          <div className="profile__dropdown__blk">
+          <div className="profile__dropdown__blk" style={{
+            display: 'flex',
+            justifyContent: 'flex-end',
+            width: '100%',
+          }}>
             <div className="profile__dropdown__inner">
               <div className="profile__drop__thumb">
                 <img
@@ -560,12 +552,9 @@ function Curation() {
                         />
                       </div>
                       <div className="sport__content">
-                        <h5>{item?.name}22</h5>
+                        <h5>{item?.name}</h5>
                         <p>
-                          Created by: <span>{item?.mintedBy?.username}</span>
-                        </p>
-                        <p>
-                          Canvas Collection <span />
+                          Created by: <span>{item?.artist}</span>
                         </p>
                         <h4>
                           Price{" "}

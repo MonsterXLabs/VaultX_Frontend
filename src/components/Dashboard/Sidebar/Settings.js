@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { userServices } from "../../../services/supplier";
+import { getContactsInfo, getProperties, getSellerInfo, userServices } from "../../../services/supplier";
 import { getCookie } from "../../../utils/cookie";
 import { checkUrl } from "../../../utils/checkUrl";
 import { trimString } from "../../../utils/helpers";
@@ -8,6 +8,9 @@ import * as bootstrap from "bootstrap";
 import ErrorPopup from "./Popup";
 import { isPropertySignature } from "typescript";
 import MainSearch from "../Search/MainSearch";
+import { address } from "../../../utils/contract";
+import { Modal } from "@mui/material";
+import Info from "../../Modal/Info";
 
 function Settings(props) {
   const [avatar, setAvatar] = useState("");
@@ -27,6 +30,15 @@ function Settings(props) {
     title: "",
     messsage: "",
   });
+
+  const [sellers, setSellers] = useState([]);
+  const [contacts, setContacts] = useState([]);
+  const [properties, setProperties] = useState([]);
+  const [popUp, setPopUp] = useState({
+    active: false,
+    type: null,
+    data: null
+  })
 
   const navigae = useNavigate();
 
@@ -70,7 +82,7 @@ function Settings(props) {
 
   const handleAvatarChange = (e) => {
     const file = e.target.files[0];
-   
+
     if (!file) return
     if (file.size > 10 * 1024 * 1024) {
       setShowErrorPopup(true);
@@ -82,7 +94,7 @@ function Settings(props) {
 
   const handleBannerChange = (e) => {
     const file = e.target.files[0];
-   
+
     if (!file) return
     if (file.size > 10 * 1024 * 1024) {
       setShowErrorPopup(true);
@@ -92,9 +104,20 @@ function Settings(props) {
     setBanner(file);
   };
 
+  const getStoredInfo = async () => {
+    const storedSellers = await getSellerInfo();
+    const storedContacts = await getContactsInfo();
+    const storedProperties = await getProperties()
+
+    setSellers(storedSellers);
+    setContacts(storedContacts);
+    setProperties(storedProperties);
+  }
+
 
   useEffect(() => {
     getUser();
+    getStoredInfo();
   }, []);
 
   const updateDetails = async () => {
@@ -458,6 +481,210 @@ function Settings(props) {
                 </div>
               </div>
             </form>
+          </div>
+        </div>
+        <Modal
+          open={popUp.active}
+          onClose={() => setPopUp({ active: false, type: null })}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description"
+          sx={{
+            width: "75%",
+            height: "95%",
+            backgroundColor: "#232323",
+            margin: "auto",
+            padding: "0rem 2rem",
+            overflowY: "scroll",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <Info 
+          type={popUp.type} 
+          data={popUp.data}
+          onSave={async () => {
+            const response = await getProperties()
+
+            if (response) {
+              setProperties(response)
+              setPopUp({
+                active: false,
+                type: null,
+                data: null
+              })
+            }
+          }}
+          onCancel={() => {
+            setPopUp({
+              active: false,
+              type: null,
+              data: null
+            })
+          }}
+          onSaveSeller={async () => {
+            const response = await getSellerInfo()
+            setSellers(response)
+
+            if (response) {
+              setPopUp({
+                active: false,
+                type: null,
+                data: null
+              })
+            }
+          }}
+          onSaveContact={async () => {
+            const response = await getContactsInfo()
+            setContacts(response)
+
+            if (response) {
+              setPopUp({
+                active: false,
+                type: null,
+                data: null
+              })
+            }
+          }}
+          />
+        </Modal>
+        <div className="flex flex-col gap-y-2 text-white my-10 cursor-pointer">
+          <h2 className="text-white font-medium text-lg">Shipping Information</h2>
+          <div className="flex flex-wrap gap-5">
+            {
+              sellers.length > 0 ?
+                sellers.map((seller, index) => {
+                  return (
+                    <div className="w-[18rem] h-[15rem] bg-[#232323] flex flex-col justify-between p-4 rounded-md">
+                      <div className="flex justify-between">
+                        <div className="flex flex-col gap-y-2">
+                          <span>{seller.name}</span>
+                          <span className="text-[#A6A6A6]">{seller.phoneNumber}</span>
+                        </div>
+                        <div className="text-[#A6A6A6]">{seller.shippingAddr}</div>
+                      </div>
+                      <div>
+                        <p className="text-[#A6A6A6]">{`${seller.address.line1 + seller.address.line2 + seller.address.state + seller.address.city + seller.country}`.length > 150 ?
+                          `${seller.address.line1 + " " + seller.address.line2 + " " + seller.address.state + seller.address.city + " " + seller.country}`.slice(0, 150) + "..." :
+                          `${seller.address.line1 + " " + seller.address.line2 + " " + seller.address.state + " " + seller.address.city + " " + seller.country}`
+                        } </p>
+                      </div>
+                      <div className="flex justify-end" onClick={() => {
+                        setPopUp({
+                          active: true,
+                          type: "seller",
+                          data: {
+                            ...seller
+                          }
+                        })
+                      }}>
+                        <span className="text-[#DDF247] px-2 py-1 rounded-md border-2 border-gray-400">Edit</span>
+                      </div>
+                    </div>
+                  )
+                }) : null
+            }
+            <div className="w-[18rem] h-[15rem] bg-[#232323] flex flex-col relative justify-center cursor-pointer items-center rounded-md" onClick={() => {
+              setPopUp({
+                active: true,
+                type: "seller",
+                data: null
+              })
+            }}>
+              <div className="flex flex-col gap-y-6 items-center">
+                <div className="w-16 h-16 rounded-full bg-[#111111] border-2 border-[#FFFFFF4D] flex justify-center items-center">
+                  <img src="../../assets/icons/plus.svg" className="w-5 h-5" />
+                </div>
+                <p className="text-[#828282]">Add New Address</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="flex flex-col gap-y-2 text-white my-10 cursor-pointer">
+          <h2 className="text-white font-medium text-lg">Contact Information</h2>
+          <div className="flex flex-wrap gap-5">
+            {
+              contacts.length > 0 ?
+                contacts.map((contact, index) => {
+                  return (
+                    <div className="w-[18rem] h-[15rem] bg-[#232323] flex flex-col justify-between p-4 rounded-md">
+                      <div className="flex justify-between">
+                        <div className="flex flex-col gap-y-2">
+                          <span>{contact.name ? contact.name : `#${index + 1}`}</span>
+                        </div>
+                      </div>
+                      <div>
+                        <p className="text-[#A6A6A6] py-1">{contact.contactInfo.length > 150 ? `${contact.contactInfo.slice(0, 150)}...` : contact.contactInfo}...</p>
+                      </div>
+                      <div className="flex justify-end" onClick={() => {
+                        setPopUp({
+                          active: true,
+                          type: 'contact',
+                          data: {
+                            ...contact
+                          }
+                        })
+                      }}>
+                        <span className="text-[#DDF247] px-2 py-1 rounded-md border-2 border-gray-400 text-sm">Edit</span>
+                      </div>
+                    </div>
+                  )
+                }) : null
+            }
+            <div className="w-[18rem] h-[15rem] bg-[#232323] flex flex-col relative justify-center cursor-pointer items-center rounded-md" onClick={() => {
+              setPopUp({
+                active: true,
+                type: "contact",
+                data: null
+              })
+            }}>
+              <div className="flex flex-col gap-y-6 items-center">
+                <div className="w-16 h-16 rounded-full bg-[#111111] border-2 border-[#FFFFFF4D] flex justify-center items-center">
+                  <img src="../../assets/icons/plus.svg" className="w-5 h-5" />
+                </div>
+                <p className="text-[#828282]">Add New Information</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="flex flex-col gap-y-2 text-white my-10 cursor-pointer">
+          <h2 className="text-white font-medium text-lg">Add Properties Template</h2>
+          <div className="flex flex-wrap gap-5">
+            {
+              properties.length > 0 ?
+                properties.map((property, index) => {
+                  return (
+                    <div className="w-[18rem] h-[15rem] bg-[#232323] flex justify-center items-center rounded-md relative">
+                      <p>{property.name}</p>
+                      <div className="absolute bottom-5 right-5" onClick={() => {
+                        setPopUp({
+                          active: true,
+                          type: 'property',
+                          data: {
+                            ...property
+                          }
+                        })
+                      }}>
+                        <span className="text-[#DDF247] px-2 py-1 rounded-md border-2 border-gray-400">Edit</span>
+                      </div>
+                    </div>
+                  )
+                }) : null
+            }
+            <div className="w-[18rem] h-[15rem] bg-[#232323] flex flex-col relative justify-center cursor-pointer items-center rounded-md" onClick={() => {
+              setPopUp({
+                active: true,
+                type: "property",
+                data: null
+              })
+            }}>
+              <div className="flex flex-col gap-y-6 items-center">
+                <div className="w-16 h-16 rounded-full bg-[#111111] border-2 border-[#FFFFFF4D] flex justify-center items-center">
+                  <img src="../../assets/icons/plus.svg" className="w-5 h-5" />
+                </div>
+                <p className="text-[#828282]">Add New Template</p>
+              </div>
+            </div>
           </div>
         </div>
         <div className="edit__profile__bottom__btn">
