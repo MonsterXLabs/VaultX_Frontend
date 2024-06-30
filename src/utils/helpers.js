@@ -1,4 +1,4 @@
-import { decodeEventLog, parseEther } from "viem";
+import { decodeEventLog, parseEther, formatEther } from "viem";
 import { waitForTransactionReceipt, getBalance } from "@wagmi/core";
 import {
   config,
@@ -185,6 +185,7 @@ export const listNft = async (
   uri,
   amount,
   royalty,
+  royaltyAddress,
   splitPayment,
   userAddress,
 ) => {
@@ -199,7 +200,7 @@ export const listNft = async (
     args: [
       uri,
       etherValue,
-      { royaltyWallet: userAddress, royaltyPercentage: royalty * 100 },
+      { royaltyWallet: royaltyAddress, royaltyPercentage: royalty * 100 },
       splitPayments,
     ],
   };
@@ -233,15 +234,19 @@ export const getMarketPlaceFee = async () => {
   return await publicClient.readContract(obj);
 };
 
-export const getMaticAmount = async (usdAmount) => {
+export const getMaticAmount = async (usdAmount, unit = 'matic') => {
+  let etherValue = unit == 'matic' ? parseEther(usdAmount.toString()) : usdAmount;
+
   const obj = {
     address: address,
     abi: abi,
     functionName: "getMaticAmount",
-    args: [usdAmount * 100],
+    args: [etherValue],
   };
   const publicClient = createPublicClientLocal();
-  return await publicClient.readContract(obj);
+  const maticWeis = await publicClient.readContract(obj);
+  const maticAmount = formatEther(maticWeis);
+  return unit == 'matic' ? maticAmount : maticWeis;
 };
 
 export const releaseTime = async (tokenId) => {
@@ -269,12 +274,13 @@ export const getTreasury = async (tokenId) => {
 
 export const buyItem = async (tokenId, userAddress) => {
   const sale = await idToSaleDetails(tokenId);
+  const etherValue = await getMaticAmount(sale[3], 'wei');
   let txObj = {
     address: address,
     abi: abi,
     functionName: "purchaseAsset",
     args: [tokenId],
-    value: sale[3],
+    value: etherValue,
   };
   try {
     return await executeWriteFunction(txObj, userAddress);
@@ -360,7 +366,8 @@ export const putCancelRequest = async (tokenId, request, userAddress) => {
 };
 
 export const placeBidOnSale = async (tokenId, price, userAddress) => {
-  let etherValue = parseEther(price);
+  let etherPrice = await getMaticAmount(price);
+  let etherValue = parseEther(etherPrice);
   const txObj = {
     address: address,
     abi: abi,
@@ -385,7 +392,8 @@ export const placeBid = async (
   royalty,
   splitPayment,
 ) => {
-  let etherValue = parseEther(price);
+  let etherPrice = await getMaticAmount(price);
+  let etherValue = parseEther(etherPrice);
   const nftValue = parseEther(nftPrice.toString());
   const splitPayments = changeSplitPayAmount(splitPayment);
   const txObj = {
@@ -469,7 +477,9 @@ export const purchaseUnmintedNft = async (
   royalty,
   splitPayment,
 ) => {
-  let etherValue = parseEther(price.toString());
+  let etherPrice = await getMaticAmount(price);
+  let etherValue = parseEther(etherPrice.toString());
+  
   const splitPayments = changeSplitPayAmount(splitPayment);
   const txObj = {
     address: address,

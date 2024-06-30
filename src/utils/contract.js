@@ -228,6 +228,19 @@ export const abi = [
         "anonymous": false,
         "inputs": [
             {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "value",
+                "type": "uint256"
+            }
+        ],
+        "name": "Debug",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
                 "indexed": true,
                 "internalType": "uint256",
                 "name": "tokenId",
@@ -722,7 +735,7 @@ export const abi = [
         "inputs": [
             {
                 "internalType": "uint256",
-                "name": "usdPrice",
+                "name": "usdAmount",
                 "type": "uint256"
             }
         ],
@@ -767,6 +780,11 @@ export const abi = [
                     {
                         "internalType": "uint256",
                         "name": "price",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "maticPrice",
                         "type": "uint256"
                     },
                     {
@@ -922,6 +940,11 @@ export const abi = [
             {
                 "internalType": "uint256",
                 "name": "price",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "maticPrice",
                 "type": "uint256"
             },
             {
@@ -1230,6 +1253,11 @@ export const abi = [
                 "internalType": "address",
                 "name": "seller",
                 "type": "address"
+            },
+            {
+                "internalType": "uint256",
+                "name": "price",
+                "type": "uint256"
             },
             {
                 "components": [
@@ -1792,4 +1820,4 @@ export const abi = [
     }
 ];
 
-export const address = "0xC7a4088E192b4dfe1ED382e5458c3388149D64B8"
+export const address = contractAddress

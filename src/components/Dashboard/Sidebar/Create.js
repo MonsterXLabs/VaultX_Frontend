@@ -848,11 +848,11 @@ function Create(props) {
         }));
         splitPayments = newArr;
       }
-      debugger;
       const result = await listNft(
         uri,
         createNftStep1.price,
         createNftStep2Conditions?.royalties ? createNftStep2.royalty : 0,
+        createNftStep2Conditions?.royalties ? createNftStep2.royaltyAddress : address,
         splitPayments,
         address
       );
@@ -2168,10 +2168,12 @@ function Create(props) {
                           <input
                             type="text"
                             placeholder="Address"
-                            name="address"
+                            name="royaltyAddress"
                             style={{
                               width: '430px'
                             }}
+                            value={createNftStep2.royaltyAddress}
+                            onChange={handleUpdateValuesStep2}
                           />
                           <input
                             type="text"
@@ -2188,14 +2190,14 @@ function Create(props) {
                               className="add_input_btn"
                               href="#"
                               onClick={() => {
-                                setCreateNftStep2Split([
-                                  ...createNftStep2Split,
-                                  createNftStep2SplitInput,
-                                ]);
-                                setCreateNftStep2SplitInput({
-                                  address: "",
-                                  percent: "",
-                                });
+                                // setCreateNftStep2Split([
+                                //   ...createNftStep2Split,
+                                //   createNftStep2SplitInput,
+                                // ]);
+                                // setCreateNftStep2SplitInput({
+                                //   address: "",
+                                //   percent: "",
+                                // });
                               }}
                             >
                               <span>

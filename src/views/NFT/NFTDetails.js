@@ -769,6 +769,7 @@ function NFTDetails() {
         nft?.uri,
         price,
         nft?.royalties ? nft.royalty : 0,
+        address,
         splitPayments,
         address
       )
@@ -971,12 +972,12 @@ function NFTDetails() {
     const maticAmount = await getMaticAmount(txType == "bid" ? price : nft?.price);
     if(maticAmount) {
       setQuotes(true);
-      const gasFee = maticAmount >0.02 ? 0.02 : maticAmount;
-      const totalAmount = (Number(maticAmount) / 100 + gasFee).toFixed(2);
-      const expectedAmount = (Number(maticAmount) * (100 - fee) / 10000 - gasFee).toFixed(2);
+      const gasFee = maticAmount >0.002 ? 0.002 : maticAmount;
+      const totalAmount = Number(maticAmount + gasFee).toFixed(2);
+      const expectedAmount = Number(maticAmount * (100 - fee) / 100 - gasFee).toFixed(2);
       setQuoteDetail({
         usdAmount: nft?.price,
-        maticAmount: Number(maticAmount) / 100,
+        maticAmount: Number(maticAmount).toFixed(2),
         gasFee,
         fee,
         totalAmount,
@@ -987,12 +988,12 @@ function NFTDetails() {
   const showCheckout = async () => {
     const maticAmount = await getMaticAmount(txType == "bid" ? price : nft?.price);
     if(maticAmount) {
-      const gasFee = maticAmount >0.02 ? 0.02 : maticAmount;
-      const totalAmount = (Number(maticAmount) / 100 + gasFee).toFixed(2);
-      const expectedAmount = (Number(maticAmount) * (100 - fee) / 10000 - gasFee).toFixed(2);
+      const gasFee = maticAmount >0.002 ? 0.002 : maticAmount;
+      const totalAmount = Number(maticAmount + gasFee).toFixed(2);
+      const expectedAmount = Number(maticAmount * (100 - fee) / 100 - gasFee).toFixed(2);
       setQuoteDetail({
         usdAmount: nft?.price,
-        maticAmount: Number(maticAmount) / 100,
+        maticAmount: Number(maticAmount).toFixed(2),
         gasFee,
         fee,
         totalAmount,
@@ -1008,12 +1009,12 @@ function NFTDetails() {
   const showBidNext = async () => {
     const maticAmount = await getMaticAmount(price);
     if(maticAmount) {
-      const gasFee = maticAmount >0.02 ? 0.02 : maticAmount;
-      const totalAmount = (Number(maticAmount) / 100 + gasFee).toFixed(2);
-      const expectedAmount = (Number(maticAmount) * (100 - fee) / 10000 - gasFee).toFixed(2);
+      const gasFee = maticAmount >0.002 ? 0.002 : maticAmount;
+      const totalAmount = Number(maticAmount + gasFee).toFixed(2);
+      const expectedAmount = Number(maticAmount * (100 - fee) / 100 - gasFee).toFixed(2);
       setQuoteDetail({
         usdAmount: nft?.price,
-        maticAmount: Number(maticAmount) / 100,
+        maticAmount: Number(maticAmount).toFixed(2),
         gasFee,
         fee,
         totalAmount,
@@ -1028,12 +1029,12 @@ function NFTDetails() {
   const showBuyNow = async () => {
     const maticAmount = await getMaticAmount(nft?.price);
     if(maticAmount) {
-      const gasFee = maticAmount >0.02 ? 0.02 : maticAmount;
+      const gasFee = maticAmount >0.002 ? 0.002 : maticAmount;
       const totalAmount = (Number(maticAmount) / 100 + gasFee).toFixed(2);
       const expectedAmount = (Number(maticAmount) * (100 - fee) / 10000 - gasFee).toFixed(2);
       setQuoteDetail({
         usdAmount: nft?.price,
-        maticAmount: Number(maticAmount) / 100,
+        maticAmount: Number(maticAmount).toFixed(2),
         gasFee,
         fee,
         totalAmount,
@@ -1049,12 +1050,12 @@ function NFTDetails() {
   const resetQuote = async () => {
     const maticAmount = await getMaticAmount(type == "bid" ? price : nft?.price);
     if(maticAmount) {
-      const gasFee = 0.02;
+      const gasFee = 0.002;
       const totalAmount = (Number(maticAmount) / 100 + gasFee).toFixed(2);
       const expectedAmount = (Number(maticAmount) * (100 - fee) / 10000 - gasFee).toFixed(2);
       setQuoteDetail({
         usdAmount: nft?.price,
-        maticAmount: Number(maticAmount) / 100,
+        maticAmount: Number(maticAmount).toFixed(2),
         gasFee,
         fee,
         totalAmount,
