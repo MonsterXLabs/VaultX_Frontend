@@ -743,7 +743,7 @@ function Create(props) {
       setUri(uri);
       nftUri = uri;
       if (!createNftStep2Conditions?.freeMint) {
-        await handleMint(uri);
+        await handleMint(uri, nftId);
       } else {
         setTimeout(() => {
           element1.hide();
@@ -759,7 +759,7 @@ function Create(props) {
         )
       ) {
         if (!createNftStep2Conditions?.freeMint) {
-          await handleMint(nftUri);
+          await handleMint(nftUri, nftId);
         } else element1.hide();
       } else element1.hide();
     }
@@ -833,7 +833,7 @@ function Create(props) {
     props.setProfileTab("Created");
   };
 
-  const handleMint = async (uri) => {
+  const handleMint = async (uri, nftId) => {
     const element1 = new bootstrap.Modal(
       document.getElementById("exampleModalToggle1")
     );

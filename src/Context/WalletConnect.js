@@ -38,14 +38,14 @@ const chains = [polygon, polygonAmoy]
     connectors: [
       // metaMask(),
       // coinbaseWallet(),
-      authConnector({
-        chains,
-        options: { projectId },
-        email: false, // default to true
-        socials: ['google', 'apple', 'facebook', 'x'],
-        showWallets: true, // default to true
-        walletFeatures: true // default to true
-      })
+      // authConnector({
+      //   chains,
+      //   options: { projectId },
+      //   email: false, // default to true
+      //   socials: ['google', 'apple', 'facebook', 'x'],
+      //   showWallets: true, // default to true
+      //   walletFeatures: true // default to true
+      // })
     ],
     transports: {
       [polygon.id]: http(),
