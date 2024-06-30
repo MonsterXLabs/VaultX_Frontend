@@ -27,12 +27,85 @@ export default function Info(prop) {
     const [property, setProperty] = useState({
         id: null,
         name: "",
-        attributes: []
+        attributes: [
+            {
+                type: 'Length',
+                value: '150cm'
+            },
+            {
+                type: 'Height',
+                value: '5cm'
+            },
+            {
+                type: 'Width',
+                value: '150cm'
+            },
+            {
+                type: 'Weight',
+                value: '5kg'
+            }
+        ]
+    })
+    const [propMod, setPropMod] = useState({
+        by: null,
+        type: false,
+        value: false,
+        index: null
     })
     const [states, setStates] = useState([]);
     const [cities, setCities] = useState([]);
     const [countryCode, setCountryCode] = useState("");
     const countries = Country.getAllCountries();
+
+    const removeProp = (index) => {
+        if (property.attributes.length === 1) {
+            return
+        }
+
+        setPropMod({
+            by: null,
+            index: null,
+            type: false,
+            value: false,
+        })
+        const newArr = property.attributes.filter((item, idx) => idx !== index)
+        setProperty({
+            ...property,
+            attributes: newArr
+        })
+    }
+
+    const modifyProp = (index, forType, value) => {
+        const newArr = property.attributes.map((item, idx) => {
+            if (idx === index) {
+                item[`${forType}`] = value
+                return item
+            }
+            return item
+        })
+        setProperty({
+            ...property,
+            attributes: newArr
+        })
+    }
+
+    const addNewProp = () => {
+        setPropMod({
+            by: null,
+            index: null,
+            type: false,
+            value: false,
+        })
+        const newProp = {
+            type: 'Title Here',
+            value: 'Write it here'
+        }
+
+        setProperty({
+            ...property,
+            attributes: [...property.attributes, newProp]
+        })
+    }
 
     const saveSeller = async () => {
         const response = await upsertSellerInfo({
@@ -53,7 +126,9 @@ export default function Info(prop) {
         })
 
         if (response) {
-            window.location.reload();
+            if (prop.onSaveSeller) {
+                prop.onSaveSeller()
+            }
         }
     }
 
@@ -65,7 +140,7 @@ export default function Info(prop) {
         })
 
         if (response) {
-            window.location.reload();
+            prop.onSaveContact()
         }
     }
 
@@ -102,7 +177,6 @@ export default function Info(prop) {
     const handleUpdateSeller = (e) => {
         const { name, value } = e.target;
         if (name === "country") {
-            console.log(name, value)
             const parsedVal = JSON.parse(value);
             const countryStates = State.getStatesOfCountry(parsedVal.isoCode);
             setStates(countryStates);
@@ -195,7 +269,15 @@ export default function Info(prop) {
         })
 
         if (response) {
-            window.location.reload();
+            const data = {
+                id: property.id,
+                name: property.name,
+                attributes: property.attributes
+            }
+
+            if (prop.onSave) {
+                prop.onSave(data)
+            }
         }
     }
 
@@ -203,17 +285,27 @@ export default function Info(prop) {
     useEffect(() => {
         if (prop.data) {
             if (prop.type === 'seller') {
+                const countryJSON = Country.getAllCountries().find((item) => item.name === prop.data.country)
+                const stateJSON = State.getStatesOfCountry(countryJSON.isoCode).find((item) => item.name === prop.data.address.state)
+                const cityJSON = City.getCitiesOfState(countryJSON.isoCode, stateJSON.isoCode).find((item) => item.name === prop.data.address.city)
+
+                const states = State.getStatesOfCountry(countryJSON.isoCode);
+                setStates(states);
+
+                const cities = City.getCitiesOfState(countryJSON.isoCode, stateJSON.isoCode);
+                setCities(cities);
+
                 setSellerInfo({
                     id: prop.data._id,
                     type: prop.data.type,
                     name: prop.data.name,
                     email: prop.data.email,
-                    country: prop.data.country,
+                    country: countryJSON ? countryJSON : prop.data.country,
                     shippingAddr: prop.data.shippingAddr,
                     address1: prop.data.address ? prop.data.address.line1 : "",
                     address2: prop.data.address ? prop.data.address.line2 : "",
-                    state: prop.data.address ? prop.data.address.state : "",
-                    city: prop.data.address ? prop.data.address.city : "",
+                    state: stateJSON ? stateJSON : "",
+                    city: cityJSON ? cityJSON : "",
                     postalCode: prop.data.address ? prop.data.address.postalCode : "",
                     phoneNumber: prop.data.phoneNumber,
                 })
@@ -307,13 +399,10 @@ export default function Info(prop) {
                                     </div>
                                     <div className="col-lg-4 col-md-6">
                                         <div className="single__edit__profile__step_custom_2">
-                                            <label htmlFor="#">Country*
-                                                {
-                                                    prop.data ? 
-                                                    <span className="text-sm text-white ml-10">({prop.data ? prop.data.country : ""})</span>
-                                                    : null
-                                                }
-                                            </label>
+                                            <label htmlFor="#" style={{
+                                                fontSize: '18px',
+                                                marginBottom: '13px'
+                                            }}>Country*</label>
                                             <select
                                                 class="form-select"
                                                 aria-label="select curation"
@@ -377,18 +466,15 @@ export default function Info(prop) {
                                     </div>
                                     <div className="col-lg-4 col-md-4">
                                         <div className="single__edit__profile__step_custom_2">
-                                            <label htmlFor="#">State*
-                                                {
-                                                    prop.data ? 
-                                                    <span className="text-sm text-white ml-10">({prop.data ? prop.data.address.state : ""})</span>
-                                                    : null
-                                                }
-                                            </label>
+                                            <label htmlFor="#" style={{
+                                                fontSize: '18px',
+                                                marginBottom: '13px'
+                                            }}>State*</label>
                                             <select
                                                 class="form-select"
                                                 aria-label="select curation"
                                                 name="state"
-                                                value={sellerInfo.state ? JSON.stringify(sellerInfo.state) : ""}
+                                                value={JSON.stringify(sellerInfo.state)}
                                                 onChange={handleUpdateSeller}
                                             >
                                                 <option value="">Select</option>
@@ -405,13 +491,10 @@ export default function Info(prop) {
                                     </div>
                                     <div className="col-lg-4 col-md-4">
                                         <div className="single__edit__profile__step_custom_2">
-                                            <label htmlFor="#">City*
-                                                {
-                                                    prop.data ? 
-                                                    <span className="text-sm text-white ml-10">({prop.data ? prop.data.address.city : ""})</span>
-                                                    : null
-                                                }
-                                            </label>
+                                            <label htmlFor="#" style={{
+                                                fontSize: '18px',
+                                                marginBottom: '13px'
+                                            }}>City*</label>
                                             <select
                                                 class="form-select"
                                                 aria-label="select curation"
@@ -462,7 +545,11 @@ export default function Info(prop) {
                             <a
                                 role="button"
                                 className="cancel"
-                                onClick={resetInfo}
+                                onClick={() => {
+                                    if (prop.onCancel) {
+                                        prop.onCancel()
+                                    }
+                                }}
                             >
                                 Cancel
                             </a>
@@ -543,7 +630,11 @@ export default function Info(prop) {
                             <a
                                 role="button"
                                 className="cancel"
-                                onClick={resetInfo}
+                                onClick={() => {
+                                    if (prop.onCancel) {
+                                        prop.onCancel()
+                                    }
+                                }}
                             >
                                 Cancel
                             </a>
@@ -591,7 +682,48 @@ export default function Info(prop) {
                         </div>
                         <div className="flex flex-col gap-y-4 my-6">
                             <p className="text-xl font-medium text-white">Properties value</p>
-                            <div className="flex gap-x-4 single__edit__profile__step">
+                            <div className='flex gap-4 flex-wrap'>
+                                {
+                                    property ?
+                                        property.attributes.length > 0 ?
+                                            property.attributes.map((item, index) => {
+                                                return (
+                                                    <div className='flex justify-center relative py-3 gap-y-1 flex-col w-[10rem] border-2 border-white rounded-md'>
+                                                        {
+                                                            (propMod.type && propMod.index === index && propMod.by === 'default') ?
+                                                                <input type="text" className='text-white text-center w-[65%] rounded-md bg-transparent mx-auto' onChange={(e) => {
+                                                                    modifyProp(index, 'type', e.target.value)
+                                                                    e.target.value = e.target.value
+                                                                }} />
+                                                                :
+                                                                <p className='text-white text-center text-sm' onClick={() => setPropMod({ ...propMod, type: true, index: index, by: 'default' })}>{item.type}</p>
+                                                        }
+                                                        {
+                                                            (propMod.value && propMod.index === index && propMod.by === 'default') ?
+                                                                <input type="text" className='text-white text-center w-[65%] rounded-md bg-transparent mx-auto' onChange={(e) => {
+                                                                    modifyProp(index, 'value', e.target.value)
+                                                                    e.target.value = e.target.value
+                                                                }} />
+                                                                :
+                                                                <p className='text-gray-400 text-center' onClick={() => setPropMod({ ...propMod, value: true, index: index, by: 'default' })}>{item.value}</p>
+                                                        }
+
+                                                        <div className='absolute top-2 right-2 cursor-pointer' onClick={() => removeProp(index)}>
+                                                            <svg width="18" height="19" viewBox="0 0 18 19" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                                <path d="M4 4L14 14" stroke="#DDF247" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                                                                <path d="M14 4L4 14" stroke="#DDF247" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                                                            </svg>
+                                                        </div>
+                                                    </div>
+                                                )
+                                            }) : null : null
+                                }
+                                <div className='flex cursor-pointer justify-center relative py-3 gap-y-1 items-center w-[10rem] border-2 border-[#DDF247] rounded-md' onClick={addNewProp}>
+                                    <img src="../../assets/icons/add-new.svg" className="w-10 h-10" />
+                                    <p className='text-center text-sm text-[#DDF247]'>Add New</p>
+                                </div>
+                            </div>
+                            {/* <div className="flex gap-x-4 single__edit__profile__step">
                                 <input type="text" placeholder="Type" style={{
                                     width: '10rem'
                                 }} className="py-2 px-3 border-2 border-white rounded-md" onChange={(e) => setAttr({
@@ -629,13 +761,17 @@ export default function Info(prop) {
                                             )
                                         }) : null
                                 }
-                            </div>
+                            </div> */}
                         </div>
                         <div className="edit__profile__bottom__btn half__width__btn">
                             <a
                                 role="button"
                                 className="cancel"
-                                onClick={resetInfo}
+                                onClick={() => {
+                                    if (prop.onCancel) {
+                                        prop.onCancel()
+                                    }
+                                }}
                             >
                                 Cancel
                             </a>

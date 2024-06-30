@@ -4,6 +4,7 @@ import {
   CategoryService,
   CreateNftServices,
   collectionServices,
+  upsertProperty,
 } from "../../../services/supplier";
 import * as bootstrap from "bootstrap";
 import {
@@ -52,6 +53,33 @@ const style = {
   justifyContent: "center",
   alignItems: "center"
 };
+
+const defaultAttributes = [
+  {
+    type: 'Type',
+    value: 'Write it here'
+  },
+  {
+    type: 'Medium',
+    value: 'Write it here'
+  },
+  {
+    type: 'Support',
+    value: 'Write it here'
+  },
+  {
+    type: 'Dimensions (cm)',
+    value: 'Write it here'
+  },
+  {
+    type: 'Signature',
+    value: 'Write it here'
+  },
+  {
+    type: 'Authentication',
+    value: 'Write it here'
+  }
+]
 
 function Create(props) {
   const [bannerImage, setBannerImage] = useState(null);
@@ -215,15 +243,26 @@ function Create(props) {
         address: item.address,
         percentage: item.percent,
       }));
-      strDoesExist("Split Payment Details", newArr, arr, "is empty");
+
+      if (createNftStep2SplitInput.address !== '' && createNftStep2SplitInput.percent !== '') {
+        setCreateNftStep2Split([
+          ...createNftStep2Split,
+          createNftStep2SplitInput,
+        ]);
+      } else {
+        strDoesExist("Split Payment Details", newArr, arr, "is empty");
+      }
     }
     if (selectedProperty && selectedProperty.attributes) {
       selectedProperty.attributes.forEach((item, idx) => {
         strDoesExist(`Attributes type ${idx}`, item.type, arr);
         strDoesExist(`Attributes value ${idx}`, item.value, arr);
       });
-    } else {
-      arr.push("Properties are needed");
+    }
+    if (!selectedProperty) {
+      if (_.isEqual(defaultAttributes, defaultBasicTemplate)) {
+        arr.push("Kindly edit the basic template");
+      }
     }
     setErrorCuration([...arr]);
     if (arr.length > 0) return false;
@@ -236,7 +275,7 @@ function Create(props) {
       arr.push("Seller is needed");
       setErrorCuration([...arr]);
       return false;
-    } 
+    }
     if (!selectedContact) {
       arr.push("Contact is needed");
       setErrorCuration([...arr]);
@@ -403,38 +442,138 @@ function Create(props) {
       if (!valid) return errElem.show();
       setStep(2)
     } else {
-    const formData = new FormData();
-    formData.append("name", createNftStep1.productName);
-    formData.append("description", createNftStep1.productDescription);
-    formData.append("artist", createNftStep1.artistName);
-    formData.append("price", createNftStep1.price);
-    formData.append("curation", createNftStep1.curation);
-    // createNftStep1Attachments.length > 0 &&
-    const allFiles = [createNftStep1File, ...createNftStep1Attachments];
-    for (const file of allFiles) {
-      formData.append("files", file);
-    }
+      const formData = new FormData();
+      formData.append("name", createNftStep1.productName);
+      formData.append("description", createNftStep1.productDescription);
+      formData.append("artist", createNftStep1.artistName);
+      formData.append("price", createNftStep1.price);
+      formData.append("curation", createNftStep1.curation);
+      // createNftStep1Attachments.length > 0 &&
+      const allFiles = [createNftStep1File, ...createNftStep1Attachments];
+      for (const file of allFiles) {
+        formData.append("files", file);
+      }
 
-    try {
-      await getStoredInfo()
-      const res = await nftService.createBasicDetails(formData);
-      return res.data.data._id;
-    } catch (error) {
-      if (
-        error?.response?.status ==
-        400
-      ) {
-        console.log("herer in modal")
-        const element5 = new bootstrap.Modal(
-          document.getElementById("exampleModalToggl5")
-        );
-        element5.show();
-      } else {
-        errElem.show();
+      try {
+        await getStoredInfo()
+        const res = await nftService.createBasicDetails(formData);
+        return res.data.data._id;
+      } catch (error) {
+        if (
+          error?.response?.status ==
+          400
+        ) {
+          console.log("herer in modal")
+          const element5 = new bootstrap.Modal(
+            document.getElementById("exampleModalToggl5")
+          );
+          element5.show();
+        } else {
+          errElem.show();
+        }
       }
     }
-  }
   };
+
+  const [defaultBasicTemplate, setDefaultBasicTemplate] = useState([
+    {
+      type: 'Type',
+      value: 'Write it here'
+    },
+    {
+      type: 'Medium',
+      value: 'Write it here'
+    },
+    {
+      type: 'Support',
+      value: 'Write it here'
+    },
+    {
+      type: 'Dimensions (cm)',
+      value: 'Write it here'
+    },
+    {
+      type: 'Signature',
+      value: 'Write it here'
+    },
+    {
+      type: 'Authentication',
+      value: 'Write it here'
+    }
+  ])
+
+  const [propMod, setPropMod] = useState({
+    by: null,
+    index: null,
+    type: false,
+    value: false,
+  })
+
+  const removeProp = (index) => {
+    setPropMod({
+      by: null,
+      index: null,
+      type: false,
+      value: false,
+    })
+    if (selectedProperty === null) {
+      const newArr = defaultBasicTemplate.filter((item, idx) => idx !== index)
+      setDefaultBasicTemplate(newArr)
+    } else {
+      const newArr = selectedProperty.attributes.filter((item, idx) => idx !== index)
+      setSelectedProperty({
+        ...selectedProperty,
+        attributes: newArr
+      })
+    }
+  }
+
+  const modifyProp = (index, forType, value) => {
+    if (selectedProperty === null) {
+      const newArr = defaultBasicTemplate.map((item, idx) => {
+        if (idx === index) {
+          item[`${forType}`] = value
+          return item
+        }
+        return item
+      })
+      setDefaultBasicTemplate(newArr)
+    } else {
+      const newArr = selectedProperty.attributes.map((item, idx) => {
+        if (idx === index) {
+          item[`${forType}`] = value
+          return item
+        }
+        return item
+      })
+      setSelectedProperty({
+        ...selectedProperty,
+        attributes: newArr
+      })
+    }
+  }
+
+  const addNewProp = () => {
+    setPropMod({
+      by: null,
+      index: null,
+      type: false,
+      value: false,
+    })
+    const newProp = {
+      type: 'Title Here',
+      value: 'Write it here'
+    }
+
+    if (selectedProperty === null) {
+      setDefaultBasicTemplate([...defaultBasicTemplate, newProp])
+    } else {
+      setSelectedProperty({
+        ...selectedProperty,
+        attributes: [...selectedProperty.attributes, newProp]
+      })
+    }
+  }
 
   const fetchUserCollections = async () => {
     try {
@@ -473,6 +612,22 @@ function Create(props) {
     data: null
   })
 
+  const makeUpdates = async (property) => {
+    if (selectedProperty !== null && selectedProperty !== property) {
+      await upsertProperty({
+        id: selectedProperty._id,
+        name: selectedProperty.name,
+        attributes: selectedProperty.attributes
+      })
+    }
+  }
+
+  useEffect(() => {
+    if (selectedProperty !== null) {
+      makeUpdates()
+    }
+  }, [selectedProperty])
+
   const getStoredInfo = async () => {
     const storedSellers = await getSellerInfo();
     const storedContacts = await getContactsInfo();
@@ -494,41 +649,41 @@ function Create(props) {
       if (!valid) return errElem.show();
       setStep(3);
     } else {
-    const formData = new FormData();
-    formData.append("nftId", id);
+      const formData = new FormData();
+      formData.append("nftId", id);
 
-    if (createNftStep2Conditions.freeMint) {
-      formData.append("freeMinting", createNftStep2Conditions.freeMint);
-    }
-    if (createNftStep2Conditions.royalties) {
-      if (!createNftStep2.royalty) return;
-      formData.append("royalty", createNftStep2.royalty);
-    }
-    if (createNftStep2Conditions.category) {
-      if (!createNftStep2.category) return;
-      formData.append("category", createNftStep2.category);
-    }
-    if (createNftStep2Conditions.unlockable) {
-      if (!createNftStep2.unlockable) return;
-      formData.append("unlockableContent", createNftStep2.unlockable);
-      for (let i = 0; i < numberOfInputs1; i++) {
-        formData.append("certificates", discriptionImage1[i]);
+      if (createNftStep2Conditions.freeMint) {
+        formData.append("freeMinting", createNftStep2Conditions.freeMint);
+      }
+      if (createNftStep2Conditions.royalties) {
+        if (!createNftStep2.royalty) return;
+        formData.append("royalty", createNftStep2.royalty);
+      }
+      if (createNftStep2Conditions.category) {
+        if (!createNftStep2.category) return;
+        formData.append("category", createNftStep2.category);
+      }
+      if (createNftStep2Conditions.unlockable) {
+        if (!createNftStep2.unlockable) return;
+        formData.append("unlockableContent", createNftStep2.unlockable);
+        for (let i = 0; i < numberOfInputs1; i++) {
+          formData.append("certificates", discriptionImage1[i]);
+        }
+      }
+      formData.append("attributes", JSON.stringify(selectedProperty.attributes ? selectedProperty.attributes : []));
+
+      try {
+        await getStoredInfo()
+
+        const res = await nftService.createAdvancedDetails(formData);
+
+        setStep(3);
+        setTimeout(() => {
+        }, 1000);
+      } catch (error) {
+        console.log(error);
       }
     }
-    formData.append("attributes", JSON.stringify(selectedProperty.attributes ? selectedProperty.attributes : []));
-
-    try {
-      await getStoredInfo()
-
-      const res = await nftService.createAdvancedDetails(formData);
-
-      setStep(3);
-      setTimeout(() => {
-      }, 1000);
-    } catch (error) {
-      console.log(error);
-    }
-  }
   };
 
   const createSellerInfo = async () => {
@@ -777,7 +932,7 @@ function Create(props) {
     const element1 = new bootstrap.Modal(
       document.getElementById("exampleModalToggl1")
     );
-    
+
     try {
       element4.show();
       const data = new FormData();
@@ -844,6 +999,33 @@ function Create(props) {
     }
   };
 
+  const [exitPopup, setExitPopup] = useState(false);
+  const [infoData, setInfoData] = useState(null)
+
+  const handleDataFromChild = async (data) => {
+    setInfoData(data)
+
+    if (data) {
+      setPopUp2({
+        active: false,
+        type: null,
+        data: null
+      })
+      const response = await getProperties()
+      if (response) {
+        setProperties(response)
+      }
+    }
+  }
+
+  const onCancel = () => {
+    setPopUp2({
+      active: false,
+      type: null,
+      data: null
+    })
+  }
+
   const { chains, switchChain } = useSwitchChain();
 
   const handleNetworkChange = () => { };
@@ -897,7 +1079,96 @@ function Create(props) {
           alignItems: "center",
         }}
       >
-        <Info type={popUp2.type} data={popUp2.data} />
+        <Info
+          type={popUp2.type}
+          data={popUp2.data}
+          onSave={handleDataFromChild}
+          onCancel={onCancel}
+          onSaveSeller={async () => {
+            const response = await getSellerInfo()
+            setSellers(response)
+
+            if (response) {
+              setPopUp2({
+                active: false,
+                type: null,
+                data: null
+              })
+            }
+          }}
+          onSaveContact={async () => {
+            const response = await getContactsInfo()
+            setContacts(response)
+
+            if (response) {
+              setPopUp2({
+                active: false,
+                type: null,
+                data: null
+              })
+            }
+          }}
+        />
+      </Modal>
+      <Modal
+        open={exitPopup}
+        onClose={() => setExitPopup(false)}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={{
+          ...style,
+          height: "auto",
+        }}>
+          <div style={{
+            position: "absolute",
+            top: "20px",
+            right: "20px",
+            backgroundColor: "white",
+            padding: "10px",
+            cursor: "pointer",
+            borderRadius: "100%",
+            zIndex: 100
+          }}
+            onClick={() => setExitPopup(false)}
+          >
+            <img src="../../assets/img/delete_icon.svg" alt="" className="close__icon" />
+          </div>
+          <div className="flex flex-col justify-center items-center">
+            <div className="modal-image">
+              <img
+                src="/assets/img/exclamation.svg"
+                alt="Error"
+                className="mx-auto mt-4"
+                style={{ width: "100px", height: "100px" }}
+              />
+            </div>
+            <div className="text-white p-4 rounded-t-lg text-center justify-center">
+              <h5 className="text-white font-bold px-5 text-lg">
+                If You Exit This Page, The Minting Information Progress Will Be Lost. Do You Still Want To Cancel?
+              </h5>
+            </div>
+            <div className="edit__profile__bottom__btn half__width__btn" style={{
+              padding: '20px',
+              width: '100%'
+            }}>
+              <a
+                onClick={() => setExitPopup(false)}
+                className="cancel"
+              >
+                No
+              </a>
+              <a
+                onClick={() => {
+                  setStep(0);
+                  setExitPopup(false);
+                }}
+              >
+                Yes
+              </a>
+            </div>
+          </div>
+        </Box>
       </Modal>
       <div className={step !== 0 ? "d-none" : "create__area"}>
         <div className="row g-0 align-items-center">
@@ -1417,25 +1688,6 @@ function Create(props) {
                       );
                     })}
                   </div>
-
-                  <div className="edit__profile__bottom__btn half__width__btn">
-                    <a
-                      data-bs-toggle="modal"
-                      href="#discardPopup"
-                      role="button"
-                      className="cancel"
-                    >
-                      Discard
-                    </a>
-                    <a
-                      onClick={handleCuration}
-                    >
-                      Next{" "}
-                      <span>
-                        <img src="assets/img/arrow_ico.svg" alt="" />
-                      </span>
-                    </a>
-                  </div>
                 </div>
               </div>
             </form>
@@ -1730,20 +1982,22 @@ function Create(props) {
                       </div>
                     </div>
                   </div>
-                  <div className="edit__profile__bottom__btn half__width__btn">
-                    <a
-                      onClick={() => setStep(0)}
-                      className="cancel"
-                    >
-                      Previous
-                    </a>
-                    <a href="#" onClick={async () => await createBasicDetails(false)}>
-                      Next{" "}
-                      <span>
-                        <img src="assets/img/arrow_ico.svg" alt="" />
-                      </span>
-                    </a>
-                  </div>
+                </div>
+                <div className="edit__profile__bottom__btn half__width__btn">
+                  <a
+                    onClick={() => {
+                      setExitPopup(true)
+                    }}
+                    className="cancel"
+                  >
+                    Cancel
+                  </a>
+                  <a href="#" onClick={async () => await createBasicDetails(false)}>
+                    Next{" "}
+                    <span>
+                      <img src="assets/img/arrow_ico.svg" alt="" />
+                    </span>
+                  </a>
                 </div>
               </div>
             </form>
@@ -1916,55 +2170,42 @@ function Create(props) {
                             placeholder="Address"
                             name="address"
                             style={{
-                              width: '240px'
+                              width: '430px'
                             }}
                           />
                           <input
                             type="text"
-                            min="0"
                             placeholder="%"
                             name="royalty"
                             style={{
                               width: '100px'
                             }}
                             value={createNftStep2.royalty}
-                            onChange={(e) =>
-                              Number(e.target.value) >= 0
-                                ? handleUpdateValuesStep2(e)
-                                : setCreateNftStep1({
-                                  ...createNftStep1,
-                                  royalty: "",
-                                })
-                            }
+                            onChange={handleUpdateValuesStep2}
                           />
-                          <img
-                            src="assets/img/Trash.svg"
-                            alt=""
-                            style={{
-                              cursor: 'pointer'
-                            }}
-                          />
-                          <a
-                            href="#"
-                            style={{
-                              color: '#DDF247',
-                              display: 'flex',
-                              gap: '5px',
-                              alignItems: 'center',
-                              border: '1px solid #DDF247',
-                              borderRadius: '5px',
-                              padding: '10px 15px'
-                            }}
-                          >
-                            <span>
-                              <img
-                                src="assets/img/Plus_circle.svg"
-                                alt=""
-                              />
-                            </span>{" "}
-                            Add
-                          </a>
+                          <div className="input__add__btn">
+                            <a
+                              className="add_input_btn"
+                              href="#"
+                              onClick={() => {
+                                setCreateNftStep2Split([
+                                  ...createNftStep2Split,
+                                  createNftStep2SplitInput,
+                                ]);
+                                setCreateNftStep2SplitInput({
+                                  address: "",
+                                  percent: "",
+                                });
+                              }}
+                            >
+                              <span>
+                                <img src="assets/img/Plus_circle.svg" alt="" />
+                              </span>{" "}
+                              Add
+                            </a>
+                          </div>
                         </div>
+
                       </div>
                     </div>
                   )}
@@ -2081,7 +2322,7 @@ function Create(props) {
                     {createNftStep2Conditions.split && (
                       <div className="ntf__flex__input__wrap">
                         <div className="single__edit__profile__step width_430">
-                          <label htmlFor="#">Split Payments</label>
+                          <label htmlFor="#">Split Payments (%)</label>
                           <input
                             type="text"
                             placeholder="Address"
@@ -2151,7 +2392,9 @@ function Create(props) {
                       </div>
                     ))}
                   </div>
-                  <div className="col-md-12">
+                  <div className="col-md-12" style={{
+                    fontFamily: 'Manrope'
+                  }}>
                     <div className="propatis__area">
                       <div className="propertis__content">
                         <h4>Properties</h4>
@@ -2159,247 +2402,286 @@ function Create(props) {
                       </div>
                       <div className="flex flex-col gap-y-2 text-white my-10 cursor-pointer">
                         <h2 className="text-white font-medium text-lg">Select Properties Template</h2>
-                        <div className="flex flex-wrap gap-5">
-                          {
-                            properties.length > 0 ?
-                              properties.map((property, index) => {
+                      </div>
+                      <div className="flex flex-wrap gap-5">
+                        <div onClick={() => {
+                          setPropMod({
+                            by: 'default',
+                            type: false,
+                            index: null,
+                            value: false
+                          })
+                          setSelectedProperty(null)
+                        }} className="w-[18rem] h-[15rem] bg-[#232323] flex justify-center items-center rounded-md relative"
+                          style={{
+                            border: selectedProperty === null ? '2px solid #DDF247' : 'none'
+                          }}>
+                          <p className="text-white">Basic Template</p>
+                        </div>
+                        {
+                          properties.length > 0 ?
+                            properties.map((property, index) => {
+                              return (
+                                <div className="w-[18rem] h-[15rem] bg-[#232323] flex justify-center items-center rounded-md relative"
+                                  style={{
+                                    border: selectedProperty === property ? '2px solid #DDF247' : 'none'
+                                  }}
+                                  onClick={async () => {
+                                    await makeUpdates(property)
+                                    setPropMod({
+                                      by: 'default',
+                                      type: false,
+                                      index: null,
+                                      value: false
+                                    })
+                                    setSelectedProperty(property)
+                                  }}>
+                                  <p className="text-white">{property.name}</p>
+                                </div>
+                              )
+                            }) : null
+                        }
+                        <div className="w-[18rem] h-[15rem] bg-[#232323] flex flex-col relative justify-center cursor-pointer items-center rounded-md" onClick={() => {
+                          setPopUp2({
+                            active: true,
+                            type: "property",
+                            data: null
+                          })
+                        }}>
+                          <div className="flex flex-col gap-y-6 items-center">
+                            <div className="w-16 h-16 rounded-full bg-[#111111] border-2 border-[#FFFFFF4D] flex justify-center items-center">
+                              <img src="../../assets/icons/plus.svg" className="w-5 h-5" />
+                            </div>
+                            <p className="text-[#828282]">Add New Template</p>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="flex flex-wrap gap-3 my-5">
+                        {
+                          selectedProperty === null ? (
+                            defaultBasicTemplate.length > 0 ?
+                              defaultBasicTemplate.map((item, index) => {
                                 return (
-                                  <div className="w-[18rem] h-[15rem] bg-[#232323] flex justify-center items-center rounded-md relative"
-                                    style={{
-                                      border: selectedProperty === property ? '2px solid #DDF247' : 'none'
-                                    }}
-                                    onClick={() => {
-                                      setSelectedProperty(property)
-                                    }}>
-                                    <p>Basic Template</p>
-                                    <div className="absolute bottom-5 right-5" onClick={() => {
-                                      setPopUp2({
-                                        active: true,
-                                        type: 'property',
-                                        data: {
-                                          ...property
-                                        }
-                                      })
-                                    }}>
-                                      <span className="text-[#DDF247] px-2 py-1 rounded-md border-2 border-gray-400">Edit</span>
+                                  <div className='flex justify-center relative py-3 gap-y-1 flex-col w-[10rem] border-2 border-white rounded-md'>
+                                    {
+                                      (propMod.type && propMod.index === index && propMod.by === 'default') ?
+                                        <input type="text" className='text-white text-center w-[65%] rounded-md bg-transparent mx-auto' onChange={(e) => {
+                                          modifyProp(index, 'type', e.target.value)
+                                          e.target.value = e.target.value
+                                        }} />
+                                        :
+                                        <p className='text-white text-center text-sm' onClick={() => setPropMod({ ...propMod, type: true, index: index, by: 'default' })}>{item.type}</p>
+                                    }
+                                    {
+                                      (propMod.value && propMod.index === index && propMod.by === 'default') ?
+                                        <input type="text" className='text-white text-center w-[65%] rounded-md bg-transparent mx-auto' onChange={(e) => {
+                                          modifyProp(index, 'value', e.target.value)
+                                          e.target.value = e.target.value
+                                        }} />
+                                        :
+                                        <p className='text-gray-400 text-center' onClick={() => setPropMod({ ...propMod, value: true, index: index, by: 'default' })}>{item.value}</p>
+                                    }
+                                    <div className='absolute top-2 right-2 cursor-pointer' onClick={() => removeProp(index)}>
+                                      <svg width="18" height="19" viewBox="0 0 18 19" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M4 4L14 14" stroke="#DDF247" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                                        <path d="M14 4L4 14" stroke="#DDF247" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                                      </svg>
                                     </div>
                                   </div>
                                 )
                               }) : null
-                          }
-                          <div className="w-[18rem] h-[15rem] bg-[#232323] flex flex-col relative justify-center items-center rounded-md" onClick={() => {
-                            setPopUp2({
-                              active: true,
-                              type: "property",
-                              data: null
-                            })
-                          }}>
-                            <img src="../../assets/icons/add.png" alt="" className="w-16 h-16" />
-                            <p className="absolute bottom-[6.5rem] text-3xl text-black">+</p>
-                            <p className="text-center absolute bottom-10 text-lg">Add new template</p>
-                          </div>
+                          ) : (
+                            selectedProperty ?
+                              selectedProperty.attributes.length > 0 ?
+                                selectedProperty.attributes.map((item, index) => {
+                                  return (
+                                    <div className='flex justify-center relative py-3 gap-y-1 flex-col w-[10rem] border-2 border-white rounded-md'>
+                                      {
+                                        (propMod.type && propMod.index === index && propMod.by === 'default') ?
+                                          <input type="text" className='text-white text-center w-[65%] rounded-md bg-transparent mx-auto' onChange={(e) => {
+                                            modifyProp(index, 'type', e.target.value)
+                                            e.target.value = e.target.value
+                                          }} />
+                                          :
+                                          <p className='text-white text-center text-sm' onClick={() => setPropMod({ ...propMod, type: true, index: index, by: 'default' })}>{item.type}</p>
+                                      }
+                                      {
+                                        (propMod.value && propMod.index === index && propMod.by === 'default') ?
+                                          <input type="text" className='text-white text-center w-[65%] rounded-md bg-transparent mx-auto' onChange={(e) => {
+                                            modifyProp(index, 'value', e.target.value)
+                                            e.target.value = e.target.value
+                                          }} />
+                                          :
+                                          <p className='text-gray-400 text-center' onClick={() => setPropMod({ ...propMod, value: true, index: index, by: 'default' })}>{item.value}</p>
+                                      }
+
+                                      <div className='absolute top-2 right-2 cursor-pointer' onClick={() => removeProp(index)}>
+                                        <svg width="18" height="19" viewBox="0 0 18 19" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                          <path d="M4 4L14 14" stroke="#DDF247" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                                          <path d="M14 4L4 14" stroke="#DDF247" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                                        </svg>
+                                      </div>
+                                    </div>
+                                  )
+                                }) : null : null
+                          )
+                        }
+                        <div className='flex cursor-pointer justify-center relative py-3 gap-y-1 items-center w-[10rem] border-2 border-[#DDF247] rounded-md' onClick={addNewProp}>
+                          <img src="../../assets/icons/add-new.svg" className="w-10 h-10" />
+                          <p className='text-center text-sm text-[#DDF247]'>Add New</p>
                         </div>
                       </div>
-                      {/* <div className="ntf__flex__input__wrap">
-                        <div className="single__edit__profile__step width_245">
-                          <label htmlFor="#">Type</label>
-                          <input
-                            type="text"
-                            placeholder="Type"
-                            name="type"
-                            value={createNftStep2PropertiesInput.type}
-                            onChange={handleUpdateValuesStep2Properties}
-                          />
-                        </div>
-                        <div className="single__edit__profile__step width_245">
-                          <label htmlFor="#">Name</label>
-                          <input
-                            type="text"
-                            placeholder="Name"
-                            name="value"
-                            value={createNftStep2PropertiesInput.value}
-                            onChange={handleUpdateValuesStep2Properties}
-                          />
-                        </div>
-                        <div className="input__add__btn">
-                          <a
-                            className="add_input_btn"
-                            href="#"
-                            onClick={() => {
-                              createNftStep2Properties.push(
-                                createNftStep2PropertiesInput
-                              );
-                              setCreateNftStep2PropertiesInput({
-                                type: "",
-                                value: "",
-                              });
-                            }}
-                          >
-                            <span>
-                              <img src="assets/img/Plus_circle.svg" alt="" />
-                            </span>{" "}
-                            Add
-                          </a>
-                        </div>
+                      <div className="flex gap-x-3 item-center">
+                        <img src="../../assets/icons/dot.svg" className="w-5 h-5" />
+                        <span>You can freely change properties values ​​by clicking on the title and content.</span>
                       </div>
-                      <div className="nft__delete__option">
-                        <div className="row g-3">
-                          {createNftStep2Properties.map((item, i) => (
-                            <div
-                              key={i}
-                              className="col-xxl-2 col-xl-3 col-lg-3 col-md-4 col-sm-6"
-                            >
-                              <div className="nft__single__option">
-                                <a
-                                  onClick={() => {
-                                    const temp = [...createNftStep2Properties];
-                                    temp.splice(i, 1);
-                                    setCreateNftStep2Properties([...temp]);
-                                  }}
-                                >
-                                  <h4>{item.type}</h4>
-                                  <p>{item.value}</p>
-                                  <span>
-                                    <img
-                                      src="../../assets/img/Trash.svg"
-                                      alt=""
-                                    />
-                                  </span>
-                                </a>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      </div> */}
                     </div>
                   </div>
+                  <div className="edit__profile__bottom__btn half__width__btn" style={{
+                    padding: '20px',
+                    width: '100%'
+                  }}>
+                    <a
+                      onClick={() => setStep(1)}
+                      className="cancel"
+                    >
+                      Previous
+                    </a>
+                    <a href="#" onClick={async () => {
+                      await makeUpdates(null)
+                      await createAdvancedDetails(false, null)
+                    }}>
+                      Next{" "}
+                      <span>
+                        <img src="assets/img/arrow_ico.svg" alt="" />
+                      </span>
+                    </a>
+                  </div>
                 </div>
-              </div>
-              <div className="edit__profile__bottom__btn half__width__btn">
-                <a
-                  onClick={() => setStep(1)}
-                  className="cancel"
-                >
-                  Previous
-                </a>
-                <a href="#" onClick={async() => await createAdvancedDetails(false, null)}>
-                  Next{" "}
-                  <span>
-                    <img src="assets/img/arrow_ico.svg" alt="" />
-                  </span>
-                </a>
               </div>
             </form>
           </div>
-          {/* Step 3 */}
-          <div className={step === 3 ? "connected__form" : "d-none"}>
-            <form action="#">
-              <div className="flex flex-col gap-y-2 text-white my-10 cursor-pointer">
-                <h2 className="text-white font-medium text-lg">Shipping Information</h2>
-                <div className="flex flex-wrap gap-5">
-                  {
-                    sellers.length > 0 ?
-                      sellers.map((seller, index) => {
-                        return (
-                          <div className="w-[15rem] h-[15rem] bg-[#232323] flex flex-col justify-between p-4 rounded-md"
-                            style={{
-                              border: selectedSeller === seller ? '2px solid #DDF247' : 'none'
-                            }}
-                            onClick={() => {
-                              setSelectedSeller(seller)
-                            }}
-                          >
-                            <div className="flex justify-between">
-                              <div className="flex flex-col gap-y-2">
-                                <span>{seller.name}</span>
-                                <span>{seller.phoneNumber}</span>
-                              </div>
-                              <div>{seller.shippingAddr}</div>
-                            </div>
-                            <div>
-                              <p>{seller.address.line1}, {seller.address.line2.trim(0, 20)}...</p>
-                              <p>{seller.address.state}, {seller.address.city}, {seller.country}</p>
-                            </div>
-                            <div className="flex justify-end" onClick={() => {
-                              setPopUp2({
-                                active: true,
-                                type: "seller",
-                                data: {
-                                  ...seller
-                                }
-                              })
-                            }}>
-                              <span className="text-[#DDF247] px-2 py-1 rounded-md border-2 border-gray-400">Edit</span>
-                            </div>
+        </div>
+      </div>
+      {/* Step 3 */}
+      <div className={step === 3 ? "connected__form" : "d-none"}>
+        <form action="#" style={{
+          fontFamily: 'Manrope'
+        }}>
+          <div className="flex flex-col gap-y-2 text-white my-10 cursor-pointer">
+            <h2 className="text-white font-medium text-lg">Shipping Information</h2>
+            <div className="flex flex-wrap gap-5">
+              {
+                sellers.length > 0 ?
+                  sellers.map((seller, index) => {
+                    return (
+                      <div className="w-[18rem] h-[15rem] bg-[#232323] flex flex-col justify-between p-4 rounded-md"
+                        style={{
+                          border: selectedSeller === seller ? '2px solid #DDF247' : 'none'
+                        }}
+                        onClick={() => {
+                          setSelectedSeller(seller)
+                        }}
+                      >
+                        <div className="flex justify-between">
+                          <div className="flex flex-col gap-y-2">
+                            <span>{seller.name}</span>
+                            <span className="text-[#A6A6A6]">{seller.phoneNumber}</span>
                           </div>
-                        )
-                      }) : null
-                  }
-                  <div className="w-[15rem] h-[15rem] bg-[#232323] flex flex-col relative justify-center items-center rounded-md" onClick={() => {
-                    setPopUp2({
-                      active: true,
-                      type: "seller",
-                      data: null
-                    })
-                  }}>
-                    <img src="../../assets/icons/add.png" alt="" className="w-16 h-16" />
-                    <p className="absolute bottom-[6.5rem] text-3xl text-black">+</p>
-                    <p className="text-center absolute bottom-10 text-lg">Add new address</p>
+                          <div className="text-[#A6A6A6]">{seller.shippingAddr}</div>
+                        </div>
+                        <div>
+                          <p className="text-[#A6A6A6]">{`${seller.address.line1 + seller.address.line2 + seller.address.state + seller.address.city + seller.country}`.length > 150 ?
+                            `${seller.address.line1 + " " + seller.address.line2 + " " + seller.address.state + seller.address.city + " " + seller.country}`.slice(0, 150) + "..." :
+                            `${seller.address.line1 + " " + seller.address.line2 + " " + seller.address.state + " " + seller.address.city + " " + seller.country}`
+                          } </p>
+                        </div>
+                        <div className="flex justify-end" onClick={() => {
+                          setPopUp2({
+                            active: true,
+                            type: "seller",
+                            data: {
+                              ...seller
+                            }
+                          })
+                        }}>
+                          <span className="text-[#DDF247] px-2 py-1 rounded-md border-2 border-gray-400">Edit</span>
+                        </div>
+                      </div>
+                    )
+                  }) : null
+              }
+              <div className="w-[18rem] h-[15rem] bg-[#232323] flex flex-col relative justify-center cursor-pointer items-center rounded-md" onClick={() => {
+                setPopUp2({
+                  active: true,
+                  type: "seller",
+                  data: null
+                })
+              }}>
+                <div className="flex flex-col gap-y-6 items-center">
+                  <div className="w-16 h-16 rounded-full bg-[#111111] border-2 border-[#FFFFFF4D] flex justify-center items-center">
+                    <img src="../../assets/icons/plus.svg" className="w-5 h-5" />
                   </div>
+                  <p className="text-[#828282]">Add New Address</p>
                 </div>
               </div>
-              <div className="flex flex-col gap-y-2 text-white my-10 cursor-pointer">
-                <h2 className="text-white font-medium text-lg">Contact Information</h2>
-                <div className="flex flex-wrap gap-5">
-                  {
-                    contacts.length > 0 ?
-                      contacts.map((contact, index) => {
-                        return (
-                          <div className="w-[15rem] h-[15rem] bg-[#232323] flex flex-col justify-between p-4 rounded-md"
-                            style={{
-                              border: selectedContact === contact ? '2px solid #DDF247' : 'none'
-                            }}
-                            onClick={() => {
-                              setSelectedContact(contact)
-                            }}
-                          >
-                            <div className="flex justify-between">
-                              <div className="flex flex-col gap-y-2">
-                                <span>{contact.name ? contact.name : `#${index + 1}`}</span>
-                              </div>
-                            </div>
-                            <div>
-                              <p>{contact.contactInfo.trim(0, 20)}...</p>
-                            </div>
-                            <div className="flex justify-end" onClick={() => {
-                              setPopUp2({
-                                active: true,
-                                type: 'contact',
-                                data: {
-                                  ...contact
-                                }
-                              })
-                            }}>
-                              <span className="text-[#DDF247] px-2 py-1 rounded-md border-2 border-gray-400">Edit</span>
-                            </div>
+            </div>
+          </div>
+          <div className="flex flex-col gap-y-2 text-white my-10 cursor-pointer">
+            <h2 className="text-white font-medium text-lg">Contact Information</h2>
+            <div className="flex flex-wrap gap-5">
+              {
+                contacts.length > 0 ?
+                  contacts.map((contact, index) => {
+                    return (
+                      <div className="w-[18rem] h-[15rem] bg-[#232323] flex flex-col justify-between p-4 rounded-md"
+                        style={{
+                          border: selectedContact === contact ? '2px solid #DDF247' : 'none'
+                        }}
+                        onClick={() => {
+                          setSelectedContact(contact)
+                        }}
+                      >
+                        <div className="flex justify-between">
+                          <div className="flex flex-col gap-y-2">
+                            <span>{contact.name ? contact.name : `#${index + 1}`}</span>
                           </div>
-                        )
-                      }) : null
-                  }
-                  <div className="w-[15rem] h-[15rem] bg-[#232323] flex flex-col relative justify-center items-center rounded-md" onClick={() => {
-                    setPopUp2({
-                      active: true,
-                      type: "contact",
-                      data: null
-                    })
-                  }}>
-                    <img src="../../assets/icons/add.png" alt="" className="w-16 h-16" />
-                    <p className="absolute bottom-[6.5rem] text-3xl text-black">+</p>
-                    <p className="text-center absolute bottom-10 text-lg">Add new information</p>
+                        </div>
+                        <div>
+                          <p className="text-[#A6A6A6] py-1">{contact.contactInfo.length > 150 ? `${contact.contactInfo.slice(0, 150)}...` : contact.contactInfo}...</p>
+                        </div>
+                        <div className="flex justify-end" onClick={() => {
+                          setPopUp2({
+                            active: true,
+                            type: 'contact',
+                            data: {
+                              ...contact
+                            }
+                          })
+                        }}>
+                          <span className="text-[#DDF247] px-2 py-1 rounded-md border-2 border-gray-400 text-sm">Edit</span>
+                        </div>
+                      </div>
+                    )
+                  }) : null
+              }
+              <div className="w-[18rem] h-[15rem] bg-[#232323] flex flex-col relative justify-center cursor-pointer items-center rounded-md" onClick={() => {
+                setPopUp2({
+                  active: true,
+                  type: "contact",
+                  data: null
+                })
+              }}>
+                <div className="flex flex-col gap-y-6 items-center">
+                  <div className="w-16 h-16 rounded-full bg-[#111111] border-2 border-[#FFFFFF4D] flex justify-center items-center">
+                    <img src="../../assets/icons/plus.svg" className="w-5 h-5" />
                   </div>
+                  <p className="text-[#828282]">Add New Information</p>
                 </div>
               </div>
-              {/* <div className="common__edit__proe__wrap mt-4">
+            </div>
+          </div>
+          {/* <div className="common__edit__proe__wrap mt-4">
                 <div className="edit__profilfile__inner__top__blk">
                   <div className="edit__profile__inner__title">
                     <h5>Seller Information</h5>
@@ -2463,7 +2745,7 @@ function Create(props) {
                   </div>
                 </div>
               </div> */}
-              {/* <div className="common__edit__proe__wrap mt-4">
+          {/* <div className="common__edit__proe__wrap mt-4">
                 <div className="edit__profilfile__inner__top__blk">
                   <div className="edit__profile__inner__title">
                     <h5>Shipping Address</h5>
@@ -2573,73 +2855,73 @@ function Create(props) {
                   </div>
                 </div>
               </div> */}
-              <div className="common__edit__proe__wrap mt-4">
-                <div className="edit__profilfile__inner__top__blk">
-                  <div className="edit__profile__inner__title">
-                    <h5>Shipment Information</h5>
-                  </div>
-                  <div className="edit_profile_inner_top_right">
-                    <div className="edit__profile__angle__ico">
-                      <span>
-                        <img src="assets/img/angle_up.svg" alt="" />
-                      </span>
-                    </div>
+          <div className="common__edit__proe__wrap mt-4">
+            <div className="edit__profilfile__inner__top__blk">
+              <div className="edit__profile__inner__title">
+                <h5>Shipment Information</h5>
+              </div>
+              <div className="edit_profile_inner_top_right">
+                <div className="edit__profile__angle__ico">
+                  <span>
+                    <img src="assets/img/angle_up.svg" alt="" />
+                  </span>
+                </div>
+              </div>
+            </div>
+            <div className="edit__profile__form">
+              <div className="row gy-4 gx-3">
+                <div className="col-xl-3 col-lg-4 col-md-6">
+                  <div className="single__edit__profile__step">
+                    <label htmlFor="#">Length (cm)</label>
+                    <input
+                      type="text"
+                      placeholder="--"
+                      name="lengths"
+                      value={sellerInfo.lengths}
+                      onChange={handleUpdateSeller}
+                    />
                   </div>
                 </div>
-                <div className="edit__profile__form">
-                  <div className="row gy-4 gx-3">
-                    <div className="col-xl-3 col-lg-4 col-md-6">
-                      <div className="single__edit__profile__step">
-                        <label htmlFor="#">Length (cm)</label>
-                        <input
-                          type="text"
-                          placeholder="--"
-                          name="lengths"
-                          value={sellerInfo.lengths}
-                          onChange={handleUpdateSeller}
-                        />
-                      </div>
-                    </div>
-                    <div className="col-xl-3 col-lg-4 col-md-6">
-                      <div className="single__edit__profile__step">
-                        <label htmlFor="#">Width (cm)</label>
-                        <input
-                          type="text"
-                          placeholder="--"
-                          name="width"
-                          value={sellerInfo.width}
-                          onChange={handleUpdateSeller}
-                        />
-                      </div>
-                    </div>
-                    <div className="col-xl-3 col-lg-4 col-md-6">
-                      <div className="single__edit__profile__step">
-                        <label htmlFor="#">Height (cm)</label>
-                        <input
-                          type="text"
-                          placeholder="--"
-                          name="height"
-                          value={sellerInfo.height}
-                          onChange={handleUpdateSeller}
-                        />
-                      </div>
-                    </div>
-                    <div className="col-xl-3 col-lg-4 col-md-6">
-                      <div className="single__edit__profile__step">
-                        <label htmlFor="#">Weight (kg)</label>
-                        <input
-                          type="text"
-                          placeholder="--"
-                          name="weight"
-                          value={sellerInfo.weight}
-                          onChange={handleUpdateSeller}
-                        />
-                      </div>
-                    </div>
+                <div className="col-xl-3 col-lg-4 col-md-6">
+                  <div className="single__edit__profile__step">
+                    <label htmlFor="#">Width (cm)</label>
+                    <input
+                      type="text"
+                      placeholder="--"
+                      name="width"
+                      value={sellerInfo.width}
+                      onChange={handleUpdateSeller}
+                    />
+                  </div>
+                </div>
+                <div className="col-xl-3 col-lg-4 col-md-6">
+                  <div className="single__edit__profile__step">
+                    <label htmlFor="#">Height (cm)</label>
+                    <input
+                      type="text"
+                      placeholder="--"
+                      name="height"
+                      value={sellerInfo.height}
+                      onChange={handleUpdateSeller}
+                    />
+                  </div>
+                </div>
+                <div className="col-xl-3 col-lg-4 col-md-6">
+                  <div className="single__edit__profile__step">
+                    <label htmlFor="#">Weight (kg)</label>
+                    <input
+                      type="text"
+                      placeholder="--"
+                      name="weight"
+                      value={sellerInfo.weight}
+                      onChange={handleUpdateSeller}
+                    />
                   </div>
                 </div>
               </div>
-              {/* <div className="common__edit__proe__wrap mt-4">
+            </div>
+          </div>
+          {/* <div className="common__edit__proe__wrap mt-4">
                 <div className="edit__profilfile__inner__top__blk">
                   <div className="edit__profile__inner__title">
                     <h5>Contact Information For seller</h5>
@@ -2670,74 +2952,73 @@ function Create(props) {
                   </div>
                 </div>
               </div> */}
-              <div className="common__edit__proe__wrap mt-4">
-                <div className="edit__profilfile__inner__top__blk">
-                  <div className="edit__profile__inner__title">
-                    <h5>
-                      Consent for collection and Usage of Personal Information
-                    </h5>
-                    <p>
-                      Please read the following and check the appropriate boxes
-                      to indicate your consent:
-                    </p>
-                  </div>
-                  <div className="edit_profile_inner_top_right">
-                    <div className="edit__profile__angle__ico">
-                      <span>
-                        <img src="assets/img/angle_up.svg" alt="" />
-                      </span>
-                    </div>
-                  </div>
-                </div>
-                <div className="edit__profile__form">
-                  <div className="row gy-4 gx-3">
-                    <div className="col-xl-12">
-                      <div className="single__edit__profile__step">
-                        <textarea
-                          placeholder="faucibus id malesuada aliquam. Tempus morbi turpis nulla viverra tellus mauris cum. Est consectetur commodo turpis habitasse sed. Nibh tincidunt quis nunc placerat arcu sagittis. In vitae fames nunc consectetur. Magna faucibus sit risus sed tortor malesuada purus. Donec fringilla orci lobortis quis id blandit rhoncus. "
-                          id=""
-                          cols={30}
-                          rows={10}
-                          name="consent"
-                          value={sellerInfo.consent}
-                          onChange={handleUpdateSeller}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
+          <div className="common__edit__proe__wrap mt-4">
+            <div className="edit__profilfile__inner__top__blk">
+              <div className="edit__profile__inner__title">
+                <h5>
+                  Consent for collection and Usage of Personal Information
+                </h5>
+                <p>
+                  Please read the following and check the appropriate boxes
+                  to indicate your consent:
+                </p>
               </div>
-              <div className="agree__radio__btn">
-                <div className="codeplay-ck">
-                  <label className="container-ck">
-                    <p>I agree to all Term, Privacy Polic and fees</p>
-                    <input type="checkbox" defaultChecked="checked" />
-                    <span className="checkmark" />
-                  </label>
-                </div>
-              </div>
-              <div className="edit__profile__bottom__btn half__width__btn">
-                <a
-                  onClick={() => setStep(2)}
-                  className="cancel"
-                >
-                  Previous
-                </a>
-                <a
-                  // data-bs-toggle="modal"
-                  href="#exampleModalToggle"
-                  role="button"
-                  onClick={createSellerInfo}
-                >
-                  Proceed to Create NFT{" "}
+              <div className="edit_profile_inner_top_right">
+                <div className="edit__profile__angle__ico">
                   <span>
-                    <img src="assets/img/arrow_ico.svg" alt="" />
+                    <img src="assets/img/angle_up.svg" alt="" />
                   </span>
-                </a>
+                </div>
               </div>
-            </form>
+            </div>
+            <div className="edit__profile__form">
+              <div className="row gy-4 gx-3">
+                <div className="col-xl-12">
+                  <div className="single__edit__profile__step">
+                    <textarea
+                      placeholder="faucibus id malesuada aliquam. Tempus morbi turpis nulla viverra tellus mauris cum. Est consectetur commodo turpis habitasse sed. Nibh tincidunt quis nunc placerat arcu sagittis. In vitae fames nunc consectetur. Magna faucibus sit risus sed tortor malesuada purus. Donec fringilla orci lobortis quis id blandit rhoncus. "
+                      id=""
+                      disabled={true}
+                      cols={30}
+                      rows={10}
+                      name="consent"
+                      value={sellerInfo.consent}
+                      onChange={handleUpdateSeller}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
+          <div className="agree__radio__btn">
+            <div className="codeplay-ck">
+              <label className="container-ck">
+                <p>I agree to all Term, Privacy Polic and fees</p>
+                <input type="checkbox" defaultChecked="checked" />
+                <span className="checkmark" />
+              </label>
+            </div>
+          </div>
+          <div className="edit__profile__bottom__btn half__width__btn">
+            <a
+              onClick={() => setStep(2)}
+              className="cancel"
+            >
+              Previous
+            </a>
+            <a
+              // data-bs-toggle="modal"
+              href="#exampleModalToggle"
+              role="button"
+              onClick={createSellerInfo}
+            >
+              Proceed to Create NFT{" "}
+              <span>
+                <img src="assets/img/arrow_ico.svg" alt="" />
+              </span>
+            </a>
+          </div>
+        </form>
       </div>
       <div
         className="modal fade common__popup__blk"
@@ -3162,7 +3443,7 @@ function Create(props) {
         onClose={() => setShowErrorPopup(false)}
         messege={"Please upload an image with Size less than 10MB"}
       />
-    </div>
+    </div >
   );
 }
 

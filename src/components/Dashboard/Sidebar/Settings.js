@@ -500,7 +500,53 @@ function Settings(props) {
             alignItems: "center",
           }}
         >
-          <Info type={popUp.type} data={popUp.data} />
+          <Info 
+          type={popUp.type} 
+          data={popUp.data}
+          onSave={async () => {
+            const response = await getProperties()
+
+            if (response) {
+              setProperties(response)
+              setPopUp({
+                active: false,
+                type: null,
+                data: null
+              })
+            }
+          }}
+          onCancel={() => {
+            setPopUp({
+              active: false,
+              type: null,
+              data: null
+            })
+          }}
+          onSaveSeller={async () => {
+            const response = await getSellerInfo()
+            setSellers(response)
+
+            if (response) {
+              setPopUp({
+                active: false,
+                type: null,
+                data: null
+              })
+            }
+          }}
+          onSaveContact={async () => {
+            const response = await getContactsInfo()
+            setContacts(response)
+
+            if (response) {
+              setPopUp({
+                active: false,
+                type: null,
+                data: null
+              })
+            }
+          }}
+          />
         </Modal>
         <div className="flex flex-col gap-y-2 text-white my-10 cursor-pointer">
           <h2 className="text-white font-medium text-lg">Shipping Information</h2>
@@ -508,19 +554,20 @@ function Settings(props) {
             {
               sellers.length > 0 ?
                 sellers.map((seller, index) => {
-                  console.log(seller)
                   return (
-                    <div className="w-[15rem] h-[15rem] bg-[#232323] flex flex-col justify-between p-4 rounded-md">
+                    <div className="w-[18rem] h-[15rem] bg-[#232323] flex flex-col justify-between p-4 rounded-md">
                       <div className="flex justify-between">
                         <div className="flex flex-col gap-y-2">
                           <span>{seller.name}</span>
-                          <span>{seller.phoneNumber}</span>
+                          <span className="text-[#A6A6A6]">{seller.phoneNumber}</span>
                         </div>
-                        <div>{seller.shippingAddr}</div>
+                        <div className="text-[#A6A6A6]">{seller.shippingAddr}</div>
                       </div>
                       <div>
-                        <p>{seller.address.line1}, {seller.address.line2.trim(0, 20)}...</p>
-                        <p>{seller.address.state}, {seller.address.city}, {seller.country}</p>
+                        <p className="text-[#A6A6A6]">{`${seller.address.line1 + seller.address.line2 + seller.address.state + seller.address.city + seller.country}`.length > 150 ?
+                          `${seller.address.line1 + " " + seller.address.line2 + " " + seller.address.state + seller.address.city + " " + seller.country}`.slice(0, 150) + "..." :
+                          `${seller.address.line1 + " " + seller.address.line2 + " " + seller.address.state + " " + seller.address.city + " " + seller.country}`
+                        } </p>
                       </div>
                       <div className="flex justify-end" onClick={() => {
                         setPopUp({
@@ -537,16 +584,19 @@ function Settings(props) {
                   )
                 }) : null
             }
-            <div className="w-[15rem] h-[15rem] bg-[#232323] flex flex-col relative justify-center items-center rounded-md" onClick={() => {
+            <div className="w-[18rem] h-[15rem] bg-[#232323] flex flex-col relative justify-center cursor-pointer items-center rounded-md" onClick={() => {
               setPopUp({
                 active: true,
                 type: "seller",
                 data: null
               })
             }}>
-              <img src="../../assets/icons/add.png" alt="" className="w-16 h-16" />
-              <p className="absolute bottom-[6.5rem] text-3xl text-black">+</p>
-              <p className="text-center absolute bottom-10 text-lg">Add new address</p>
+              <div className="flex flex-col gap-y-6 items-center">
+                <div className="w-16 h-16 rounded-full bg-[#111111] border-2 border-[#FFFFFF4D] flex justify-center items-center">
+                  <img src="../../assets/icons/plus.svg" className="w-5 h-5" />
+                </div>
+                <p className="text-[#828282]">Add New Address</p>
+              </div>
             </div>
           </div>
         </div>
@@ -557,14 +607,14 @@ function Settings(props) {
               contacts.length > 0 ?
                 contacts.map((contact, index) => {
                   return (
-                    <div className="w-[15rem] h-[15rem] bg-[#232323] flex flex-col justify-between p-4 rounded-md">
+                    <div className="w-[18rem] h-[15rem] bg-[#232323] flex flex-col justify-between p-4 rounded-md">
                       <div className="flex justify-between">
                         <div className="flex flex-col gap-y-2">
                           <span>{contact.name ? contact.name : `#${index + 1}`}</span>
                         </div>
                       </div>
                       <div>
-                        <p>{contact.contactInfo.trim(0, 20)}...</p>
+                        <p className="text-[#A6A6A6] py-1">{contact.contactInfo.length > 150 ? `${contact.contactInfo.slice(0, 150)}...` : contact.contactInfo}...</p>
                       </div>
                       <div className="flex justify-end" onClick={() => {
                         setPopUp({
@@ -575,21 +625,25 @@ function Settings(props) {
                           }
                         })
                       }}>
-                        <span className="text-[#DDF247] px-2 py-1 rounded-md border-2 border-gray-400">Edit</span>
+                        <span className="text-[#DDF247] px-2 py-1 rounded-md border-2 border-gray-400 text-sm">Edit</span>
                       </div>
                     </div>
                   )
                 }) : null
             }
-            <div className="w-[15rem] h-[15rem] bg-[#232323] flex flex-col relative justify-center items-center rounded-md" onClick={() => {
+            <div className="w-[18rem] h-[15rem] bg-[#232323] flex flex-col relative justify-center cursor-pointer items-center rounded-md" onClick={() => {
               setPopUp({
                 active: true,
-                type: "contact"
+                type: "contact",
+                data: null
               })
             }}>
-              <img src="../../assets/icons/add.png" alt="" className="w-16 h-16" />
-              <p className="absolute bottom-[6.5rem] text-3xl text-black">+</p>
-              <p className="text-center absolute bottom-10 text-lg">Add new information</p>
+              <div className="flex flex-col gap-y-6 items-center">
+                <div className="w-16 h-16 rounded-full bg-[#111111] border-2 border-[#FFFFFF4D] flex justify-center items-center">
+                  <img src="../../assets/icons/plus.svg" className="w-5 h-5" />
+                </div>
+                <p className="text-[#828282]">Add New Information</p>
+              </div>
             </div>
           </div>
         </div>
@@ -597,36 +651,39 @@ function Settings(props) {
           <h2 className="text-white font-medium text-lg">Add Properties Template</h2>
           <div className="flex flex-wrap gap-5">
             {
-              properties.length > 0 ? 
-              properties.map((property, index) => {
-                return (
-                  <div className="w-[18rem] h-[15rem] bg-[#232323] flex justify-center items-center rounded-md relative">
-                  <p>Basic Template</p>
-                  <div className="absolute bottom-5 right-5" onClick={() => {
-                    setPopUp({
-                      active: true,
-                      type: 'property',
-                      data: {
-                        ...property 
-                      }
-                    })
-                  }}>
-                    <span className="text-[#DDF247] px-2 py-1 rounded-md border-2 border-gray-400">Edit</span>
-                  </div>
-                </div>
-                )
-              }) : null
+              properties.length > 0 ?
+                properties.map((property, index) => {
+                  return (
+                    <div className="w-[18rem] h-[15rem] bg-[#232323] flex justify-center items-center rounded-md relative">
+                      <p>{property.name}</p>
+                      <div className="absolute bottom-5 right-5" onClick={() => {
+                        setPopUp({
+                          active: true,
+                          type: 'property',
+                          data: {
+                            ...property
+                          }
+                        })
+                      }}>
+                        <span className="text-[#DDF247] px-2 py-1 rounded-md border-2 border-gray-400">Edit</span>
+                      </div>
+                    </div>
+                  )
+                }) : null
             }
-
-            <div className="w-[18rem] h-[15rem] bg-[#232323] flex flex-col relative justify-center items-center rounded-md" onClick={() => {
+            <div className="w-[18rem] h-[15rem] bg-[#232323] flex flex-col relative justify-center cursor-pointer items-center rounded-md" onClick={() => {
               setPopUp({
                 active: true,
-                type: "property"
+                type: "property",
+                data: null
               })
             }}>
-              <img src="../../assets/icons/add.png" alt="" className="w-16 h-16" />
-              <p className="absolute bottom-[6.5rem] text-3xl text-black">+</p>
-              <p className="text-center absolute bottom-10 text-lg">Add new template</p>
+              <div className="flex flex-col gap-y-6 items-center">
+                <div className="w-16 h-16 rounded-full bg-[#111111] border-2 border-[#FFFFFF4D] flex justify-center items-center">
+                  <img src="../../assets/icons/plus.svg" className="w-5 h-5" />
+                </div>
+                <p className="text-[#828282]">Add New Template</p>
+              </div>
             </div>
           </div>
         </div>
