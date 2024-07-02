@@ -1689,6 +1689,25 @@ function Create(props) {
                       );
                     })}
                   </div>
+
+                  <div className="edit__profile__bottom__btn half__width__btn">
+                    <a
+                      data-bs-toggle="modal"
+                      href="#discardPopup"
+                      role="button"
+                      className="cancel"
+                    >
+                      Discard
+                    </a>
+                    <a
+                      onClick={handleCuration}
+                    >
+                      Next{" "}
+                      <span>
+                        <img src="assets/img/arrow_ico.svg" alt="" />
+                      </span>
+                    </a>
+                  </div>
                 </div>
               </div>
             </form>
