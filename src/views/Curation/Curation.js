@@ -428,7 +428,6 @@ function Curation() {
                   {/* <a href="#">
                     <i className="fab fa-discord" />
                   </a> */}
-                  {}
                 </div>
               </div>
             </div>
