@@ -434,68 +434,168 @@ function Curation() {
           </div>
         </div>
         <div>
-        <div style={{
-          position: 'relative',
-          overflow: !expandImage ? 'hidden' : 'visible',
-          borderRadius: '20px',
-          marginBottom: '60px',
-          height: !expandImage ? '300px' : `${heightExpand + 10}px`,
-          backgroundRepeat: 'no-repeat',
-        }}
-        ref={containerRef}
-        >
-          <img
-            src={
-              curation?.descriptionImage.length > 0 &&
-              curation?.descriptionImage[0]
+        <div className="flex">
+          <div style={{
+            position: 'relative',
+            overflow: !expandImage ? 'hidden' : 'visible',
+            borderRadius: '20px',
+            marginBottom: '60px',
+            height: !expandImage ? '300px' : `${heightExpand + 10}px`,
+            backgroundRepeat: 'no-repeat',
+            width: curation?.descriptionImage.length > 1 ? '50%' : '100%',
+          }}
+          ref={containerRef}
+          >
+            <img
+              src={
+                curation?.descriptionImage.length > 0 &&
+                curation?.descriptionImage[0]
+              }
+              alt=""
+              style={{
+                borderRadius: "20px",
+                // width: curation?.descriptionImage.length > 1 ? '50%' : '100%',
+                width: "100%",
+                objectPosition: "center",
+                position: 'absolute',
+                height: !expandImage ? 'auto' : `${heightExpand}px`,
+                top: 0,
+              }}
+            />
+            {/* <img
+              src={
+                curation?.descriptionImage.length > 1 &&
+                curation?.descriptionImage[1]
+              }
+              alt=""
+              style={{
+                borderRadius: "20px",
+                width: curation?.descriptionImage.length > 1 ? '50%' : '100%',
+                objectPosition: "center",
+                position: 'absolute',
+                height: !expandImage ? 'auto' : `${heightExpand}px`,
+                top: 0,
+              }}
+            /> */}
+            {
+              !expandImage ? 
+              <div style={{
+                position: 'absolute',
+                bottom: "10px",
+                zIndex: 10,
+                left: "45%",
+                cursor: "pointer",
+                
+              }}
+              onClick={() => setExpandImage(true)} 
+              >
+                  <img src="../../assets/img/double_down_ico.svg" alt=""/> 
+              </div>
+              : 
+              <div style={{
+                position: 'absolute',
+                bottom: "30px",
+                zIndex: 10,
+                left: "45%",
+                cursor: "pointer",
+                
+              }}
+              onClick={() => setExpandImage(false)} 
+              >
+                  <img src="../../assets/img/double_down_ico.svg" alt="" style={{ transform: "rotate(180deg)" }} /> 
+              </div>
             }
-            alt=""
-            style={{
-              borderRadius: "20px",
-              width: "100%",
-              objectPosition: "center",
-              position: 'absolute',
-              height: !expandImage ? 'auto' : `${heightExpand}px`,
-              top: 0,
-            }}
-          />
-          {
-            !expandImage ? 
-            <div style={{
-              position: 'absolute',
-              bottom: "10px",
-              zIndex: 10,
-              left: "45%",
-              cursor: "pointer",
-              
-            }}
-            onClick={() => setExpandImage(true)} 
-            >
-                <img src="../../assets/img/double_down_ico.svg" alt=""/> 
-            </div>
-            : 
-            <div style={{
-              position: 'absolute',
-              bottom: "30px",
-              zIndex: 10,
-              left: "45%",
-              cursor: "pointer",
-              
-            }}
-            onClick={() => setExpandImage(false)} 
-            >
-                <img src="../../assets/img/double_down_ico.svg" alt="" style={{ transform: "rotate(180deg)" }} /> 
-            </div>
-          }
-          {
-            !expandImage ? 
-            <div style={{
-              position: "absolute",
-              zIndex: 5,
-              bottom: 0,
-            }} className="h-1/4 bg-gradient-to-b from-transparent via-[#121211aa] to-[#121211] absolute left-0 right-0 z-10"></div>
-            : null
-          }          
+            {
+              !expandImage ? 
+              <div style={{
+                position: "absolute",
+                zIndex: 5,
+                bottom: 0,
+              }} className="h-1/4 bg-gradient-to-b from-transparent via-[#121211aa] to-[#121211] absolute left-0 right-0 z-10"></div>
+              : null
+            }          
+          </div>
+          <div style={{
+            position: 'relative',
+            overflow: !expandImage ? 'hidden' : 'visible',
+            borderRadius: '20px',
+            marginBottom: '60px',
+            height: !expandImage ? '300px' : `${heightExpand + 10}px`,
+            backgroundRepeat: 'no-repeat',
+            width: '50%',
+            display: curation?.descriptionImage.length > 1 ? 'block' : 'none',
+          }}
+          ref={containerRef}
+          >
+            <img
+              src={
+                curation?.descriptionImage.length > 1 &&
+                curation?.descriptionImage[1]
+              }
+              alt=""
+              style={{
+                borderRadius: "20px",
+                // width: curation?.descriptionImage.length > 1 ? '50%' : '100%',
+                width: "100%",
+                objectPosition: "center",
+                position: 'absolute',
+                height: !expandImage ? 'auto' : `${heightExpand}px`,
+                top: 0,
+              }}
+            />
+            {/* <img
+              src={
+                curation?.descriptionImage.length > 1 &&
+                curation?.descriptionImage[1]
+              }
+              alt=""
+              style={{
+                borderRadius: "20px",
+                width: curation?.descriptionImage.length > 1 ? '50%' : '100%',
+                objectPosition: "center",
+                position: 'absolute',
+                height: !expandImage ? 'auto' : `${heightExpand}px`,
+                top: 0,
+              }}
+            /> */}
+            {
+              !expandImage ? 
+              <div style={{
+                position: 'absolute',
+                bottom: "10px",
+                zIndex: 10,
+                left: "45%",
+                cursor: "pointer",
+                
+              }}
+              onClick={() => setExpandImage(true)} 
+              >
+                  <img src="../../assets/img/double_down_ico.svg" alt=""/> 
+              </div>
+              : 
+              <div style={{
+                position: 'absolute',
+                bottom: "30px",
+                zIndex: 10,
+                left: "45%",
+                cursor: "pointer",
+                
+              }}
+              onClick={() => setExpandImage(false)} 
+              >
+                  <img src="../../assets/img/double_down_ico.svg" alt="" style={{ transform: "rotate(180deg)" }} /> 
+              </div>
+            }
+            {
+              !expandImage ? 
+              <div style={{
+                position: "absolute",
+                zIndex: 5,
+                bottom: 0,
+              }} className="h-1/4 bg-gradient-to-b from-transparent via-[#121211aa] to-[#121211] absolute left-0 right-0 z-10"></div>
+              : null
+            }          
+          </div>
         </div>
         </div>
         <div className="categorie__btn">
