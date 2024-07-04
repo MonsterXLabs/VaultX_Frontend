@@ -384,7 +384,6 @@ function Create(props) {
   const handleDiscriptionImage = (i) => {
     const tempArr = [...discriptionImage];
     tempArr.splice(i, 1);
-
     setDiscriptionImage([...tempArr]);
     setNumberOfInputs(numberOfInputs - 1);
   };
@@ -392,7 +391,7 @@ function Create(props) {
   const [agree, setAgree] = useState(false);
   const { address } = useAccount();
 
-  const discriptionImageRef = useRef();
+  const discriptionImageRef = useRef([]);
 
   const createCollection = async () => {
     const element4 = new bootstrap.Modal(
@@ -1606,9 +1605,13 @@ function Create(props) {
                       <div className="edit_profile_inner_top_right">
                         <div className="add_new">
                           <div
-                            onClick={() =>
+                            onClick={() => {
                               setNumberOfInputs(numberOfInputs + 1)
+                              let tempDiscription = [...discriptionImage];
+                              tempDiscription.push(null);
+                              setDiscriptionImage(tempDiscription)
                             }
+                          }
                           >
                             {numberOfInputs < 2 && (
                               <div className="flex gap-1 items-center cursor-pointer">
@@ -1642,31 +1645,31 @@ function Create(props) {
                           key={index}
                         >
                           <div className="upload__file__with__name">
-                            {index === 0 && (
-                              <input
-                                type="file"
-                                id="discription-image"
-                                ref={discriptionImageRef}
-                                style={{ display: "none" }}
-                                onChange={(e) => {
-                                  const file = e.target.files[0];
-                                  if (!file) return;
-                                  if (file.size > 10 * 1024 * 1024) {
-                                    setShowErrorPopup(true);
-                                    return;
-                                  }
-                                  setDiscriptionImage([
-                                    e.target.files[0],
-                                  ]);
-                                }}
-                              />
-                            )}
+                            <input
+                              type="file"
+                              id="discription-image"
+                              ref={(el) => (discriptionImageRef.current[index] = el)}
+                              style={{ display: "none" }}
+                              onChange={(e) => {
+                                const file = e.target.files[0];
+                                if (!file) return;
+                                if (file.size > 10 * 1024 * 1024) {
+                                  setShowErrorPopup(true);
+                                  return;
+                                }
+                                var tempDiscription = [...discriptionImage];
+                                if(tempDiscription.length <= index)
+                                  return;
+                                tempDiscription[index] = e.target.files[0];
+                                setDiscriptionImage(tempDiscription);
+                              }}
+                            />
                             <button
                               type="button"
                               id="custom-button"
                               onClick={() =>
                                 discriptionImageRef &&
-                                discriptionImageRef.current.click()
+                                discriptionImageRef.current[index].click()
                               }
                             >
                               Upload{" "}
