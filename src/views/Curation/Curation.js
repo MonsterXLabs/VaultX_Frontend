@@ -436,7 +436,6 @@ function Curation() {
         </div>
         <div>
         <div className="flex">
-          {/* <div></div> */}
           <div style={{
             position: 'relative',
             overflow: !expandImage ? 'hidden' : 'visible',
