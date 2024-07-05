@@ -429,7 +429,6 @@ function Curation() {
                     <i className="fab fa-discord" />
                   </a> */}
                 </div>
-                {}
               </div>
             </div>
           </div>
