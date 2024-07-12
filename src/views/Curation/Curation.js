@@ -1,21 +1,21 @@
-import {useContext, useEffect, useRef, useState} from "react"
+import { useContext, useEffect, useRef, useState } from "react"
 import RecentActivity from "../../components/Dashboard/Filters/RecentActivity"
 import Sidebar from "../../components/Dashboard/Sidebar"
-import {Link, useNavigate, useParams} from "react-router-dom"
-import {FavoriteService, collectionServices} from "../../services/supplier"
+import { Link, useNavigate, useParams } from "react-router-dom"
+import { FavoriteService, collectionServices } from "../../services/supplier"
 import {
   getYouTubeVideoId,
   handleCopyClick,
   trimString,
 } from "../../utils/helpers"
-import {useAccount} from "wagmi"
-import {getCookie} from "../../utils/cookie"
-import {WalletContext} from "../../Context/WalletConnect"
+import { useAccount } from "wagmi"
+import { getCookie } from "../../utils/cookie"
+import { WalletContext } from "../../Context/WalletConnect"
 
 function Curation() {
   const navigate = useNavigate()
   const [searchInput, setSearchInput] = useState()
-  const {sidebar, setSidebar} = useContext(WalletContext)
+  const { sidebar, setSidebar } = useContext(WalletContext)
   const [selectedType, setSelectedType] = useState("items")
   const [tabShow, setTabShow] = useState("curation")
   const [curation, setCuration] = useState()
@@ -40,7 +40,7 @@ function Curation() {
       navigate('/dashboard')
     }
   }
-  const {curationId} = useParams()
+  const { curationId } = useParams()
 
   const [heightExpand, setHeightExpand] = useState(1000)
 
@@ -50,9 +50,9 @@ function Curation() {
     const containerWidth = containerRef.current.offsetWidth
     // Create a new Image object
     const img = new Image();
-  
+
     // Define the onload event handler
-    img.onload = function() {
+    img.onload = function () {
       // Image is loaded, retrieve the dimensions
       const width = img.width;
       const height = img.height;
@@ -69,13 +69,13 @@ function Curation() {
         callback(width, height);
       }
     };
-  
+
     // Handle potential errors
-    img.onerror = function() {
+    img.onerror = function () {
       console.error('Error loading the image.');
       callback(null, null);
     };
-  
+
     // Set the image source to the provided URL
     img.src = imageUrl;
   }
@@ -83,7 +83,7 @@ function Curation() {
 
   const getCuraion = async () => {
     try {
-      const {data} = await collectionServices.getCollectionById(curationId)
+      const { data } = await collectionServices.getCollectionById(curationId)
       const res = await collectionServices.getCollectionInfo(curationId)
       setCurationInfo(res.data.collection)
       setCuration(data.collection)
@@ -99,13 +99,13 @@ function Curation() {
       console.log(error)
     }
   }
-  
+
   const [expandImage, setExpandImage] = useState(false)
 
   const getCurationNfts = async () => {
     try {
       const {
-        data: {nfts},
+        data: { nfts },
       } = await collectionServices.getCollectionNfts({
         collectionId: curationId,
         filterString: search,
@@ -121,12 +121,12 @@ function Curation() {
   const getArtitsLikes = async () => {
     try {
       const {
-        data: {totalLikedCollection},
+        data: { totalLikedCollection },
       } = await favoriteService.getCollectionTotalLikes({
         collectionId: curation?._id,
       })
       const {
-        data: {favorite},
+        data: { favorite },
       } = await favoriteService.getUserReactionToCollection({
         collectionId: curation?._id,
       })
@@ -140,7 +140,7 @@ function Curation() {
   const getCollectionActivity = async () => {
     try {
       const {
-        data: {activity},
+        data: { activity },
       } = await collectionServices.getAllActivitiesCollection({
         collectionId: curationId,
         searchInput: searchInput,
@@ -176,7 +176,7 @@ function Curation() {
 
   const setMyLike = async () => {
     try {
-      await favoriteService.handleLikeCollections({collectionId: curation?._id})
+      await favoriteService.handleLikeCollections({ collectionId: curation?._id })
     } catch (error) {
       console.log(error)
     }
@@ -239,7 +239,7 @@ function Curation() {
           <div
             className="breadcrumb__inner__wrap"
             style={{
-              backgroundImage: `url(${curation?.bannerImage?curation.bannerImage:curation?.logo})`,
+              backgroundImage: `url(${curation?.bannerImage ? curation.bannerImage : curation?.logo})`,
             }}
           >
             <div className="breadcrumb__inner__blk">
@@ -425,16 +425,12 @@ function Curation() {
                       <i className="fa fa-globe" />
                     </a>
                   )}
-                  {/* <a href="#">
-                    <i className="fab fa-discord" />
-                  </a> */}
                 </div>
               </div>
             </div>
           </div>
         </div>
         <div>
-        <div className="flex">
           <div style={{
             position: 'relative',
             overflow: !expandImage ? 'hidden' : 'visible',
@@ -442,9 +438,8 @@ function Curation() {
             marginBottom: '60px',
             height: !expandImage ? '300px' : `${heightExpand + 10}px`,
             backgroundRepeat: 'no-repeat',
-            width: curation?.descriptionImage.length > 1 ? '50%' : '100%',
           }}
-          ref={containerRef}
+            ref={containerRef}
           >
             <img
               src={
@@ -454,7 +449,6 @@ function Curation() {
               alt=""
               style={{
                 borderRadius: "20px",
-                // width: curation?.descriptionImage.length > 1 ? '50%' : '100%',
                 width: "100%",
                 objectPosition: "center",
                 position: 'absolute',
@@ -462,141 +456,44 @@ function Curation() {
                 top: 0,
               }}
             />
-            {/* <img
-              src={
-                curation?.descriptionImage.length > 1 &&
-                curation?.descriptionImage[1]
-              }
-              alt=""
-              style={{
-                borderRadius: "20px",
-                width: curation?.descriptionImage.length > 1 ? '50%' : '100%',
-                objectPosition: "center",
-                position: 'absolute',
-                height: !expandImage ? 'auto' : `${heightExpand}px`,
-                top: 0,
-              }}
-            /> */}
             {
-              !expandImage ? 
-              <div style={{
-                position: 'absolute',
-                bottom: "10px",
-                zIndex: 10,
-                left: "45%",
-                cursor: "pointer",
-                
-              }}
-              onClick={() => setExpandImage(true)} 
-              >
-                  <img src="../../assets/img/double_down_ico.svg" alt=""/> 
-              </div>
-              : 
-              <div style={{
-                position: 'absolute',
-                bottom: "30px",
-                zIndex: 10,
-                left: "45%",
-                cursor: "pointer",
-                
-              }}
-              onClick={() => setExpandImage(false)} 
-              >
-                  <img src="../../assets/img/double_down_ico.svg" alt="" style={{ transform: "rotate(180deg)" }} /> 
-              </div>
+              !expandImage ?
+                <div style={{
+                  position: 'absolute',
+                  bottom: "10px",
+                  zIndex: 10,
+                  left: "45%",
+                  cursor: "pointer",
+
+                }}
+                  onClick={() => setExpandImage(true)}
+                >
+                  <img src="../../assets/img/double_down_ico.svg" alt="" />
+                </div>
+                :
+                <div style={{
+                  position: 'absolute',
+                  bottom: "30px",
+                  zIndex: 10,
+                  left: "45%",
+                  cursor: "pointer",
+
+                }}
+                  onClick={() => setExpandImage(false)}
+                >
+                  <img src="../../assets/img/double_down_ico.svg" alt="" style={{ transform: "rotate(180deg)" }} />
+                </div>
             }
             {
-              !expandImage ? 
-              <div style={{
-                position: "absolute",
-                zIndex: 5,
-                bottom: 0,
-              }} className="h-1/4 bg-gradient-to-b from-transparent via-[#121211aa] to-[#121211] absolute left-0 right-0 z-10"></div>
-              : null
-            }          
-          </div>
-          <div style={{
-            position: 'relative',
-            overflow: !expandImage ? 'hidden' : 'visible',
-            borderRadius: '20px',
-            marginBottom: '60px',
-            height: !expandImage ? '300px' : `${heightExpand + 10}px`,
-            backgroundRepeat: 'no-repeat',
-            width: '50%',
-            display: curation?.descriptionImage.length > 1 ? 'block' : 'none',
-          }}
-          ref={containerRef}
-          >
-            <img
-              src={
-                curation?.descriptionImage.length > 1 &&
-                curation?.descriptionImage[1]
-              }
-              alt=""
-              style={{
-                borderRadius: "20px",
-                // width: curation?.descriptionImage.length > 1 ? '50%' : '100%',
-                width: "100%",
-                objectPosition: "center",
-                position: 'absolute',
-                height: !expandImage ? 'auto' : `${heightExpand}px`,
-                top: 0,
-              }}
-            />
-            {/* <img
-              src={
-                curation?.descriptionImage.length > 1 &&
-                curation?.descriptionImage[1]
-              }
-              alt=""
-              style={{
-                borderRadius: "20px",
-                width: curation?.descriptionImage.length > 1 ? '50%' : '100%',
-                objectPosition: "center",
-                position: 'absolute',
-                height: !expandImage ? 'auto' : `${heightExpand}px`,
-                top: 0,
-              }}
-            /> */}
-            {
-              !expandImage ? 
-              <div style={{
-                position: 'absolute',
-                bottom: "10px",
-                zIndex: 10,
-                left: "45%",
-                cursor: "pointer",
-                
-              }}
-              onClick={() => setExpandImage(true)} 
-              >
-                  <img src="../../assets/img/double_down_ico.svg" alt=""/> 
-              </div>
-              : 
-              <div style={{
-                position: 'absolute',
-                bottom: "30px",
-                zIndex: 10,
-                left: "45%",
-                cursor: "pointer",
-                
-              }}
-              onClick={() => setExpandImage(false)} 
-              >
-                  <img src="../../assets/img/double_down_ico.svg" alt="" style={{ transform: "rotate(180deg)" }} /> 
-              </div>
+              !expandImage ?
+                <div style={{
+                  position: "absolute",
+                  zIndex: 5,
+                  bottom: 0,
+                }} className="h-1/4 bg-gradient-to-b from-transparent via-[#121211aa] to-[#121211] absolute left-0 right-0 z-10"></div>
+                : null
             }
-            {
-              !expandImage ? 
-              <div style={{
-                position: "absolute",
-                zIndex: 5,
-                bottom: 0,
-              }} className="h-1/4 bg-gradient-to-b from-transparent via-[#121211aa] to-[#121211] absolute left-0 right-0 z-10"></div>
-              : null
-            }          
           </div>
-        </div>
         </div>
         <div className="categorie__btn">
           <a
@@ -634,7 +531,7 @@ function Curation() {
         >
           <div className="row g-4">
             {nfts.length > 0 &&
-              nfts.filter((nft)=>(!nft?.active && !nft.owner?.active && !nft.curation?.active)).map((item, index) => {
+              nfts.filter((nft) => (!nft?.active && !nft.owner?.active && !nft.curation?.active)).map((item, index) => {
                 return (
                   <div
                     className="col-xxl-3 col-xl-4 col-lg-4 col-md-6"
@@ -765,8 +662,8 @@ function Curation() {
                           {" "}
                           {value?.createdAt
                             ? new Date(value.createdAt)
-                                .toLocaleString()
-                                .slice(0, 10)
+                              .toLocaleString()
+                              .slice(0, 10)
                             : "-/-"}
                         </td>
                         <td>
