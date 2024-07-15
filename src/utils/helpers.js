@@ -479,6 +479,7 @@ export const purchaseUnmintedNft = async (
 ) => {
   let etherPrice = await getMaticAmount(price);
   let etherValue = parseEther(etherPrice.toString());
+  const nftValue = parseEther(price.toString());
   
   const splitPayments = changeSplitPayAmount(splitPayment);
   const txObj = {
@@ -488,6 +489,7 @@ export const purchaseUnmintedNft = async (
     args: [
       uri,
       sellerAddress,
+      nftValue,
       { royaltyWallet: userAddress, royaltyPercentage: royalty * 100 },
       splitPayments,
     ],
