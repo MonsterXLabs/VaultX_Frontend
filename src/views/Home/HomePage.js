@@ -559,8 +559,8 @@ function HomePage() {
             <div className="col-xl-7">
               <div className="event__left__thumb">
                 <a
-                  href="https://artistvaultx.wpcomstaging.com/join-the-vaultx-grant-program-web3-educational-events/"
-                  target="_blank"
+                    href={section4?.box[0]?.subtitle2 ? section4?.box[0]?.subtitle2 : ''}
+                    target="_blank"
                   rel="noopener noreferrer"
                 >
                   <img
@@ -576,7 +576,7 @@ function HomePage() {
               <div className="news__thumb__blk">
                 <div className="news__thumb">
                   <a
-                    href="https://artistvaultx.wpcomstaging.com/auction-house-sothebys-announces-first-sale-of-bitcoin-ordinals-collection/"
+                    href={section4?.box[1]?.subtitle2 ? section4?.box[1]?.subtitle2 : ''}
                     target="_blank"
                     rel="noopener noreferrer"
                   >
@@ -590,7 +590,7 @@ function HomePage() {
                 </div>
                 <div className="news__thumb">
                   <a
-                    href="https://artistvaultx.wpcomstaging.com/at-art-basel-fashion-and-innovation-get-back-to-business/"
+                    href={section4?.box[2]?.subtitle2 ? section4?.box[2]?.subtitle2 : ''}
                     target="_blank"
                     rel="noopener noreferrer"
                   >
@@ -604,7 +604,7 @@ function HomePage() {
                 </div>
                 <div className="news__thumb">
                   <a
-                    href="https://artistvaultx.wpcomstaging.com/celebrating-art-nfts-h3nsy-hosts-immersive-phygital-experience-at-nfc-lisbon/"
+                    href={section4?.box[3]?.subtitle2 ? section4?.box[3]?.subtitle2 : ''}
                     target="_blank"
                     rel="noopener noreferrer"
                   >
@@ -618,7 +618,7 @@ function HomePage() {
                 </div>
                 <div className="news__thumb">
                   <a
-                    href="https://artistvaultx.wpcomstaging.com/rwa-tokens-know-its-benefits-and-how-it-facilitates-trade/"
+                    href={section4?.box[4]?.subtitle2 ? section4?.box[4]?.subtitle2 : ''}
                     target="_blank"
                     rel="noopener noreferrer"
                   >
@@ -632,7 +632,7 @@ function HomePage() {
                 </div>
                 <div className="news__thumb">
                   <a
-                    href="https://artistvaultx.wpcomstaging.com/tokenized-real-world-assets-are-bringing-new-yield-opportunities-to-defi/"
+                    href={section4?.box[5]?.subtitle2 ? section4?.box[5]?.subtitle2 : ''}
                     target="_blank"
                     rel="noopener noreferrer"
                   >
@@ -646,7 +646,7 @@ function HomePage() {
                 </div>
                 <div className="news__thumb">
                   <a
-                    href="https://artistvaultx.wpcomstaging.com/the-price-of-bitcoin-has-been-dropped-sudden-by-12-3/"
+                    href={section4?.box[6]?.subtitle2 ? section4?.box[6]?.subtitle2 : ''}
                     target="_blank"
                     rel="noopener noreferrer"
                   >
