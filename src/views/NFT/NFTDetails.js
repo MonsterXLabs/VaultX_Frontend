@@ -350,6 +350,7 @@ function NFTDetails() {
       element1.show()
     } catch (error) {
       console.log({ error })
+      throw new Error(error);
     }
   }
 
@@ -690,12 +691,16 @@ function NFTDetails() {
     try {
       if (txType === "buy") await purchase()
       else await bidAPlace()
+      setTimeout(() => {
+        window.location.reload()
+      }, 3000)
     } catch (err) {
+      const elem = new bootstrap.Modal(
+        document.getElementById("exampleModalToggl8")
+      )
+      elem.show()
       console.log(err)
     }
-    setTimeout(() => {
-      window.location.reload()
-    }, 3000)
   }
 
   const acceptBidByOwner = async bid => {
@@ -4024,6 +4029,69 @@ function NFTDetails() {
                     onClick={showCheckout}
                   >
                     I Agree
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        className="modal fade common__popup__blk"
+        id="exampleModalToggl8"
+        aria-hidden="true"
+        aria-labelledby="exampleModalToggleLabel"
+        tabIndex={-1}
+      >
+        <div
+          className="modal-dialog modal-dialog-centered"
+          style={{ maxWidth: 780 }}
+        >
+          <div className="modal-content">
+            <div className="modal-body similar__site__popup">
+              <div className="popup__inner__blk">
+                <div className="popup__common__title">
+                  <h5>
+                    <span>
+                      <img
+                        src="../../assets/img/information_icon_1.svg"
+                        alt=""
+                      />
+                    </span>{" "}
+                    Caution
+                  </h5>
+                </div>
+                <div className="popup__information__content">
+                  <h6>
+                  Payment transaction failed
+                  </h6>
+                  <p>
+                  We're sorry, but your payment transaction was unsuccessful. This 
+                  may have been due to network congestion on the blockchain or 
+                  other factors beyond our control. However, please don't worry
+                  - you can simply click the "Retry" button below to make 
+                  another attempt at completing your payment.
+                  </p>
+                  <p>
+                  We appreciate your patience and understanding, and are here 
+                  to help if you have any other questions or concerns..
+                  </p>
+                </div>
+                <div
+                  className="popup__inner__button edit__profile__bottom__btn pt-20 pb-0"
+                  style={{ maxWidth: 210, marginRight: "auto" }}
+                >
+                  <a
+                    data-bs-dismiss="modal"
+                    href="#"
+                    onClick={() => {
+                      const elem = new bootstrap.Modal(
+                        document.getElementById("exampleModalToggl8")
+                      )
+                      elem.hide()
+                    }}
+                  >
+                    Retry
                   </a>
                 </div>
               </div>

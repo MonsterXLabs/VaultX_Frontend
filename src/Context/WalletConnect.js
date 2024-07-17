@@ -36,8 +36,8 @@ const chains = [polygon, polygonAmoy]
   export const config = createConfig({
     chains: chains,
     connectors: [
-      // metaMask(),
-      // coinbaseWallet(),
+      metaMask(),
+      coinbaseWallet(),
       // authConnector({
       //   chains,
       //   options: { projectId },
