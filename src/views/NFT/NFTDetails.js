@@ -55,6 +55,7 @@ import Modal from '@mui/material/Modal';
 import NftCarousel from "../../components/Modal/NftCarousel"
 import Slider from "react-slick"
 import * as contractInfo from "../../utils/contract";
+import { useWeb3Modal } from "@web3modal/wagmi/react"
 const style = {
   borderRadius: '10px',
   position: 'absolute',
@@ -74,13 +75,14 @@ const style = {
  * @component
  */
 function NFTDetails() {
+  const { open: modalOpen, close } = useWeb3Modal()
   const [type, setType] = useState("buy")
   const [nft, setNft] = useState()
   const [name, setName] = useState()
   const [email, setEmail] = useState()
   const [createNftStep2SplitInput, setCreateNftStep2SplitInput] = useState()
   const { id } = useParams()
-  const { address } = useAccount()
+  const { address, isConnected } = useAccount()
   const nftService = new NftServices()
   const createNftServices = new CreateNftServices()
   const navigate = useNavigate()
@@ -194,9 +196,14 @@ function NFTDetails() {
     }
   }
   useEffect(() => {
+    const reconnect = async () => {
+      !isConnected && await connectWallet()
+    }
+
     getFee()
     fetchCategories()
     handleView()
+    reconnect()
     // fetchMaticPrice()
   }, [])
 
@@ -894,6 +901,10 @@ function NFTDetails() {
     }
   }
 
+  const connectWallet = async () => {
+    await modalOpen()
+  }
+
   useEffect(() => {
     if (now === true) setMyLike()
   }, [liked])
@@ -1547,7 +1558,9 @@ function NFTDetails() {
                             data-bs-toggle="modal"
                             href="#exampleModalToggle6"
                             role="button"
-                            onClick={() => setTxType("buy")}
+                            onClick={() => {
+                              setTxType("buy")
+                            }}
                           >
                             Buy Now
                           </a>
@@ -4084,11 +4097,17 @@ function NFTDetails() {
                   <a
                     data-bs-dismiss="modal"
                     href="#"
-                    onClick={() => {
+                    role="button"
+                    onClick={async () => {
                       const elem = new bootstrap.Modal(
                         document.getElementById("exampleModalToggl8")
                       )
+                      const elem1 = new bootstrap.Modal(
+                        document.getElementById("exampleModalToggle6")
+                      )
                       elem.hide()
+                      elem1.hide()
+                      window.location.reload()
                     }}
                   >
                     Retry
