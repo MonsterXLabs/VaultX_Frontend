@@ -1,8 +1,7 @@
 import { useEffect, useRef, useState } from "react"
 import Category from "../../components/Dashboard/Filters/Category"
 import Footer from "../../components/Footer/Footer"
-import { useAccount} from "wagmi"
-import { simulateContract, writeContract } from '@wagmi/core'
+import { useAccount } from "wagmi"
 import * as bootstrap from "bootstrap"
 import { City, Country, State } from "country-state-city"
 import _ from "lodash"
@@ -56,11 +55,7 @@ import Modal from '@mui/material/Modal';
 import NftCarousel from "../../components/Modal/NftCarousel"
 import Slider from "react-slick"
 import * as contractInfo from "../../utils/contract";
-import * as smartContractInfo from "../../utils/contract";
 import { useWeb3Modal } from "@web3modal/wagmi/react"
-import { parseEther } from "viem"
-import { config } from "../../Context/WalletConnect";
-
 const style = {
   borderRadius: '10px',
   position: 'absolute',
@@ -430,49 +425,6 @@ function NFTDetails() {
     else await purchaseUnminted()
   }
 
-  const changeSplitPayAmount_wagmi = (splitPayment) => {
-    const splitPayments =
-      splitPayment?.length > 0
-        ? splitPayment.map((item) => ({
-            paymentWallet: item.paymentWallet,
-            paymentPercentage: item.paymentPercentage * 100,
-          }))
-        : [];
-    return splitPayments;
-  };
-
-  const purchaseUnmintedNft_wagmi = async (
-    uri,
-    price,
-    sellerAddress,
-    userAddress,
-    royalty,
-    splitPayment,
-  ) => {
-      let etherPrice = await getMaticAmount(price);
-      let etherValue = parseEther(etherPrice.toString());
-      const nftValue = parseEther(price.toString());
-      
-      const splitPayments = changeSplitPayAmount_wagmi(splitPayment);
-
-      const txnObj = {
-        address: smartContractInfo.address,
-        abi: smartContractInfo.abi,
-        functionName: "purchaseAssetUnmited",
-        args: [
-          uri,
-          sellerAddress,
-          nftValue,
-          { royaltyWallet: userAddress, royaltyPercentage: royalty * 100 },
-          splitPayments,
-        ],
-        value: etherValue,
-      }
-      const result = await writeContract(config, txnObj)
-      return result;
-    
-  }
-
   const reSellNft = async () => {
     const element1 = new bootstrap.Modal(
       document.getElementById("exampleModalToggl5")
@@ -527,7 +479,7 @@ function NFTDetails() {
             }))
             : []
           : []
-      const result = await purchaseUnmintedNft_wagmi(
+      const result = await purchaseUnmintedNft(
         nft?.uri,
         nft?.price,
         nft?.owner?.wallet,
