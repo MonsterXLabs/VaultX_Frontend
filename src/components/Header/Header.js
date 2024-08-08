@@ -1,183 +1,242 @@
-import { useContext, useEffect, useState } from "react"
-import { useNavigate } from "react-router-dom"
-import { useWeb3Modal } from "@web3modal/wagmi/react"
+import { useContext, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useWeb3Modal } from "@web3modal/wagmi/react";
 import { ConnectionController } from "@web3modal/core";
-import { useAccount, useDisconnect } from "wagmi"
-import { getAccount } from '@wagmi/core'
-import { config } from "../../Context/WalletConnect"
-import { getEthBalance, handleCopyClick, trimString } from "../../utils/helpers"
-import { WalletContext } from "../../Context/WalletConnect"
-import { collectionServices, userServices } from "../../services/supplier"
-import * as bootstrap from "bootstrap"
-import { debounce } from "lodash"
-import { Tab, Tabs } from "react-bootstrap"
-import useDebounce from "../../customHook/useDebounce"
+import { useAccount, useDisconnect } from "wagmi";
+import { ConnectButton, useActiveAccount } from "thirdweb/react";
+import { client } from "../../utils/clients";
+import { getAccount } from "@wagmi/core";
+import { config } from "../../Context/WalletConnect";
+import {
+  getEthBalance,
+  handleCopyClick,
+  trimString,
+} from "../../utils/helpers";
+import { WalletContext } from "../../Context/WalletConnect";
+import { collectionServices, userServices, getAllUsers } from "../../services/supplier";
+import * as bootstrap from "bootstrap";
+import { debounce } from "lodash";
+import { Tab, Tabs } from "react-bootstrap";
+import useDebounce from "../../customHook/useDebounce";
 
 function Header() {
-  const [openDialog, setOpenDialog] = useState(false)
-  const { open: modalOpen, close } = useWeb3Modal()
-  const { address, isConnected, isDisconnected } = useAccount()
-  const { disconnect } = useDisconnect()
-  const { login, logout, isLoggedIn } = useContext(WalletContext)
-  const [nfts, setNfts] = useState([])
-  const [curations, setCurations] = useState([])
-  const [artistsNfts, setArtistsNfts] = useState([])
-  const [users, setUsers] = useState([])
-  const [filterString, setFilterString] = useState("")
-  const [open, setOpen] = useState(false)
-  const navigate = useNavigate()
+  const [openDialog, setOpenDialog] = useState(false);
+  const { open: modalOpen, close } = useWeb3Modal();
+  const { address, isConnected, isDisconnected } = useAccount();
+  const { disconnect } = useDisconnect();
+  const { login, logout, isLoggedIn, setIsLoggedIn} = useContext(WalletContext);
+  const [nfts, setNfts] = useState([]);
+  const [curations, setCurations] = useState([]);
+  const [artistsNfts, setArtistsNfts] = useState([]);
+  const [users, setUsers] = useState([]);
+  const [filterString, setFilterString] = useState("");
+  const [open, setOpen] = useState(false);
+  const navigate = useNavigate();
   const [info, setInfo] = useState({
     nickname: "",
     email: "",
-  })
-  const [errorMsg, setErrorMsg] = useState("")
+  });
+  const [errorMsg, setErrorMsg] = useState("");
 
-  const [balance, setBalance] = useState(0)
-  const { getUser, user, setSidebar } = useContext(WalletContext)
-
-  useEffect(() => {
-    getUser()
-  }, [isLoggedIn])
+  const [balance, setBalance] = useState(0);
+  const { getUser, user, setSidebar } = useContext(WalletContext);
+  const activeAccount = useActiveAccount();
 
   useEffect(() => {
-    if (!isLoggedIn) return
+    const fetchUsersAndLogin = async () => {
+      if (activeAccount) {
+        console.log("===========activeAccount========", activeAccount);
+        const address = activeAccount.address;
+        
+        try {
+          const response = await getAllUsers();
+          const users = response.data.user;
+          const wallets = users.map(user => user.wallet);
+          
+          if (wallets.includes(address)) {
+            login(address);
+            getUser();
+          } else {
+            setIsLoggedIn(false);
+            login(address);
+          }
+        } catch (error) {
+          console.error('Error fetching users:', error);
+        }
+      }
+    };
+
+    fetchUsersAndLogin();
+  }, [activeAccount])
+
+  useEffect(() => {
+    getUser();
+  }, [isLoggedIn]);
+
+  useEffect(() => {
+    if (!isLoggedIn) return;
     if (!user?.username || !user?.email) {
       const element = new bootstrap.Modal(
         document.getElementById("exampleModalToggle2")
-      )
-      element.show()
+      );
+      element.show();
     }
-  }, [user])
+  }, [user]);
 
   const getBalance = async () => {
     try {
-      const balance = await getEthBalance(address)
-      setBalance(balance)
+      const balance = await getEthBalance(address);
+      setBalance(balance);
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-  }
+  };
 
-  console.log('------------------------------------connect status---------', isConnected, isDisconnected, isLoggedIn);
+  console.log(
+    "------------------------------------connect status---------",
+    isConnected,
+    isDisconnected,
+    isLoggedIn
+  );
   useEffect(() => {
-    if (!isConnected) logoutOnConnect()
-    getBalance()
-  }, [isConnected, address])
+    console.log("===address==", address);
+    if (!isConnected) logoutOnConnect();
+    getBalance();
+  }, [isConnected, address]);
 
-  const handleDropdownMenuClick = event => {
-    event.stopPropagation()
-  }
+  const handleDropdownMenuClick = (event) => {
+    event.stopPropagation();
+  };
 
-  const handleSubmit = async e => {
-    e.preventDefault()
-    await updateDetails()
-  }
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (await checkUserInfo(info)) {
+      await updateDetails();
+    }
+  };
 
   const handleOpen = () => {
-    setOpenDialog(!openDialog)
-  }
+    setOpenDialog(!openDialog);
+  };
   const closePopUp = () => {
-    setOpenDialog(false)
-  }
+    setOpenDialog(false);
+  };
 
   const loginOnConnect = async () => {
     try {
       if (isConnected) {
-        await login(address)
+        await login(address);
       }
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-  }
+  };
 
   const logoutOnConnect = async () => {
     if (isLoggedIn) {
-      await ConnectionController.disconnect()
+      await ConnectionController.disconnect();
       // disconnect()
       // const { connector } = getAccount(config)
       // const result = await disconnect(config, {
-      //   connector, 
+      //   connector,
       // })
-      await logout(window.location.pathname)
-      navigate("/")
+      await logout(window.location.pathname);
+      navigate("/");
     }
-  }
+  };
 
   const connectWallet = async () => {
-    await modalOpen()
-  }
+    await modalOpen();
+  };
 
   const getSearchResult = (filterString) => {
-    
-     collectionServices.getSearch({ filterString }).then(res=>{
-          console.log('setts',res.data.nfts)
+    collectionServices
+      .getSearch({ filterString })
+      .then((res) => {
+        console.log("setts", res.data.nfts);
         setArtistsNfts(res.data.artistsNfts);
         setUsers(res.data.users);
         setCurations(res.data.curations);
         setNfts(res.data.nfts);
-        }).catch(err=>{
-          console.log("Error in getting search result",err)
-        })
-    
+      })
+      .catch((err) => {
+        console.log("Error in getting search result", err);
+      });
   };
 
   useEffect(() => {
-    loginOnConnect()
-  }, [address])
+    console.log("===address==", address);
+    loginOnConnect();
+  }, [address]);
 
-
-
-
-  const handleSearch = e => {
-    setFilterString(e.target.value)
-  }
+  const handleSearch = (e) => {
+    setFilterString(e.target.value);
+  };
 
   const debouncedSearch = useDebounce(getSearchResult, 1000);
 
-  useEffect(()=>{
+  useEffect(() => {
     debouncedSearch(filterString);
-  },[filterString])
-
+  }, [filterString]);
 
   const updateDetails = async () => {
     const element = new bootstrap.Modal(
       document.getElementById("exampleModalToggle2")
-    )
+    );
     try {
-      const data = new FormData()
-      data.append("username", info.nickname)
-      data.append("email", info.email)
-      await userServices.updateProfile(data)
-      await getUser()
-      element.hide()
+      const data = new FormData();
+      data.append("username", info.nickname);
+      data.append("email", info.email);
+      await userServices.updateProfile(data);
+      await getUser();
+      element.hide();
       const element2 = new bootstrap.Modal(
         document.getElementById("exampleModalToggle3")
-      )
-      element2.show()
+      );
+      element2.show();
       setTimeout(() => {
-        element2.hide()
-        window.location.reload()
-      }, 2000)
+        element2.hide();
+        window.location.reload();
+      }, 2000);
     } catch (error) {
-      console.log({ error })
+      console.log({ error });
       if (
         error?.response?.data?.message?.includes(
           "This e-mail is already taken."
         )
       ) {
-        setErrorMsg("This e-mail is already taken.")
+        setErrorMsg("This e-mail is already taken.");
       }
       setTimeout(() => {
-        element.hide()
-      }, 1000)
+        element.hide();
+      }, 1000);
     }
-  }
+  };
 
-  const [activeKey, setActiveKey] = useState('artists');
+  const checkUserInfo = async (info) => {
+    if (info.nickname && info.email) {
+      const users = (await getAllUsers()).data.user;
+      const emails = users.map(user => user.email);
+      const usernames = users.map(user => user.username);
+      if(emails.includes(info.email)) {
+        setErrorMsg("This email is already in use. Try another one");
+        return false;
+      } else if (usernames.includes(info.nickname)){
+        setErrorMsg("This nickname is already in use. Try another one");
+        return false;                         
+      }
+      return true;
+    } else {
+      setErrorMsg("All fields are required");
+      return false;
+    }
+  };
+
+  const [activeKey, setActiveKey] = useState("artists");
 
   const renderDropdownItems = (items, itemType) => {
     switch (itemType) {
-      case 'artistsNfts':
+      case "artistsNfts":
         return items.map((nft, index) => (
           <div
             key={index}
@@ -197,7 +256,7 @@ function Header() {
             </div>
           </div>
         ));
-      case 'nfts':
+      case "nfts":
         return items.map((nft, index) => (
           <div
             key={index}
@@ -217,7 +276,7 @@ function Header() {
             </div>
           </div>
         ));
-      case 'curations':
+      case "curations":
         return items.map((curation, index) => (
           <div
             key={index}
@@ -237,7 +296,7 @@ function Header() {
             </div>
           </div>
         ));
-      case 'users':
+      case "users":
         return items.map((user, index) => (
           <div
             key={index}
@@ -247,14 +306,12 @@ function Header() {
             <div className="search__drop__thumb">
               <img
                 className="w-full h-full object-cover"
-                src={user.avatar?.url ? user.avatar.url : 'assets/img/fox.svg'}
+                src={user.avatar?.url ? user.avatar.url : "assets/img/fox.svg"}
                 alt=""
               />
             </div>
             <div className="search__drop__content">
-              <h5>
-                {user.username ? user.username : trimString(user.wallet)}
-              </h5>
+              <h5>{user.username ? user.username : trimString(user.wallet)}</h5>
             </div>
           </div>
         ));
@@ -262,11 +319,6 @@ function Header() {
         return null;
     }
   };
-
-
-
-
-
 
   return (
     <>
@@ -304,22 +356,22 @@ function Header() {
               >
                 <Tab eventKey="artists" title="Artists">
                   <div className="search__drop__body">
-                    {renderDropdownItems(artistsNfts, 'artistsNfts')}
+                    {renderDropdownItems(artistsNfts, "artistsNfts")}
                   </div>
                 </Tab>
                 <Tab eventKey="nfts" title="NFTs">
                   <div className="search__drop__body">
-                    {renderDropdownItems(nfts, 'nfts')}
+                    {renderDropdownItems(nfts, "nfts")}
                   </div>
                 </Tab>
                 <Tab eventKey="curations" title="Curations">
                   <div className="search__drop__body">
-                    {renderDropdownItems(curations, 'curations')}
+                    {renderDropdownItems(curations, "curations")}
                   </div>
                 </Tab>
                 <Tab eventKey="users" title="Users">
                   <div className="search__drop__body">
-                    {renderDropdownItems(users, 'users')}
+                    {renderDropdownItems(users, "users")}
                   </div>
                 </Tab>
               </Tabs>
@@ -355,15 +407,33 @@ function Header() {
               </ul>
             </nav>
           </div>
+          {/* <ConnectButton
+              client={client}
+              // className={"common_btn"}
+              appMetadata={{
+                name: "Monster App",
+                // url: "https://tadmin.vault-x.io",
+                url: "http://localhost:3000",
+              }}
+            /> */}
           {!isLoggedIn ? (
-            <div onClick={() => connectWallet()} className="header__btn">
-              <a role="button">
-                Connect Wallet{" "}
-                <span>
-                  <img src="../assets/img/wallet.svg" alt="" />
-                </span>
-              </a>
-            </div>
+            // <div onClick={() => connectWallet()} className="header__btn">
+            //   <a role="button">
+            //     Connect Wallet{" "}
+            //     <span>
+            //       <img src="../assets/img/wallet.svg" alt="" />
+            //     </span>
+            //   </a>
+            // </div>
+            <ConnectButton
+              client={client}
+              className={"common_btn"}
+              appMetadata={{
+                name: "Monster App",
+                // url: "https://tadmin.vault-x.io",
+                url: "http://localhost:3000",
+              }}
+            />
           ) : (
             <div className="header__btn">
               <a role="button">{user?.username}</a>
@@ -397,13 +467,17 @@ function Header() {
         }
       />
       <header className="header__area">
-       {/* <w3m-button />
+        {/* <w3m-button />
        <w3m-connect-button /> */}
         <div className="container lg:block !flex !flex-row-reverse items-center gap-3">
           <div className="header__inner__blk w-full">
-            <div className="header__logo" onClick={() => navigate("/")} style={{
-              cursor: "pointer"
-            }}>
+            <div
+              className="header__logo"
+              onClick={() => navigate("/")}
+              style={{
+                cursor: "pointer",
+              }}
+            >
               <span>
                 <img src="../../assets/img/brand.svg" alt="" />
               </span>
@@ -412,9 +486,24 @@ function Header() {
             <div className="main__menu none__phone">
               <nav>
                 <div className="flex gap-x-6 text-white header_item">
-                  <span className="cursor-pointer" onClick={() => navigate("/dashboard?appreciate")}>Appreciation</span>
-                  <span className="cursor-pointer" onClick={() => navigate("/dashboard?curation")}>Curation</span>
-                  <a href="https://artistvaultx.wpcomstaging.com/" className="cursor-pointer"><span>Magazine</span></a>
+                  <span
+                    className="cursor-pointer"
+                    onClick={() => navigate("/dashboard?appreciate")}
+                  >
+                    Appreciation
+                  </span>
+                  <span
+                    className="cursor-pointer"
+                    onClick={() => navigate("/dashboard?curation")}
+                  >
+                    Curation
+                  </span>
+                  <a
+                    href="https://artistvaultx.wpcomstaging.com/"
+                    className="cursor-pointer"
+                  >
+                    <span>Magazine</span>
+                  </a>
                   <span className="cursor-pointer">How to Work</span>
                 </div>
                 {/* <ul className="flex">
@@ -467,7 +556,7 @@ function Header() {
                   </button>
                   <div
                     className="search__dropdown dropdown-menu dropdown-menu-end"
-                    onClick={e => e.stopPropagation()}
+                    onClick={(e) => e.stopPropagation()}
                     aria-labelledby="dropdownMenuClickableInside"
                   >
                     <div className="nav nav-tabs" id="nav-tab" role="tablist">
@@ -658,15 +747,33 @@ function Header() {
                   </div>
                 </div>
               </div>
+              {/* <ConnectButton
+                client={client}
+                // className={"common_btn"}
+                appMetadata={{
+                  name: "Monster App",
+                  // url: "https://tadmin.vault-x.io",
+                  url: "http://localhost:3000",
+                }}
+              /> */}
               {!isLoggedIn || !isConnected ? (
-                <div onClick={() => connectWallet()} className="header__btn">
-                  <a role="button">
-                    Connect Wallet{" "}
-                    <span>
-                      <img src="../assets/img/wallet.svg" alt="" />
-                    </span>
-                  </a>
-                </div>
+                // <div onClick={() => connectWallet()} className="header__btn">
+                //   <a role="button">
+                //     Connect Wallet{" "}
+                //     <span>
+                //       <img src="../assets/img/wallet.svg" alt="" />
+                //     </span>
+                //   </a>
+                // </div>
+                <ConnectButton
+                  client={client}
+                  className={"common_btn"}
+                  appMetadata={{
+                    name: "Monster App",
+                    // url: "https://tadmin.vault-x.io",
+                    url: "http://localhost:3000",
+                  }}
+                />
               ) : (
                 // <div className="header__btn">
                 //   <a role="button">{trimString(address)}</a>
@@ -686,7 +793,7 @@ function Header() {
                         src={
                           user?.avatar?.url
                             ? user?.avatar?.url
-                            : "assets/img/metamask-fox.svg"
+                            : "assets/img/init_user_avatar.svg"
                         }
                         alt=""
                       />
@@ -708,7 +815,7 @@ function Header() {
                               src={
                                 user?.avatar?.url
                                   ? user?.avatar?.url
-                                  : "assets/img/metamask-fox.svg"
+                                  : "assets/img/init_user_avatar.svg"
                               }
                               alt=""
                             />
@@ -738,9 +845,7 @@ function Header() {
                             <li>
                               <a
                                 href="#"
-                                onClick={() =>
-                                  navigate("/dashboard?myOrder")
-                                }
+                                onClick={() => navigate("/dashboard?myOrder")}
                               >
                                 My Order
                               </a>
@@ -815,7 +920,7 @@ function Header() {
                             </li>
                           </ul>
                           <div className="ethereum__area">
-                            <div className="ethereum__left__blk">
+                            {/* <div className="ethereum__left__blk">
                               <div className="ethereum__thumb">
                                 <img
                                   src="../../assets/img/metamask-fox.svg"
@@ -826,7 +931,16 @@ function Header() {
                                 <h4>Polygon</h4>
                                 <p>{trimString(address)}</p>
                               </div>
-                            </div>
+                            </div> */}
+                            <ConnectButton
+                              client={client}
+                              className={"common_btn"}
+                              appMetadata={{
+                                name: "Monster App",
+                                // url: "https://tadmin.vault-x.io",
+                                url: "http://localhost:3000",
+                              }}
+                            />
                             <div className="ethereum__right__blk">
                               <div className="ethereum__btn">
                                 <a
@@ -888,10 +1002,9 @@ function Header() {
                 <form className="popup__similar__form" onSubmit={handleSubmit}>
                   <div className="single__popup__input">
                     <input
-                      required
                       type="text"
                       value={info.nickname}
-                      onChange={e =>
+                      onChange={(e) =>
                         setInfo({ ...info, nickname: e.target.value })
                       }
                       placeholder="Enter nickname..."
@@ -902,10 +1015,11 @@ function Header() {
                   </div>
                   <div className="single__popup__input">
                     <input
-                      required
                       type="email"
                       value={info.email}
-                      onChange={e => setInfo({ ...info, email: e.target.value })}
+                      onChange={(e) =>
+                        setInfo({ ...info, email: e.target.value })
+                      }
                       placeholder="Enter Email"
                     />
                     <button className="popup_left_position_btn" type="button">
@@ -962,7 +1076,7 @@ function Header() {
         </div>
       </div>
     </>
-  )
+  );
 }
 
-export default Header
+export default Header;
