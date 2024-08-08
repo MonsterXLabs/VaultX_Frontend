@@ -148,6 +148,7 @@ export function WalletContextProvider({children}) {
         sidebar,
         setSidebar,
         fetchImages,
+        setIsLoggedIn,
       }}
     >
       <WagmiProvider config={config}>
