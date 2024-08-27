@@ -1,11 +1,12 @@
 import { decodeEventLog, parseEther, formatEther } from "viem";
-import { waitForTransactionReceipt, getBalance } from "@wagmi/core";
+import { waitForTransactionReceipt, getBalance, writeContract, simulateContract, estimateGas } from "@wagmi/core";
 import {
-  config,
   createPublicClientLocal,
   createWalletClientLocal,
 } from "./web3Service";
 import { abi, address } from "./contract";
+import { config } from "../Context/WalletConnect";
+import { polygon } from "viem/chains";
 
 export const trimString = (trimString) => {
   if (!trimString) return "";
@@ -26,9 +27,9 @@ const changeSplitPayAmount = (splitPayment) => {
   const splitPayments =
     splitPayment?.length > 0
       ? splitPayment.map((item) => ({
-          paymentWallet: item.paymentWallet,
-          paymentPercentage: item.paymentPercentage * 100,
-        }))
+        paymentWallet: item.paymentWallet,
+        paymentPercentage: item.paymentPercentage * 100,
+      }))
       : [];
   return splitPayments;
 };
@@ -54,9 +55,9 @@ export const getEventValue = (logs, eventName) => {
     try {
       if (
         logs[i].topics[0] !==
-          "0xe6497e3ee548a3372136af2fcb0696db31fc6cf20260707645068bd3fe97f3c4" &&
+        "0xe6497e3ee548a3372136af2fcb0696db31fc6cf20260707645068bd3fe97f3c4" &&
         logs[i].topics[0] !==
-          "0x4dfe1bbbcf077ddc3e01291eea2d5c70c2b422b415d95645b9adcfd678cb1d63"
+        "0x4dfe1bbbcf077ddc3e01291eea2d5c70c2b422b415d95645b9adcfd678cb1d63"
       ) {
         const log = decodeEventLog({
           abi: abi,
@@ -79,22 +80,22 @@ export const getEventArray = (logs, eventName) => {
     try {
       if (
         logs[i]?.topics[0] !==
-          "0xe6497e3ee548a3372136af2fcb0696db31fc6cf20260707645068bd3fe97f3c4" &&
+        "0xe6497e3ee548a3372136af2fcb0696db31fc6cf20260707645068bd3fe97f3c4" &&
         logs[i]?.topics[0] !==
-          "0x4dfe1bbbcf077ddc3e01291eea2d5c70c2b422b415d95645b9adcfd678cb1d63"
+        "0x4dfe1bbbcf077ddc3e01291eea2d5c70c2b422b415d95645b9adcfd678cb1d63"
       ) {
         const log = decodeEventLog({
           abi: abi,
           data: logs[i].data,
           topics: logs[i].topics,
         });
-        console.log("log in event array is---->",log);
+        console.log("log in event array is---->", log);
         if (log.eventName === eventName) {
           state.push(log);
         }
       }
     } catch (error) {
-      console.log("error is--->",{ error });
+      console.log("error is--->", { error });
       throw error;
     }
   }
@@ -113,26 +114,30 @@ const executeWriteFunction = async (txObj, userAddress) => {
   const walletClient = createWalletClientLocal();
   console.log({ txObj });
   try {
-    await publicClient.estimateContractGas({ ...txObj, account: userAddress });
+    // await publicClient.estimateContractGas({ ...txObj, account: userAddress });
+    estimateGas(config, txObj);
   } catch (error) {
     throw error;
   }
   let hash;
   try {
-    const { request } = await publicClient.simulateContract({
-      ...txObj,
-      account: userAddress,
-    });
-    hash = await walletClient.writeContract(request);
+    // const { request } = await publicClient.simulateContract({
+    //   ...txObj,
+    //   account: userAddress
+    // })
+    const { request } = await simulateContract(config, txObj);
+
+    hash = await writeContract(config, request);
+    // hash = await walletClient.writeContract(request);
   } catch (error) {
     console.log({ error });
     throw error;
   }
   return await waitForTransactionReceipt(config, {
     hash: hash,
-    pollingInterval: 5000,
   });
 };
+
 
 export const pullTransaction = async (hash) => {
   try {
@@ -480,7 +485,7 @@ export const purchaseUnmintedNft = async (
   let etherPrice = await getMaticAmount(price);
   let etherValue = parseEther(etherPrice.toString());
   const nftValue = parseEther(price.toString());
-  
+
   const splitPayments = changeSplitPayAmount(splitPayment);
   const txObj = {
     address: address,
