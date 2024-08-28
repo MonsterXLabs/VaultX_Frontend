@@ -1,11 +1,12 @@
 import { decodeEventLog, parseEther, formatEther } from "viem";
-import { waitForTransactionReceipt, getBalance } from "@wagmi/core";
+import { waitForTransactionReceipt, getBalance, writeContract } from "@wagmi/core";
 import {
   createPublicClientLocal,
   createWalletClientLocal,
 } from "./web3Service";
 import { abi, address } from "./contract";
 import { config } from "../Context/WalletConnect";
+import { polygon } from "viem/chains";
 
 export const trimString = (trimString) => {
   if (!trimString) return "";
@@ -124,7 +125,11 @@ const executeWriteFunction = async (txObj, userAddress) => {
       account: userAddress,
     });
 
-    hash = await walletClient.writeContract(request);
+    // hash = await walletClient.writeContract({
+    //   ...request,
+    //   chain: polygon,
+    // });
+    hash = await writeContract(config, request);
   } catch (error) {
     console.log({ error });
     throw error;
