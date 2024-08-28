@@ -1,5 +1,5 @@
 import { decodeEventLog, parseEther, formatEther } from "viem";
-import { waitForTransactionReceipt, getBalance, writeContract } from "@wagmi/core";
+import { waitForTransactionReceipt, getBalance, writeContract, simulateContract, estimateGas } from "@wagmi/core";
 import {
   createPublicClientLocal,
   createWalletClientLocal,
@@ -114,29 +114,27 @@ const executeWriteFunction = async (txObj, userAddress) => {
   const walletClient = createWalletClientLocal();
   console.log({ txObj });
   try {
-    await publicClient.estimateContractGas({ ...txObj, account: userAddress });
+    // await publicClient.estimateContractGas({ ...txObj, account: userAddress });
+    estimateGas(config, txObj);
   } catch (error) {
     throw error;
   }
   let hash;
   try {
-    const { request } = await publicClient.simulateContract({
-      ...txObj,
-      account: userAddress,
-    });
+    // const { request } = await publicClient.simulateContract({
+    //   ...txObj,
+    //   account: userAddress
+    // })
+    const { request } = await simulateContract(config, txObj);
 
-    // hash = await walletClient.writeContract({
-    //   ...request,
-    //   chain: polygon,
-    // });
     hash = await writeContract(config, request);
+    // hash = await walletClient.writeContract(request);
   } catch (error) {
     console.log({ error });
     throw error;
   }
   return await waitForTransactionReceipt(config, {
     hash: hash,
-    pollingInterval: 5000,
   });
 };
 
