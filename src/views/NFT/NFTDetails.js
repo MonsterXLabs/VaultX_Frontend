@@ -303,6 +303,7 @@ function NFTDetails() {
         } else if (nft?.saleId?.saleStatus === "Active") setType("buy")
         else setType("bid")
       }
+
     } catch (error) {
       console.log(error)
     }
@@ -981,14 +982,14 @@ function NFTDetails() {
   const [quoteCount, setQuoteCount] = useState(30);
 
   const checkQuotes = async () => {
-    if(!nft?.price) {
+    if (!nft?.price) {
       return;
     }
 
     const maticAmount = await getMaticAmount(txType == "bid" ? price : nft?.price);
-    if(maticAmount) {
+    if (maticAmount) {
       setQuotes(true);
-      const gasFee = maticAmount >0.002 ? 0.002 : maticAmount;
+      const gasFee = maticAmount > 0.002 ? 0.002 : maticAmount;
       const totalAmount = Number(maticAmount + gasFee).toFixed(2);
       const expectedAmount = Number(maticAmount * (100 - fee) / 100 - gasFee).toFixed(2);
       setQuoteDetail({
@@ -1003,8 +1004,8 @@ function NFTDetails() {
   }
   const showCheckout = async () => {
     const maticAmount = await getMaticAmount(txType == "bid" ? price : nft?.price);
-    if(maticAmount) {
-      const gasFee = maticAmount >0.002 ? 0.002 : maticAmount;
+    if (maticAmount) {
+      const gasFee = maticAmount > 0.002 ? 0.002 : maticAmount;
       const totalAmount = Number(maticAmount + gasFee).toFixed(2);
       const expectedAmount = Number(maticAmount * (100 - fee) / 100 - gasFee).toFixed(2);
       setQuoteDetail({
@@ -1024,8 +1025,8 @@ function NFTDetails() {
   }
   const showBidNext = async () => {
     const maticAmount = await getMaticAmount(price);
-    if(maticAmount) {
-      const gasFee = maticAmount >0.002 ? 0.002 : maticAmount;
+    if (maticAmount) {
+      const gasFee = maticAmount > 0.002 ? 0.002 : maticAmount;
       const totalAmount = Number(maticAmount + gasFee).toFixed(2);
       const expectedAmount = Number(maticAmount * (100 - fee) / 100 - gasFee).toFixed(2);
       setQuoteDetail({
@@ -1044,8 +1045,8 @@ function NFTDetails() {
   }
   const showBuyNow = async () => {
     const maticAmount = await getMaticAmount(nft?.price);
-    if(maticAmount) {
-      const gasFee = maticAmount >0.002 ? 0.002 : maticAmount;
+    if (maticAmount) {
+      const gasFee = maticAmount > 0.002 ? 0.002 : maticAmount;
       const totalAmount = (Number(maticAmount) / 100 + gasFee).toFixed(2);
       const expectedAmount = (Number(maticAmount) * (100 - fee) / 10000 - gasFee).toFixed(2);
       setQuoteDetail({
@@ -1065,7 +1066,7 @@ function NFTDetails() {
   }
   const resetQuote = async () => {
     const maticAmount = await getMaticAmount(type == "bid" ? price : nft?.price);
-    if(maticAmount) {
+    if (maticAmount) {
       const gasFee = 0.002;
       const totalAmount = (Number(maticAmount) / 100 + gasFee).toFixed(2);
       const expectedAmount = (Number(maticAmount) * (100 - fee) / 10000 - gasFee).toFixed(2);
@@ -1086,10 +1087,10 @@ function NFTDetails() {
   }, [nft])
 
   useEffect(() => {
-    if(!quotes)
+    if (!quotes)
       return;
     const timerId = setTimeout(() => {
-      if(quoteCount > 0 && quotes)
+      if (quoteCount > 0 && quotes)
         setQuoteCount(quoteCount - 1);
     }, 1000);
     return () => clearTimeout(timerId);
@@ -1156,13 +1157,13 @@ function NFTDetails() {
                   <div className='flex items-center justify-center'>
                     <button className='text-white px-4 py-2 rounded-xl bg-[#535353]' disabled={quoteCount > 0}
                       onClick={resetQuote}>
-                        {
-                          (
-                            quoteCount ? <span>New Quotes in 0:{quoteCount}</span>
+                      {
+                        (
+                          quoteCount ? <span>New Quotes in 0:{quoteCount}</span>
                             : <span>New Quotes</span>
-                          )
-                        }
-                        
+                        )
+                      }
+
                     </button>
                   </div>
                 </div>
@@ -1539,32 +1540,32 @@ function NFTDetails() {
                       <div className="sale__btn w-full">
                         {type === "buy" ? (
                           <div className="flex flex-row justify-between pt-2">
-                          <a
-                            className="common__btn common_border__btn w-[48%]"
-                            style={{
-                              backgroundColor: "rgba(221, 242, 71, 0.20)",
-                              color: "rgba(221, 242, 71, 0.60)",
-                            }}
-                            data-bs-toggle="modal"
-                            href="#placeBidInitialDialog"
-                            role="button"
-                            // onClick={bidPlace}
-                            onClick={() => setTxType("bid")}
-                          >
-                            Place a bid
-                          </a>
-                          <a
-                            className="common__btn common_border__btn w-[48%]"
-                            data-bs-toggle="modal"
-                            href="#exampleModalToggle6"
-                            role="button"
-                            onClick={() => {
-                              setTxType("buy")
-                            }}
-                          >
-                            Buy Now
-                          </a>
-                        </div>
+                            <a
+                              className="common__btn common_border__btn w-[48%]"
+                              style={{
+                                backgroundColor: "rgba(221, 242, 71, 0.20)",
+                                color: "rgba(221, 242, 71, 0.60)",
+                              }}
+                              data-bs-toggle="modal"
+                              href="#placeBidInitialDialog"
+                              role="button"
+                              // onClick={bidPlace}
+                              onClick={() => setTxType("bid")}
+                            >
+                              Place a bid
+                            </a>
+                            <a
+                              className="common__btn common_border__btn w-[48%]"
+                              data-bs-toggle="modal"
+                              href="#exampleModalToggle6"
+                              role="button"
+                              onClick={() => {
+                                setTxType("buy")
+                              }}
+                            >
+                              Buy Now
+                            </a>
+                          </div>
                         ) : type === "release" ? (
                           <div className="sale__btn">
                             <a
@@ -3944,9 +3945,9 @@ function NFTDetails() {
                             </p>
                             <hr className="w-full text-white mb-3 opacity-10" />
                             <p>
-                            You will pay the purchase amount in cryptocurrency based on the real-time CoinMarketCap exchange rate at the current moment.
-                            <br />
-                            If the bidding is not successful, all cryptocurrency used in the purchase price, excluding gas fees, will be refunded.
+                              You will pay the purchase amount in cryptocurrency based on the real-time CoinMarketCap exchange rate at the current moment.
+                              <br />
+                              If the bidding is not successful, all cryptocurrency used in the purchase price, excluding gas fees, will be refunded.
                             </p>
                           </div>
                         </div>
@@ -4076,18 +4077,18 @@ function NFTDetails() {
                 </div>
                 <div className="popup__information__content">
                   <h6>
-                  Payment transaction failed
+                    Payment transaction failed
                   </h6>
                   <p>
-                  We're sorry, but your payment transaction was unsuccessful. This 
-                  may have been due to network congestion on the blockchain or 
-                  other factors beyond our control. However, please don't worry
-                  - you can simply click the "Retry" button below to make 
-                  another attempt at completing your payment.
+                    We're sorry, but your payment transaction was unsuccessful. This
+                    may have been due to network congestion on the blockchain or
+                    other factors beyond our control. However, please don't worry
+                    - you can simply click the "Retry" button below to make
+                    another attempt at completing your payment.
                   </p>
                   <p>
-                  We appreciate your patience and understanding, and are here 
-                  to help if you have any other questions or concerns..
+                    We appreciate your patience and understanding, and are here
+                    to help if you have any other questions or concerns..
                   </p>
                 </div>
                 <div
@@ -4503,26 +4504,26 @@ function NFTDetails() {
                   gap: '1rem',
                 }}>
                   <div className="w-full flex justify-between">
-                  <div className="connected__left__blk" style={{
-                    display: 'flex',
-                    gap: '1rem'
-                  }}>
-                    <div className="connected_compas flex gap-x-3">
+                    <div className="connected__left__blk" style={{
+                      display: 'flex',
+                      gap: '1rem'
+                    }}>
+                      <div className="connected_compas flex gap-x-3">
                         <img
                           src="../../assets/icons/polygon.svg"
-                        alt=""
+                          alt=""
                         />
-                      <div className="connected_left_text">
-                        <div className="flex flex-col">
-                          <p className="text-lg text-white">Matic <span>{network} Network</span></p>
-                          <h5>{trimString(address)}</h5>
+                        <div className="connected_left_text">
+                          <div className="flex flex-col">
+                            <p className="text-lg text-white">Matic <span>{network} Network</span></p>
+                            <h5>{trimString(address)}</h5>
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                  <div className="connected__right__blk">
-                    <a href="#">Connected</a>
-                  </div>
+                    <div className="connected__right__blk">
+                      <a href="#">Connected</a>
+                    </div>
                   </div>
                   <hr className="mt-2 w-full" style={{
                     color: 'white'
