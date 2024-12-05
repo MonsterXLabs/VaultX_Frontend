@@ -531,7 +531,8 @@ function Curation() {
         >
           <div className="row g-4">
             {nfts.length > 0 &&
-              nfts.filter((nft) => (!nft?.active && !nft.owner?.active && !nft.curation?.active)).map((item, index) => {
+              // nfts.filter((nft) => (!nft?.active && !nft.owner?.active && !nft.curation?.active)).map((item, index) => {
+              nfts.filter((nft) => (!nft?.active && !nft.curation?.active)).map((item, index) => {
                 return (
                   <div
                     className="col-xxl-3 col-xl-4 col-lg-4 col-md-6"

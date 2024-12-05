@@ -1,11 +1,11 @@
-import {createContext, useEffect, useState} from "react"
-import {createWeb3Modal} from "@web3modal/wagmi/react"
-import {defaultWagmiConfig} from "@web3modal/wagmi/react/config"
+import { createContext, useEffect, useState } from "react"
+import { createWeb3Modal } from "@web3modal/wagmi/react"
+import { defaultWagmiConfig } from "@web3modal/wagmi/react/config"
 import { authConnector } from '@web3modal/wagmi'
-import { createConfig, configureChains, mainnet,http } from 'wagmi'
-import {WagmiProvider} from "wagmi"
-import {polygon, polygonMumbai,polygonAmoy} from "wagmi/chains"
-import {QueryClient, QueryClientProvider} from "@tanstack/react-query"
+import { createConfig, configureChains, mainnet, http } from 'wagmi'
+import { WagmiProvider } from "wagmi"
+import { polygon, polygonMumbai, polygonAmoy } from "wagmi/chains"
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 
 import { metaMask, coinbaseWallet } from 'wagmi/connectors'
 
@@ -14,7 +14,7 @@ import {
   getMedia,
   userServices,
 } from "../services/supplier"
-import {createCookie, getCookie} from "../utils/cookie"
+import { createCookie, getCookie } from "../utils/cookie"
 
 // const connector = new MetaMaskConnector()
 
@@ -33,25 +33,25 @@ const metadata = {
 
 const chains = [polygon, polygonAmoy]
 
-  export const config = createConfig({
-    chains: chains,
-    connectors: [
-      metaMask(),
-      coinbaseWallet(),
-      // authConnector({
-      //   chains,
-      //   options: { projectId },
-      //   email: false, // default to true
-      //   socials: ['google', 'apple', 'facebook', 'x'],
-      //   showWallets: true, // default to true
-      //   walletFeatures: true // default to true
-      // })
-    ],
-    transports: {
-      [polygon.id]: http(),
-      [polygonAmoy.id]: http(),
-    },
-  })
+export const config = createConfig({
+  chains: chains,
+  connectors: [
+    metaMask(),
+    coinbaseWallet(),
+    // authConnector({
+    //   chains,
+    //   options: { projectId },
+    //   email: false, // default to true
+    //   socials: ['google', 'apple', 'facebook', 'x'],
+    //   showWallets: true, // default to true
+    //   walletFeatures: true // default to true
+    // })
+  ],
+  transports: {
+    [polygon.id]: http(),
+    [polygonAmoy.id]: http(),
+  },
+})
 
 // export const config = defaultWagmiConfig({
 //   chains, // required
@@ -78,7 +78,7 @@ createWeb3Modal({
 
 export const WalletContext = createContext(null)
 
-export function WalletContextProvider({children}) {
+export function WalletContextProvider({ children }) {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [user, setUser] = useState(null)
   const [sidebar, setSidebar] = useState(false)
@@ -91,21 +91,21 @@ export function WalletContextProvider({children}) {
         })
       createCookie("user", JSON.stringify(authenticate_user_token.data.user))
       createCookie("token", authenticate_user_token.data.token)
-      createCookie('isLoggedIn',true)
+      createCookie('isLoggedIn', true)
       setIsLoggedIn(true)
     } catch (error) {
-      console.log({error})
+      console.log({ error })
     }
   }
 
   const getUser = async () => {
     try {
       const {
-        data: {user},
+        data: { user },
       } = await userServices.getSingleUser()
       setUser(user)
     } catch (error) {
-      console.log({error})
+      console.log({ error })
     }
   }
 
@@ -118,19 +118,19 @@ export function WalletContextProvider({children}) {
       localStorage.removeItem("isLoggedIn")
       if (pathname?.includes("/")) window.location.reload()
     } catch (error) {
-      console.log({error})
+      console.log({ error })
     }
   }
 
   const fetchImages = async () => {
     const data = await getMedia()
-    console.log("media",data)
+    console.log("media", data)
     localStorage.setItem("media", JSON.stringify(data))
     return data
   }
 
   useEffect(() => {
-    if(getCookie('isLoggedIn')){
+    if (getCookie('isLoggedIn')) {
 
       setIsLoggedIn(getCookie('isLoggedIn'))
     }
